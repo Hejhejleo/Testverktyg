@@ -4,6 +4,7 @@ public class Main {
 		System.out.println("Hejsan");
 		System.out.println("HEJSNAJSNAJNJFA");
 		System.out.println("Tja!");
-		System.out.println("ÅÄÖ");
+		System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+		System.out.println("Ã…Ã„Ã–");
 	}
 }
