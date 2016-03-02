@@ -4,6 +4,6 @@ public class Main {
 		System.out.println("Hejsan");
 		System.out.println("HEJSNAJSNAJNJFA");
 		System.out.println("Tja!");
-		System.out.println("HEJDÅ!");
+		System.out.println("HEJDA!");
 	}
 }
