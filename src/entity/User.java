@@ -4,8 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 @Entity
+@NamedQuery(query = "Select user from User user where user.uname = :uname", name="loginByName")
+
 public class User {
 
 	@Id
@@ -14,12 +17,15 @@ public class User {
 	private String uname;
 	private String password;
 	private String accountType;
+	private String email;
 	
-	public User(int uid, String uname, String password, String accountType) {
+	public User(int uid, String uname, String password, String accountType, String email) {
 		this.uid = uid;
 		this.uname = uname;
 		this.password = password;
 		this.accountType = accountType;
+		this.email = email;
+		
 	}
 	
 	public User() {
@@ -58,4 +64,12 @@ public class User {
 		this.accountType = accountType;
 	}
 	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 }

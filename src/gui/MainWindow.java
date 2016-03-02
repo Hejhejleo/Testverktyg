@@ -1,6 +1,7 @@
 package gui;
 
-import dao.DAO;
+import connectivity.AddUser;
+import connectivity.Login;
 import javafx.application.Application;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -17,6 +18,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -28,13 +30,15 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class MainWindow extends Application {
-	private DAO dao;
+	private AddUser addUser;
+	private Login logIn;
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
 	private BooleanProperty isAdmin = new SimpleBooleanProperty(false);
 	private Stage stage;
 	
 	public void start(Stage stage) {
-		dao = new DAO();
+		addUser = new AddUser();
+		logIn = new Login();
 		this.stage = stage;
 		BorderPane root = new BorderPane();
 		Scene scene = new Scene(root, 800, 600);  
@@ -64,18 +68,26 @@ public class MainWindow extends Application {
 			addUser();
 		});
 		
-		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, mnuAddUser);
+		MenuItem mnuExit = new MenuItem("Exit");
+		mnuExit.setOnAction(exitAction -> {
+			System.exit(0);
+		});
+		
+		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, mnuAddUser, new SeparatorMenuItem(), mnuExit);
 		stage.setTitle("Guest");
 		mnuLogIn.setOnAction(logInAction -> {
-			if (!canAdd.get()) {
+			if (!isLoggedIn.get()) {
 				showLogin();
 			}
 		});
+		mnuLogIn.disableProperty().bind(isLoggedIn);
 		
 		mnuLogOut.setOnAction(logOutAction -> {
+			stage.setTitle("Guest");
 			isLoggedIn.set(false);
 			isAdmin.set(false);
 		});
+		mnuLogOut.disableProperty().bind(isLoggedIn.not());
 		
 		menu.getMenus().add(mnuFile);
 		
@@ -86,7 +98,7 @@ public class MainWindow extends Application {
 	public void showLogin() {
 		Stage logInStage = new Stage();
 		StackPane logInPane = new StackPane();
-		Scene logInScene = new Scene(logInPane, 250, 150);
+		Scene logInScene = new Scene(logInPane, 400, 200);
 		logInStage.setScene(logInScene);
 		logInStage.initStyle(StageStyle.UNDECORATED);
 		logInStage.show();
@@ -104,15 +116,29 @@ public class MainWindow extends Application {
 		PasswordField txtPassword = new PasswordField();
 		txtPassword.setMaxWidth(200);
 		txtPassword.setPromptText("Password");
+		Text wrongLogin = new Text("Wrong username/password");
+		wrongLogin.setFont(Font.font(30));
+		wrongLogin.setVisible(false);
+		
 		VBox loginColumn = new VBox();
 		loginColumn.setAlignment(Pos.CENTER);
-		loginColumn.getChildren().addAll(title,txtUserName, txtPassword);
+		loginColumn.getChildren().addAll(title,txtUserName, txtPassword, wrongLogin);
 		logInPane.getChildren().addAll(loginColumn);
+		
 		txtPassword.setOnAction(e -> {
-			isLoggedIn.set(true);
-			isAdmin.set(true);
-			stage.setTitle("Logged in as admin");
-			logInStage.close();
+			if (logIn.login(txtUserName.getText(), txtPassword.getText())) {
+				if (logIn.getAccountType().equals("Admin")) {
+					stage.setTitle("Logged in as " + logIn.getName() + " - Admin");
+					isAdmin.set(true);
+				} else {
+					stage.setTitle("Logged in as " + logIn.getName() + " - Student");
+				}
+				wrongLogin.setVisible(false);
+				logInStage.close();
+				isLoggedIn.set(true);
+			} else {
+				wrongLogin.setVisible(true);
+			}
 		});
 		
 	}
@@ -124,7 +150,7 @@ public class MainWindow extends Application {
 		
 		Stage addUserStage = new Stage();
 		StackPane userPane = new StackPane();
-		Scene addUserScene = new Scene(userPane, 400, 200);
+		Scene addUserScene = new Scene(userPane, 400, 250);
 		addUserStage.setScene(addUserScene);
 		addUserStage.initStyle(StageStyle.UNDECORATED);
 		addUserStage.toFront();
@@ -149,8 +175,12 @@ public class MainWindow extends Application {
 		cmbAccountType.setItems(accountType);
 		cmbAccountType.setPromptText("Account type");
 		
+		TextField txtEmail = new TextField();
+		txtEmail.setMaxWidth(200);
+		txtEmail.setPromptText("E-mail");
+		
 		VBox enterBox = new VBox();
-		enterBox.getChildren().addAll(txtUserName, txtPassword, confirmPassword, cmbAccountType);
+		enterBox.getChildren().addAll(txtUserName, txtPassword, confirmPassword, cmbAccountType, txtEmail);
 		
 		Button okButton = new Button("OK");
 		Button cancelButton = new Button("Cancel");
@@ -172,8 +202,14 @@ public class MainWindow extends Application {
 				error.setTitle("No accounttype chosen");
 				error.setHeaderText("You must choose an account type");
 				error.showAndWait();
-			} else {
-				dao.addUser(txtUserName.getText(), txtPassword.getText(), cmbAccountType.getValue().toString());
+			}
+			else if(!(txtEmail.getText().contains("@"))) {
+				error.setTitle("Incorrect e-mail");
+				error.setHeaderText("You have not entered a valid e-mail");
+				error.showAndWait();
+			}
+			else {
+				addUser.addUser(txtUserName.getText(), txtPassword.getText(), cmbAccountType.getValue().toString(), txtEmail.getText());
 				addUserStage.close();
 			}
 			
