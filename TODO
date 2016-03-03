@@ -1,0 +1,26 @@
+Login/ut
+
+Admin
+	Skapa prov
+	Rätta prov
+	Statistik
+	Lägga till avändare
+	
+Elev
+	Göra prov
+	Titta på tidigare prov
+	Skapa konto
+	
+
+Databas
+	Inlog
+	
+	id|namn|lösen|kontotyp|
+	
+	skapa prov
+	
+	provid|provnamn|provstart|provslut|klass
+	
+	frågeid|provid|frågetyp|frågetext|korrekt_svar|
+	
+	
