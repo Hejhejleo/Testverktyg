@@ -180,11 +180,12 @@ public class MainWindow extends Application {
 		txtEmail.setPromptText("E-mail");
 		
 		VBox enterBox = new VBox();
-		enterBox.getChildren().addAll(txtUserName, txtPassword, confirmPassword, cmbAccountType, txtEmail);
+		enterBox.getChildren().addAll(txtUserName, txtPassword, confirmPassword, txtEmail, cmbAccountType);
 		
 		Button okButton = new Button("OK");
 		Button cancelButton = new Button("Cancel");
 		HBox buttons = new HBox();
+		okButton.requestFocus();
 		buttons.getChildren().addAll(okButton, cancelButton);
 		
 		cancelButton.setOnAction(cancel -> {
@@ -209,7 +210,15 @@ public class MainWindow extends Application {
 				error.showAndWait();
 			}
 			else {
-				addUser.addUser(txtUserName.getText(), txtPassword.getText(), cmbAccountType.getValue().toString(), txtEmail.getText());
+				if (addUser.addUser(txtUserName.getText(), txtPassword.getText(), cmbAccountType.getValue().toString(), txtEmail.getText())) {
+					error.setTitle("User added");
+					error.setHeaderText("User " + txtUserName.getText() + " added");
+					error.showAndWait();
+				} else {
+					error.setTitle("User exists");
+					error.setHeaderText("User " + txtUserName.getText() + " already exists");
+					error.showAndWait();
+				}
 				addUserStage.close();
 			}
 			
