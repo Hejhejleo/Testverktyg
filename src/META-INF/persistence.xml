@@ -7,6 +7,13 @@
 
 	<persistence-unit name="Testverktyg" transaction-type="RESOURCE_LOCAL">
 		<class>entity.User</class>
+		<class>entity.SchoolClass</class>
+		<class>entity.Question</class>
+		<class>entity.QuestionType</class>
+		<class>StudentAnswer</class>
+		<class>entity.Test</class>
+		<class>entity.TestTime</class>
+		
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testverktyg" />
 			<property name="javax.persistence.jdbc.user" value="root" />

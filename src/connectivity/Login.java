@@ -27,8 +27,8 @@ public class Login {
 			return false;
 		} else {
 			this.accountType = result.get(0).getAccountType();
-			this.name = result.get(0).getUname();
-			if (name.equals(result.get(0).getUname()) && password.equals(result.get(0).getPassword())) {
+			this.name = result.get(0).getUserName();
+			if (name.equals(result.get(0).getUserName()) && password.equals(result.get(0).getPassword())) {
 				return true;
 			}
 		}

@@ -22,7 +22,7 @@ public class AddUser {
 			User user = new User();
 			user.setAccountType(accountType);
 			user.setPassword(password);
-			user.setUname(name);
+			user.setUserName(name);
 			user.setEmail(email);
 			
 			em.getTransaction().begin();
@@ -47,7 +47,7 @@ public class AddUser {
 		query.setParameter("uname", name);
 		List<User> userList = query.getResultList();
 		for (User user : userList) {
-			if (name.equals(user.getUname()))
+			if (name.equals(user.getUserName()))
 				return true;
 		}
 		
