@@ -6,8 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
-@Entity
+/** Stores a question
+ * 
+ * @author Mattias Larsson
+ *
+ */
 
+@Entity
 public class Question {
 
 	@Id
@@ -22,48 +27,20 @@ public class Question {
 	@ManyToOne
 	private QuestionType qType;
 	
+	/** Constructor
+	 * 
+	 */
 	public Question() {}
-
-	public double getPoints() {
-		return points;
-	}
-
-	public void setPoints(double points) {
-		this.points = points;
-	}
-
-	public boolean isDirectFeedback() {
-		return directFeedback;
-	}
-
-	public void setDirectFeedback(boolean directFeedback) {
-		this.directFeedback = directFeedback;
-	}
-
-	public String getQuestionTitle() {
-		return questionTitle;
-	}
-
-	public void setQuestionTitle(String questionTitle) {
-		this.questionTitle = questionTitle;
-	}
-
-	public String getQuestionText() {
-		return questionText;
-	}
-
-	public void setQuestionText(String questionText) {
-		this.questionText = questionText;
-	}
-
-	public void setQuestionType(QuestionType qType) {
-		this.qType = qType;
-	}
 	
-	public QuestionType getquestionType() {
-		return qType;
-	}
-	
+	/** Constructor
+	 * 
+	 * @param points - double, How many points is the question worth
+	 * @param directFeedback - boolean, Is direct feedback to the student possible 
+	 * @param questionTitle - String, The title of the question
+	 * @param questionText - String, The actual question
+	 * @param test - An instance of Test, which test contains the question
+	 * @param questionType - An instance of QuestionType, which type of question is it
+	 */
 	public Question(double points, boolean directFeedback, String questionTitle, String questionText, Test test, QuestionType questionType) {
 		this.points = points;
 		this.directFeedback = directFeedback;
@@ -73,5 +50,83 @@ public class Question {
 		this.qType = questionType;
 	}
 	
+	/** Returns the value of the question
+	 * 
+	 * @return the value of the question
+	 */
+	public double getPoints() {
+		return points;
+	}
+
+	/** Sets the value of this question
+	 * 
+	 * @param points Double
+	 */
+	public void setPoints(double points) {
+		this.points = points;
+	}
+
+	/** Reurns if direct feedback is possible
+	 * 
+	 * @return Boolean
+	 */
+	public boolean isDirectFeedback() {
+		return directFeedback;
+	}
+
+	/** Sets if direct feedback is possible
+	 * 
+	 * @param directFeedback - Boolean
+	 */
+	public void setDirectFeedback(boolean directFeedback) {
+		this.directFeedback = directFeedback;
+	}
 	
+	/** Returns the title of this question
+	 * 
+	 * @return a String containing the title of this question
+	 */
+	public String getQuestionTitle() {
+		return questionTitle;
+	}
+
+	/** Sets the title of this question
+	 * 
+	 * @param questionTitle - String
+	 */
+	public void setQuestionTitle(String questionTitle) {
+		this.questionTitle = questionTitle;
+	}
+
+	/** Returns the actual question
+	 * 
+	 * @return a String containing the actual question
+	 */
+	public String getQuestionText() {
+		return questionText;
+	}
+
+	/** Sets this question's actual question
+	 * 
+	 * @param questionText - a String containing the actual question
+	 */
+	public void setQuestionText(String questionText) {
+		this.questionText = questionText;
+	}
+
+	/** Sets this question's questiontype
+	 * 
+	 * @param qType - an instance of QuestionType
+	 */
+	public void setQuestionType(QuestionType qType) {
+		this.qType = qType;
+	}
+	
+	/** Returns this question's questiontype
+	 * 
+	 * @return an instance of QuestionType
+	 */
+	public QuestionType getquestionType() {
+		return qType;
+	}
 }
