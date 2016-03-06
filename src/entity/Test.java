@@ -20,6 +20,8 @@ public class Test {
 	private String testEnd;
 	@OneToMany
 	private List<Question> questionList;
+	@OneToMany
+	private List<SchoolClass> classList;
 	
 	public Test() {}
 	
@@ -28,6 +30,7 @@ public class Test {
 		this.testStart = testStart;
 		this.testEnd = testEnd;
 		this.questionList = new ArrayList<>();
+		this.classList = new ArrayList<>();
 	}
 	
 	public void addQuestion(Question question) {
@@ -60,5 +63,13 @@ public class Test {
 
 	public void setTestEnd(String testEnd) {
 		this.testEnd = testEnd;
+	}
+
+	public void addClass(SchoolClass schoolClass) {
+		this.classList.add(schoolClass);
+	}
+	
+	public List<SchoolClass> getClasses() {
+		return this.classList;
 	}
 }

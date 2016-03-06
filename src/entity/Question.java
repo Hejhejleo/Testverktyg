@@ -64,12 +64,13 @@ public class Question {
 		return qType;
 	}
 	
-	public Question(double points, boolean directFeedback, String questionTitle, String questionText, Test test) {
+	public Question(double points, boolean directFeedback, String questionTitle, String questionText, Test test, QuestionType questionType) {
 		this.points = points;
 		this.directFeedback = directFeedback;
 		this.questionTitle = questionTitle;
 		this.questionText = questionText;
 		this.test = test;
+		this.qType = questionType;
 	}
 	
 	

@@ -13,44 +13,33 @@ public class StudentAnswer {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int studentAnswerId;
 	@OneToOne
-	private int studentId;
+	private User user;
 	@OneToOne
-	private int questionId;
-	@OneToOne
-	private int testId;
+	private Question question;
 	private String answer;
 	
 	public StudentAnswer() {}
 	
-	public StudentAnswer (int studentId, int questionId, int testId, String answer) {
-		this.studentId = studentId;
-		this.questionId = questionId;
-		this.testId = testId;
+	public StudentAnswer (User user, Question question, String answer) {
+		this.user = user;
+		this.question = question;
 		this.answer = answer;
 	}
 
-	public int getStudentId() {
-		return studentId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setStudentId(int studentId) {
-		this.studentId = studentId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public int getQuestionId() {
-		return questionId;
+	public Question getQuestion() {
+		return question;
 	}
 
-	public void setQuestionId(int questionId) {
-		this.questionId = questionId;
-	}
-
-	public int getTestId() {
-		return testId;
-	}
-
-	public void setTestId(int testId) {
-		this.testId = testId;
+	public void setQuestionId(Question question) {
+		this.question = question;
 	}
 
 	public String getAnswer() {

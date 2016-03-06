@@ -1,12 +1,10 @@
 package entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 
 @Entity
@@ -17,6 +15,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int uid;
+	@Column(unique = true)
 	private String userName;
 	private String fName;
 	private String lName;
@@ -97,10 +96,5 @@ public class User {
 	public int getUid() {
 		return uid;
 	}
-	
-
-	
-
-	
 
 }
