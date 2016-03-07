@@ -21,7 +21,17 @@ public class TestsTheDatabase {
 	public static void main(String[] args) {
 		
 		// Add a user
-		User user = new User("Mattias", "Larsson", "kultomten", "secret", "Student", "mattias@mail.com", "123456");
+		User user = new User();
+		user.setAccountType("Student");
+		user.setCity("Mölndal");
+		user.setEmail("a@b.c");
+		user.setfName("Mattias");
+		user.setlName("Larsson");
+		user.setPassword("hemligt");
+		user.setPhone("0735908926");
+		user.setStreet("Glasbergsgatan 188");
+		user.setUserName("kultomten");
+		user.setZip(43134);
 		
 		// Add a schoolclass
 		SchoolClass class1 = new SchoolClass("JAVAG1");
