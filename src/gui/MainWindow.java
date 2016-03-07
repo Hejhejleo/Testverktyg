@@ -105,7 +105,16 @@ public class MainWindow extends Application {
 		});
 		mnuLogOut.disableProperty().bind(isLoggedIn.not());
 		
-		menu.getMenus().add(mnuFile);
+		Menu mnuAdmin = new Menu("Admin");
+		MenuItem adminUsers = new MenuItem("Administer Users");
+		adminUsers.setOnAction(action -> {
+			root.setCenter(new AdminUser().showPane());
+		});
+		adminUsers.disableProperty().bind(canAdd);
+		mnuAdmin.getItems().add(adminUsers);
+		
+		menu.getMenus().addAll(mnuFile, mnuAdmin);
+		
 		
 		
 		return menu;
