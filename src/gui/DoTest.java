@@ -1,5 +1,15 @@
 package gui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+import entity.Question;
+import entity.Test;
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -24,10 +34,37 @@ import javafx.util.Duration;
 public class DoTest extends Application {
 	private Stage primaryStage;
 	boolean fade;
+	String testName;
+	int questionNummer;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// GridDebug
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
+		EntityManager em = emf.createEntityManager();
+		Query test = em.createNamedQuery("get tests");
+		testName = "Test i JPA";
+		test.setParameter("name", "Test i JPA");
+		System.out.println("---------------:::Hello:::-----------------");
+		
+		//get questions from DB
+		System.out.println("---------------:::1:::-----------------");
+	    List<Test> testsList = new ArrayList<>(test.getResultList());
+	    System.out.println("---------------:::2:::-----------------");
+	    List<Question> questions = new ArrayList<>();
+	    
+	    System.out.println("---------------:::3:::-----------------");
+	    Test currentTest = testsList.get(0);
+	    System.out.println("---------------:::4:::-----------------");
+	    currentTest.getQuestions().forEach(q ->{
+	    	questions.add(q);
+	    });
+	    System.out.println("---------------:::5:::-----------------");
+
+	    
+	    
+	    
+	    //
+		
 
 		this.primaryStage = primaryStage;
 		GridPane root = new GridPane();
@@ -36,8 +73,13 @@ public class DoTest extends Application {
 		// TopLeft Corner
 		VBox topLeft = new VBox();
 
-		Text titleText = new Text("Title");
-		Text questionText = new Text("Vilken typ av bil får man inte köra under vintern?");
+		System.out.println("------------------");
+		System.out.println("------------------");
+		Text titleText = new Text(questions.get(questionNummer).getQuestionTitle());
+		Text questionText = new Text(questions.get(questionNummer).getQuestionText());
+		
+		// GridDebug
+		
 
 		// TitleStyle
 		titleText.setFont(Font.font(20));
@@ -142,7 +184,6 @@ public class DoTest extends Application {
 		});
 		
 		
-		//Invis shape ontop for detection!
 
 	}
 

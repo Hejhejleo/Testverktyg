@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 /** Creates a new test 
@@ -16,6 +17,7 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
+@NamedQuery(query = "Select t from Test t where t.testName = :name", name = "get tests")
 public class Test {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
