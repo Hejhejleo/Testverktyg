@@ -38,6 +38,7 @@ public class MainWindow extends Application {
 	private Stage stage;
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
+	private QuizmakerGUI qMakerGUI;
 	
 	public void start(Stage stage) {
 		User user = new User();
@@ -79,11 +80,16 @@ public class MainWindow extends Application {
 		
 		MenuItem mnuChangeUser = new MenuItem("Change user info");
 		mnuChangeUser.setOnAction(change -> {
-			userInfo = new ChangeUserInfo();
+			userInfo = new ChangeUserInfo();			
 			root.setCenter(userInfo.showPane());
 		});
+		MenuItem createQuest = new MenuItem("Create Test");
+		createQuest.setOnAction(createQ -> {
+			qMakerGUI = new QuizmakerGUI();
+			root.setCenter(qMakerGUI.showPane());
+		});
 		
-		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, mnuAddUser, new SeparatorMenuItem(), mnuExit);
+		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, mnuAddUser, new SeparatorMenuItem(), mnuExit, mnuChangeUser, createQuest);
 		stage.setTitle("Guest");
 		mnuLogIn.setOnAction(logInAction -> {
 			if (!isLoggedIn.get()) {
