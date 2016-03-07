@@ -31,6 +31,9 @@ public class User {
 	private String accountType;
 	private String email;
 	private String phone;
+	private String street;
+	private int zip;
+	private String city;
 	
 	/** Constructor
 	 * 
@@ -42,7 +45,7 @@ public class User {
 	 * @param email - a String with the user's e-mail
 	 * @param phone - a String with the user's phone number
 	 */
-	public User(String fName, String lName, String userName, String password, String accountType, String email, String phone) {
+	public User(String fName, String lName, String userName, String password, String accountType, String email, String phone, String street, int zip, String city) {
 		this.fName = fName;
 		this.lName = lName;
 		this.password = password;
@@ -50,6 +53,9 @@ public class User {
 		this.email = email;
 		this.phone = phone;
 		this.userName = userName;
+		this.street = street;
+		this.zip = zip;
+		this.city = city;
 		
 	}
 	
@@ -168,5 +174,53 @@ public class User {
 	 */
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	/** Sets the user's streetaddress
+	 * 
+	 * @param street - String
+	 */
+	public void setStreet(String street) {
+		this.street = street;
+	}
+	
+	/** Returns the user's streetaddress
+	 * 
+	 * @return String
+	 */
+	public String getAddress() {
+		return this.street;
+	}
+	
+	/** Sets the users zip
+	 * 
+	 * @param int
+	 */
+	public void setZip(int zip) {
+		this.zip = zip;
+	}
+	
+	/** Returns the user's zip
+	 * 
+	 * @return int
+	 */
+	public int getZip() {
+		return this.zip;
+	}
+	
+	/** Sets the user's city
+	 * 
+	 * @param city - String
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+	
+	/** Returns the user's city
+	 * 
+	 * @return String
+	 */
+	public String getCity() {
+		return this.city;
 	}
 }
