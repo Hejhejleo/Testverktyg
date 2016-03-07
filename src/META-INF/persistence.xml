@@ -10,14 +10,15 @@
 		<class>entity.SchoolClass</class>
 		<class>entity.Question</class>
 		<class>entity.QuestionType</class>
-		<class>StudentAnswer</class>
+		<class>entity.StudentAnswer</class>
 		<class>entity.Test</class>
 		<class>entity.TestTime</class>
+		<class>entity.Answers</class>
 		
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testverktyg" />
 			<property name="javax.persistence.jdbc.user" value="root" />
-			<property name="javax.persistence.jdbc.password" value="master" />
+			<property name="javax.persistence.jdbc.password" value="senapsmos" />
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 			<property name="eclipselink.logging.level" value="FINE" />
 			<property name="eclipselink.ddl-generation" value="create-tables" />
