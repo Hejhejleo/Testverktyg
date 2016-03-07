@@ -42,7 +42,7 @@ public class MainWindow extends Application {
 		logIn = new Login();
 		this.stage = stage;
 		BorderPane root = new BorderPane();
-		Scene scene = new Scene(root, 800, 600);  
+		Scene scene = new Scene(root,800,600);  
 		stage.setScene(scene);
 		stage.setMaximized(true);
 		stage.show();

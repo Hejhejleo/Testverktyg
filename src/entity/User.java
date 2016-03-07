@@ -7,11 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+
 /** Creates a new user
  * 
  * @author Mattias Larsson
  *
  */
+
+
 @Entity
 @NamedQuery(query = "Select user from User user where user.userName = :uname", name="loginByName")
 
