@@ -2,6 +2,7 @@ package gui;
 
 import connectivity.AddUser;
 import connectivity.Login;
+import entity.User;
 import javafx.application.Application;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -32,16 +33,18 @@ import javafx.stage.StageStyle;
 public class MainWindow extends Application {
 	private AddUser addUser;
 	private Login logIn;
-	//No Comment
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
 	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
 	private Stage stage;
+	private BorderPane root;
+	private ChangeUserInfo userInfo;
 	
 	public void start(Stage stage) {
+		User user = new User();
 		addUser = new AddUser();
 		logIn = new Login();
 		this.stage = stage;
-		BorderPane root = new BorderPane();
+		root = new BorderPane();
 		Scene scene = new Scene(root,800,600);  
 		stage.setScene(scene);
 		stage.setMaximized(true);
@@ -72,6 +75,12 @@ public class MainWindow extends Application {
 		MenuItem mnuExit = new MenuItem("Exit");
 		mnuExit.setOnAction(exitAction -> {
 			System.exit(0);
+		});
+		
+		MenuItem mnuChangeUser = new MenuItem("Change user info");
+		mnuChangeUser.setOnAction(change -> {
+			userInfo = new ChangeUserInfo();
+			root.setCenter(userInfo.showPane());
 		});
 		
 		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, mnuAddUser, new SeparatorMenuItem(), mnuExit);
