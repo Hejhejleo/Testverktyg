@@ -1,6 +1,8 @@
 package gui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -17,11 +19,14 @@ public class DoTestOverview extends Application {
 		Scene scene = new Scene(root, 600, 800);
 
 		TextArea overview = new TextArea();
+		overview.setEditable(false);
 
 		HBox rightContainer = new HBox(12);
+		rightContainer.setPadding(new Insets(0,3000,20,30));
+		rightContainer.setAlignment(Pos.BOTTOM_LEFT);
 		
 		Button yes = new Button("Yes");
-		Button no = new Button("No");
+		Button no = new Button("Cancel");
 		rightContainer.getChildren().addAll(yes, no);
 
 		root.setLeft(overview);

@@ -12,6 +12,7 @@ import entity.Answers;
 import entity.Question;
 import entity.Test;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -221,8 +222,53 @@ public class DoTest extends Application {
 
 
 		}
+		
+		//LastCanvas /START
+		
+		BorderPane rootLC = new BorderPane();
+		Scene lastCanvas = new Scene(rootLC,800,350);
+		Button endTest = new Button("End Test");
+		rootLC.setCenter(endTest);
+		canvases.add(lastCanvas);
+		
+		//LastCanvas /SLUT
+		
+		//Overview för provets svar /START
+		BorderPane rootOV = new BorderPane();
+		Scene sceneOV = new Scene(rootOV, 800, 350);
 
-		// BorderPane lastPage
+		Text overviewTitle = new Text("Overview");
+		overviewTitle.setFont(Font.font(18));
+		TextArea overview = new TextArea();
+		overview.setEditable(false);
+
+		HBox rightContainer = new HBox(12);
+		BorderPane leftContainer = new BorderPane();
+		rightContainer.setPadding(new Insets(0,3000,20,30));
+		rightContainer.setAlignment(Pos.BOTTOM_LEFT);
+		
+		Button yes = new Button("Skicka in");
+		Button cancel = new Button("Cancel");
+		rightContainer.getChildren().addAll(yes, cancel);
+		//leftContainer.getChildren().addAll(overviewTitle,overview);
+		leftContainer.setTop(overviewTitle);
+		leftContainer.setCenter(overview);
+
+		rootOV.setLeft(leftContainer);
+		rootOV.setRight(rightContainer);
+
+		primaryStage.setScene(canvases.get(0));
+		primaryStage.show();
+		
+		
+		cancel.setOnAction(event ->{
+			primaryStage.setScene(canvases.get(0));
+			questionNumber=0;
+		});
+		endTest.setOnAction(event ->{
+			primaryStage.setScene(sceneOV);
+		});
+		//Overview för provets svar /SLUT
 
 		primaryStage.setScene(canvases.get(questionNumber));
 		primaryStage.show();
@@ -241,9 +287,9 @@ public class DoTest extends Application {
 
 	public void changeQuestion(String cond) {
 		if (questionNumber < 1 & cond == "-") {
-			this.questionNumber = questions.size() - 1;
+			this.questionNumber = canvases.size() - 1;
 			primaryStage.setScene(canvases.get(questionNumber));
-		} else if (questionNumber >= (questions.size() - 1) & cond == "+") {
+		} else if (questionNumber >= (canvases.size() - 1) & cond == "+") {
 			this.questionNumber = 0;
 			primaryStage.setScene(canvases.get(questionNumber));
 			goneThrough = true;
