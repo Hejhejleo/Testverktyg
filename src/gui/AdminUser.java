@@ -8,9 +8,11 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import entity.SchoolClass;
+import entity.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -19,8 +21,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
 /** Administrates users
  * 
@@ -73,15 +77,106 @@ public class AdminUser {
 		
 		Button addStudent = new Button("Add student");
 		addStudent.setOnAction(addAction -> {
-			showNewStudent();
+			showNewStudent(classCombo.getValue());
 		});
 		
+		adminUserPane.add(addStudent, 0, 1);
 		
 		return adminUserPane;
 	}
 	
-	public void showNewStudent() {
+	public void showNewStudent(String className) {
+		Stage newStudentStage = new Stage();
+		GridPane root = new GridPane();
+		Scene newStudentScene = new Scene(root, 400, 400);
+		newStudentStage.setScene(newStudentScene);
+		newStudentStage.show();
 		
+		TextField txtFname = new TextField();
+		txtFname.setPromptText("First name");
+		root.add(txtFname, 0, 0);
+		
+		TextField txtLname = new TextField();
+		txtLname.setPromptText("Last name");
+		root.add(txtLname, 1, 0);
+		
+		TextField txtEmail = new TextField();
+		txtEmail.setPromptText("E-mail");
+		root.add(txtEmail, 0, 1);
+		
+		TextField txtPhone = new TextField();
+		txtPhone.setPromptText("Phonenumber");
+		root.add(txtPhone, 1, 1);
+		
+		TextField txtAddress = new TextField();
+		txtAddress.setPromptText("Street Address");
+		root.add(txtAddress, 0, 2);
+		
+		TextField txtZip = new TextField();
+		txtZip.setPromptText("Zip");
+		root.add(txtZip, 1, 2);
+		
+		TextField txtCity = new TextField();
+		txtCity.setPromptText("City");
+		root.add(txtCity, 0, 3);
+		
+		TextField txtUserName = new TextField();
+		txtUserName.setPromptText("Username");
+		root.add(txtUserName, 0, 4);
+		
+		PasswordField txtPassword = new PasswordField();
+		txtPassword.setPromptText("Password");
+		root.add(txtPassword, 1, 4);
+		
+		Button okButton = new Button("OK");
+		Button cancelButton = new Button("Cancel");
+		root.add(okButton, 0, 5);
+		root.add(cancelButton, 1, 5);
+		
+		cancelButton.setOnAction(c -> {
+			newStudentStage.close();
+		});
+		
+		okButton.setOnAction(ok -> {
+			if (!className.equals("Create new class")) {
+				if(!checkDoubles(txtUserName.getText())) {
+					User newUser = new User();
+					newUser.setAccountType("Student");
+					newUser.setCity(txtCity.getText());
+					newUser.setEmail(txtEmail.getText());
+					newUser.setfName(txtFname.getText());
+					newUser.setlName(txtLname.getText());
+					newUser.setPassword(txtPassword.getText());
+					newUser.setPhone(txtPhone.getText());
+					newUser.setStreet(txtAddress.getText());
+					newUser.setUserName(txtUserName.getText());
+					newUser.setZip(Integer.parseInt(txtZip.getText()));
+					
+					SchoolClass sc = (SchoolClass)em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
+					sc.addStudent(newUser);
+					
+					em.getTransaction().begin();
+					em.persist(newUser);
+					em.persist(sc);
+					em.getTransaction().commit();
+					
+					newStudentStage.close();
+				} else {
+					Alert doubleUser = new Alert(AlertType.ERROR);
+					doubleUser.setTitle("Username already exists");
+					doubleUser.setHeaderText("The username already exists");
+					doubleUser.showAndWait();
+				}
+			}
+		});
+	}
+	
+	public boolean checkDoubles(String userName) {
+		List<User> tempUserList = em.createQuery("select u from User u").getResultList();
+		for (int i = 0; i < tempUserList.size(); i++) {
+			if (tempUserList.get(i).getUserName().equals(userName)) {return true;}
+		}
+		return false;
 	}
 	
 	public void showNewClass() {
@@ -116,6 +211,5 @@ public class AdminUser {
 				classList.add(newClass.getClassName());
 			}
 		});
-		
 	}
 }
