@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import entity.Answers;
 import entity.Question;
 import entity.Test;
 import javafx.animation.FadeTransition;
@@ -39,6 +40,7 @@ public class DoTest extends Application {
 	boolean fade;
 	String testName;
 	int questionNummer = 0;
+	Answers answer;
 	List<Scene> canvases = new ArrayList<>();
 	List<Question> questions = new ArrayList<>();
 
@@ -55,6 +57,7 @@ public class DoTest extends Application {
 		System.out.println("---------------:::1:::-----------------");
 		List<Test> testsList = new ArrayList<>(test.getResultList());
 		System.out.println("---------------:::2:::-----------------");
+		List<Answers> answersList = new ArrayList<>(em.createQuery("select a from Answers a").getResultList());
 		
 		System.out.println("---------------:::3:::-----------------");
 		Test currentTest = new Test();
@@ -72,6 +75,12 @@ public class DoTest extends Application {
 		//Make scenes
 		System.out.println("---------------:::6:::-----------------");
 		for (int i = 0; i <= (questions.size()-1); i++) {
+			for(int j=0; j <= (answersList.size()-1);j++){
+				if (answersList.get(j).getQuestion()==questions.get(i)){
+					answer = answersList.get(j);
+				}
+				
+			}
 			GridPane root = new GridPane();
 			System.out.println("---------------:::7:::-----------------");
 			
@@ -145,13 +154,13 @@ public class DoTest extends Application {
 				ToggleGroup group = new ToggleGroup();
 				VBox toggleButtons = new VBox();
 
-				RadioButton button1 = new RadioButton("Answer 1");
+				RadioButton button1 = new RadioButton(answer.getAnswerList().get(0));
 				button1.setToggleGroup(group);
-				RadioButton button2 = new RadioButton("Answer 2");
+				RadioButton button2 = new RadioButton(answer.getAnswerList().get(1));
 				button2.setToggleGroup(group);
-				RadioButton button3 = new RadioButton("Answer 3");
+				RadioButton button3 = new RadioButton(answer.getAnswerList().get(2));
 				button3.setToggleGroup(group);
-				RadioButton button4 = new RadioButton("Answer 4");
+				RadioButton button4 = new RadioButton(answer.getAnswerList().get(3));
 				button4.setToggleGroup(group);
 
 				toggleButtons.getChildren().addAll(button1, button2, button3, button4);
@@ -206,6 +215,8 @@ public class DoTest extends Application {
 			});
 
 		}
+		
+		
 		
 
 		primaryStage.setScene(canvases.get(questionNummer));

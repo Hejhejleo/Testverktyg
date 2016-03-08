@@ -17,7 +17,7 @@ import javax.persistence.OneToOne;
  *
  */
 @Entity
-@NamedQuery(query = "Select a from Answers a where a.question = :questionId", name = "get answers")
+@NamedQuery(query = "Select a from Answers a where a.question = :questionName", name = "get answers")
 public class Answers {
 
 	@Id
