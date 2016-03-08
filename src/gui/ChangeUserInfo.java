@@ -11,6 +11,8 @@ import javax.persistence.Query;
 
 import entity.User;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -162,11 +164,13 @@ public class ChangeUserInfo {
 				 
 			 
 			 Optional<Pair<String, String>> result = pwDialog.showAndWait();
+			 
 			 result.ifPresent(password -> {
 				 if (password.getKey().equals(user.getPassword())) {
 					 em.getTransaction().begin();
 					 user.setPassword(password.getValue());
 					 em.getTransaction().commit();
+					 
 				 }
 			 });
 			 

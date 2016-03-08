@@ -108,9 +108,10 @@ public class MainWindow extends Application {
 		Menu mnuAdmin = new Menu("Admin");
 		MenuItem adminUsers = new MenuItem("Administer Users");
 		adminUsers.setOnAction(action -> {
-			root.setCenter(new AdminUser().showPane());
+			AdminUser userAdmin = new AdminUser();
+			root.setCenter(userAdmin.showPane());
 		});
-		adminUsers.disableProperty().bind(canAdd);
+		adminUsers.disableProperty().bind(canAdd.not());
 		mnuAdmin.getItems().add(adminUsers);
 		
 		menu.getMenus().addAll(mnuFile, mnuAdmin);

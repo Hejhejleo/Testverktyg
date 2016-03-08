@@ -223,4 +223,8 @@ public class User {
 	public String getCity() {
 		return this.city;
 	}
+
+	public String getStreet() {
+		return this.street;
+	}
 }
