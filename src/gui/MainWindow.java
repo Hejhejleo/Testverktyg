@@ -1,5 +1,8 @@
 package gui;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import connectivity.AddUser;
 import connectivity.Login;
 import entity.User;
@@ -172,6 +175,7 @@ public class MainWindow extends Application {
 
 	}
 
+	
 	public void addUser() {
 		ObservableList<String> accountType = FXCollections.observableArrayList();
 		accountType.add("Admin");
@@ -184,6 +188,18 @@ public class MainWindow extends Application {
 		addUserStage.initStyle(StageStyle.UNDECORATED);
 		addUserStage.toFront();
 		addUserStage.show();
+		
+		// Get the default toolkit
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		// Get the current screen size
+		Dimension scrnsize = toolkit.getScreenSize();
+		int scrnResolotion = toolkit.getScreenResolution();
+
+		// Print the screen size
+		System.out.println ("Screen size : " + scrnsize);
+		System.out.println ("Screen resolotion: " + scrnResolotion);
+
 
 		Text titleText = new Text("Add user account");
 		titleText.setFont(Font.font(30));
