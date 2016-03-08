@@ -183,7 +183,7 @@ public class MainWindow extends Application {
 
 		Stage addUserStage = new Stage();
 		StackPane userPane = new StackPane();
-		Scene addUserScene = new Scene(userPane, 400, 500);
+		Scene addUserScene = new Scene(userPane, 400, 300);
 		addUserStage.setScene(addUserScene);
 		addUserStage.initStyle(StageStyle.UNDECORATED);
 		addUserStage.toFront();
@@ -258,11 +258,18 @@ public class MainWindow extends Application {
 		txtEmail.setMaxWidth(200);
 		txtEmail.setPromptText("E-mail");
 
-		VBox enterBox = new VBox(5);
-		enterBox.setPadding(new Insets(5, 10, 5, 10));
-		enterBox.getChildren().addAll(txtUserName, txtFirstName, txtLastName, txtPassword, confirmPassword,
-				cmbAccountType, txtSSN, txtEmail, txtPhoneNumber, txtStreet, txtZipCode, txtCity);
-
+		VBox enterBox1 = new VBox(5);
+		enterBox1.setPadding(new Insets(5, 10, 5, 10));
+		enterBox1.getChildren().addAll(txtUserName, txtFirstName, txtLastName, txtPassword, confirmPassword,
+				cmbAccountType);
+		
+		VBox enterBox2 = new VBox(5);
+		enterBox2.setPadding(new Insets(5, 10, 5, 10));
+		enterBox2.getChildren().addAll(txtSSN, txtEmail, txtPhoneNumber, txtStreet, txtZipCode, txtCity);
+		
+HBox enterBoxes = new HBox();
+enterBoxes.getChildren().addAll(enterBox1, enterBox2);
+		
 		Button okButton = new Button("OK");
 		Button cancelButton = new Button("Cancel");
 		okButton.setStyle(whiteBGAndGreyBorder);
@@ -336,7 +343,7 @@ public class MainWindow extends Application {
 
 		VBox addUserColumn = new VBox(5);
 		addUserColumn.setPadding(new Insets(0));
-		addUserColumn.getChildren().addAll(titleBox, enterBox, buttons);
+		addUserColumn.getChildren().addAll(titleBox, enterBoxes, buttons);
 		addUserColumn.setStyle(frameStyle);// sets style for addframe
 		userPane.getChildren().add(addUserColumn);
 	}
