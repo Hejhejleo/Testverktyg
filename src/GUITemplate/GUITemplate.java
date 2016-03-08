@@ -1,7 +1,11 @@
 package GUITemplate;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,8 +15,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -22,13 +28,15 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class GUITemplate extends Application{
 
                 
-    	Button btn1, btn2, btn3,btn7, btn8;
+    	Button btn1, btn2, btn3,btn4,btn5,btn6, btn7, btn8;
     	Label lbl;
-
+    	Label lbl2;
+    	
     	AnchorPane rectCenter;
     	boolean writeLine = false;
     	
@@ -43,9 +51,9 @@ public class GUITemplate extends Application{
     	@Override
     	public void start(Stage primaryStage) {
     		primaryStage.getIcons().add(new Image("/1up.png"));	
-    		primaryStage.setTitle("SomeThingUndefined 1.0");
+    		primaryStage.setTitle("Newton test tool 1.0");
     		
-    		//Låter dig utföra ex. en savefunktion innan programmet stängs
+    		
     		
     		primaryStage.setOnCloseRequest(e -> {
     			e.consume();
@@ -57,13 +65,13 @@ public class GUITemplate extends Application{
     		
     		Menu fileMenu = new Menu("_File");
     		
-    		fileMenu.getItems().add(new MenuItem("Ny"));
-    		fileMenu.getItems().add(new MenuItem("Öppna"));
-    		fileMenu.getItems().add(new MenuItem("_Spara"));
+    		fileMenu.getItems().add(new MenuItem("New"));
+    		fileMenu.getItems().add(new MenuItem("Open"));
+    		fileMenu.getItems().add(new MenuItem("_Save"));
     		fileMenu.getItems().add(new SeparatorMenuItem());
-    		MenuItem avsluta = new MenuItem("Avsluta");
+    		MenuItem avsluta = new MenuItem("Exit");
     		avsluta.setOnAction(e -> {
-    			boolean result4 = ConfirmPane.display("Avsluta Programmet", "Vill du avsluta programmet?");
+    			boolean result4 = ConfirmPane.display("Exit program", "Do you want to exit the program?");
     			if (result4 == true) {
     				System.exit(0);
     			}
@@ -72,61 +80,127 @@ public class GUITemplate extends Application{
     		
     		Menu editMenu = new Menu("_Edit");	
     		
-    		editMenu.getItems().add(new MenuItem("Kopiera"));
-    		editMenu.getItems().add(new MenuItem("Klipp ut"));
-    		editMenu.getItems().add(new MenuItem("Klistra in"));
+    		editMenu.getItems().add(new MenuItem("Copy"));
+    		editMenu.getItems().add(new MenuItem("Cut"));
+    		editMenu.getItems().add(new MenuItem("Paste"));
+    		editMenu.getItems().add(new SeparatorMenuItem());
+    		editMenu.getItems().add(new MenuItem("User settings"));
     		  		
-    		Menu hjaMenu = new Menu("_Hjälp");
+    		Menu hjaMenu = new Menu("_Help");
     		
-    		hjaMenu.getItems().add(new MenuItem("Hjälp"));
-    		hjaMenu.getItems().add(new MenuItem("Om"));
+    		hjaMenu.getItems().add(new MenuItem("Help"));
+    		hjaMenu.getItems().add(new MenuItem("About"));
     		
     		MenuBar menuBar = new MenuBar();
     		menuBar.getMenus().addAll(fileMenu, editMenu, hjaMenu);
+    		menuBar.setStyle("-fx-background-color: #F47920;");
     		
     		//Vertikal box till vänster med knappar och funktioner
     		
     		VBox leftMenu = new VBox(20);
-    		leftMenu.setPadding(new Insets(20));
-    		
+    		leftMenu.setStyle("-fx-background-color: #F47920;");
+    		leftMenu.setPadding(new Insets(10, 10, 10, 10));
+    			/*
     			btn1 = new Button();
     			btn1.setLayoutX(22.0);
     			btn1.setLayoutY(50.0);
-    			//btn1.setText("Oval");
+    			btn1.setText(" View tests ");
     			double b = 15;
     			btn1.setShape(new Circle(b));
     			btn1.setMinSize(5*b, 3*b);
     			btn1.setMaxSize(5*b, 3*b);
     			//btn1.setOnAction(this);
     			VBox.setMargin(btn1, new Insets(0,0,0,3));
+    			*/
     			
     			btn2 = new Button();
     			btn2.setLayoutX(20.0);
     			btn2.setLayoutY(110.0);
-    			//btn2.setText("Rektangel");
+    			btn2.setText(" Taken tests ");
     			double a = 10;
     			btn2.setShape(new Rectangle(a, a));
-    			btn2.setMinSize(8*a, 3*a);
-    			btn2.setMaxSize(8*a, 3*a);
+    			btn2.setMinSize(9*a, 3*a);
+    			btn2.setMaxSize(9*a, 3*a);
+    			btn2.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920;");
+    			DropShadow shadow = new DropShadow();
     			//btn2.setOnAction(this);
+    			VBox.setMargin(btn2, new Insets(100,0,0,10));
     			
-    					
-    			Image img = new Image(this.getClass().getResourceAsStream("/Chart.png"));
-    			btn7 = new Button("New", new ImageView(img));
-    			btn7.setLayoutX(20.0);
-    			btn7.setLayoutY(500.0);
-    			btn7.setText("New User");
-    			btn7.setOnAction(e -> {
-    				boolean result = ConfirmPane.display("Skapa ny chart", "   Vill du skapa en ny chart? \n Tidigare arbete sparas inte!   ");
-    				if (result == true) {
-    					
-    					lbl.setText("Du har valt att börja om på nytt");
-    				}
+    			//Adding the shadow when the mouse cursor is on
+    			btn2.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn2.setEffect(shadow);
+    			        }
+    			});
+    			//Removing the shadow when the mouse cursor is off
+    			btn2.addEventHandler(MouseEvent.MOUSE_EXITED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn2.setEffect(null);
+    			        }
     			});
     			
-    			leftMenu.getChildren().addAll(btn1, btn2, btn7);
+    			btn3 = new Button();
+    			btn3.setLayoutX(20.0);
+    			btn3.setLayoutY(110.0);
+    			btn3.setText(" Update ");
+    			double ae = 10;
+    			btn3.setShape(new Rectangle(ae, ae));
+    			btn3.setMinSize(9*ae, 3*ae);
+    			btn3.setMaxSize(9*ae, 3*ae);
+    			btn3.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920;");
+    			DropShadow shadow1 = new DropShadow();
+    			//btn2.setOnAction(this);
+    			VBox.setMargin(btn3, new Insets(0,0,0,10));
     			
-    			//Som center-area en rektangel
+    			
+    			btn3.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn3.setEffect(shadow1);
+    			        }
+    			});
+    			
+    			btn3.addEventHandler(MouseEvent.MOUSE_EXITED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn3.setEffect(null);
+    			        }
+    			});
+    			
+    			btn4 = new Button();
+    			btn4.setLayoutX(30.0);
+    			btn4.setLayoutY(235.0);
+    			btn4.setText(" START ");
+    			double r = 30;
+    			btn4.setShape(new Circle(r));
+    			btn4.setMinSize(2*r, 2*r);
+    			btn4.setMaxSize(2*r, 2*r);
+    			btn4.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
+    			
+    			DropShadow shadow2 = new DropShadow();
+    			
+    			btn4.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn4.setEffect(shadow2);
+    			        }
+    			});
+    			
+    			btn4.addEventHandler(MouseEvent.MOUSE_EXITED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn4.setEffect(null);
+    			        }
+    			});
+    			//btn4.setOnAction(this);
+    			
+    			VBox.setMargin(btn4, new Insets(0,0,0,25));
+    			
+    			leftMenu.getChildren().addAll( btn2, btn3, btn4);
+    			
+    			//CenterPane
     			
     			rectCenter = new AnchorPane();
     			
@@ -134,8 +208,11 @@ public class GUITemplate extends Application{
     			//Horizontal box i nedre kant
     			
     			HBox bottomMenu = new HBox();
-    			Image img1 = new Image(this.getClass().getResourceAsStream("/exit.png"));
-    			btn8 = new Button("Avsluta", new ImageView(img1));
+    			bottomMenu.setStyle("-fx-background-color: #F47920;");
+    			bottomMenu.setPadding(new Insets(10, 10, 10, 10));
+    			/*
+    			Image img1 = new Image(this.getClass().getResourceAsStream("/exit.png"));   			
+    			btn8 = new Button("Exit", new ImageView(img1));
     			btn8.setLayoutX(20.0);
     			btn8.setLayoutY(550.0);
     			HBox.setMargin(btn8, new Insets(0,0,5,5));
@@ -144,17 +221,78 @@ public class GUITemplate extends Application{
     				if (result1 == true) {
     					System.exit(0);
     				}
-    			});
-    			lbl = new Label("Status");
-    			lbl.setPrefSize(630, 30);
-    			lbl.setStyle("-fx-border-color: #7CAFC2;" +  
-    					   "-fx-background-color: #7CAFC2;" + 
-    					   "-fx-text-fill: #ffffff");
-    			lbl.setAlignment(Pos.CENTER);
-    			lbl.setFont(Font.font("Arial", 12));
-    			HBox.setMargin(lbl, new Insets(2,0,0,63));
+    			})*/
     			
-    			bottomMenu.getChildren().addAll(btn8, lbl);
+    			lbl = new Label("Time remaining: 00:00:00");
+    			lbl.setLayoutX(20.0);
+    			lbl.setLayoutY(100.0);
+    			double ad = 10;
+    			lbl.setShape(new Rectangle(ad, ad));
+    			lbl.setMinSize(14*ad, 3*ad);
+    			lbl.setMaxSize(14*ad, 3*ad);
+    			lbl.setStyle("-fx-border-color: #000000;" +  
+    					   "-fx-background-color: #F47920;" + 
+    					   "-fx-text-fill: #000000");
+    			lbl.setAlignment(Pos.CENTER);
+    			lbl.setFont(Font.font("Myriad", 12));
+    			HBox.setMargin(lbl, new Insets(2,0,0,90));
+    		    /*
+    			lbl.setOnMouseEntered(new EventHandler<MouseEvent>() {
+    		        @Override
+    		        public void handle(MouseEvent e) {
+    		          lbl.setVisible(true);
+    		        }
+    		      });
+    		      lbl.setOnMouseExited(new EventHandler<MouseEvent>() {
+    		        @Override
+    		        public void handle(MouseEvent e) {
+    		          lbl.setVisible(false);
+    		        }
+    		      });
+				*/
+
+
+    			
+    			lbl2 = new Label(" Question 00/00 ");
+    			lbl2.setLayoutX(20.0);
+    			lbl2.setLayoutY(110.0);
+    			double ac = 10;
+    			lbl2.setShape(new Rectangle(ac, ac));
+    			lbl2.setMinSize(10*ac, 3*ac);
+    			lbl2.setMaxSize(10*ac, 3*ac);
+    			lbl2.setStyle("-fx-border-color: #000000;" +  
+    					   "-fx-background-color: #F47920;" + 
+    					   "-fx-text-fill: #000000");
+    			lbl2.setAlignment(Pos.CENTER);
+    			lbl2.setFont(Font.font("Myriad", 12));
+    			HBox.setMargin(lbl2, new Insets(2,0,0,3));
+    			
+    			btn5 = new Button();
+    			btn5.setLayoutX(20.0);
+    			btn5.setLayoutY(110.0);
+    			btn5.setText(" Back ");
+    			double aa = 10;
+    			btn5.setShape(new Rectangle(aa, aa));
+    			btn5.setMinSize(8*aa, 3*aa);
+    			btn5.setMaxSize(8*aa, 3*aa);
+    			btn5.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
+    			HBox.setMargin(btn5, new Insets(2,0,0,160));
+    			//btn5.setOnAction(this)
+    			
+    			btn6 = new Button();
+    			btn6.setLayoutX(20.0);
+    			btn6.setLayoutY(110.0);
+    			btn6.setText(" Next ");
+    			double ab = 10;
+    			btn6.setShape(new Rectangle(ab, ab));
+    			btn6.setMinSize(8*ab, 3*ab);
+    			btn6.setMaxSize(8*ab, 3*ab);
+    			btn6.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
+    			HBox.setMargin(btn6, new Insets(2,0,0,90));
+    			//btn6.setOnAction(this)
+    			
+    			
+    			bottomMenu.getChildren().addAll(btn5, lbl, lbl2, btn6);
     			
     			//Scen och Pane inställningar
     			

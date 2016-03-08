@@ -16,7 +16,7 @@ public class ConfirmPane {
 	public static boolean display (String title, String message) {
 		Stage stage = new Stage();
 		
-		stage.initModality(Modality.APPLICATION_MODAL);		//Låter dig inte interaktera med andra fönster innan denna har tagits om hand.
+		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.getIcons().add(new Image("/1up.png"));
 		stage.setTitle(title);
 		stage.setMinHeight(250);
@@ -25,8 +25,8 @@ public class ConfirmPane {
 		label.setText(message);
 		
 		
-		Button exitBtn = new Button("Ja");
-		Button cancelBtn = new Button("Nej");
+		Button exitBtn = new Button("Yes");
+		Button cancelBtn = new Button("No");
 		
 		exitBtn.setOnAction(e -> {
 			answer = true;
