@@ -47,6 +47,7 @@ public class DoTest extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
+		
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
 		Query test = em.createNamedQuery("get tests");
@@ -217,11 +218,7 @@ public class DoTest extends Application {
 				timerText.setStroke(Color.WHITE);
 
 			});
-		buttonNext.addEventHandler(MouseEvent.MOUSE_CLICKED, event->{
-			if(questionNumber==questions.size()-2){
-				buttonDone.setVisible(true);
-			}
-		});
+
 
 		}
 
