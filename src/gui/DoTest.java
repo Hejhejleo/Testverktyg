@@ -11,14 +11,15 @@ import javax.persistence.Query;
 import entity.Answers;
 import entity.Question;
 import entity.Test;
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -29,18 +30,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class DoTest extends Application {
 	Stage primaryStage;
 	boolean fade;
 	String testName;
-	int questionNummer = 0;
+	int questionNumber = 0;
 	Answers answer;
+	Boolean goneThrough = false;
 	List<Scene> canvases = new ArrayList<>();
 	List<Question> questions = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class DoTest extends Application {
 		List<Test> testsList = new ArrayList<>(test.getResultList());
 		System.out.println("---------------:::2:::-----------------");
 		List<Answers> answersList = new ArrayList<>(em.createQuery("select a from Answers a").getResultList());
-		
+
 		System.out.println("---------------:::3:::-----------------");
 		Test currentTest = new Test();
 		currentTest = testsList.get(0);
@@ -71,19 +71,19 @@ public class DoTest extends Application {
 		System.out.println("---------------:::5:::-----------------");
 
 		// RootGrid
-		
-		//Make scenes
+
+		// Make scenes
 		System.out.println("---------------:::6:::-----------------");
-		for (int i = 0; i <= (questions.size()-1); i++) {
-			for(int j=0; j <= (answersList.size()-1);j++){
-				if (answersList.get(j).getQuestion()==questions.get(i)){
+		for (int i = 0; i <= (questions.size() - 1); i++) {
+			for (int j = 0; j <= (answersList.size() - 1); j++) {
+				if (answersList.get(j).getQuestion() == questions.get(i)) {
 					answer = answersList.get(j);
 				}
-				
+
 			}
 			GridPane root = new GridPane();
 			System.out.println("---------------:::7:::-----------------");
-			
+
 			Scene scene = new Scene(root, 800, 350);
 
 			// TopLeft Corner
@@ -129,8 +129,11 @@ public class DoTest extends Application {
 			bottomRightButtonHolder.setAlignment(Pos.BOTTOM_RIGHT);
 			Circle buttonBack = new Circle(15);
 			Circle buttonNext = new Circle(15);
+			Button buttonDone = new Button("Lämna in");
+			buttonDone.setVisible(false);
 			GridPane.setConstraints(bottomRightButtonHolder, 1, 1);
-			bottomRight.getChildren().addAll(bottomRightButtonHolder);
+			GridPane.setConstraints(buttonDone, 0, 1);
+			bottomRight.getChildren().addAll(buttonDone, bottomRightButtonHolder);
 			bottomRightButtonHolder.getChildren().addAll(buttonBack, buttonNext);
 
 			GridPane.setConstraints(bottomRight, 2, 1);
@@ -189,16 +192,17 @@ public class DoTest extends Application {
 			bottomRight.setGridLinesVisible(true);
 			canvases.add(scene);
 			
+
 			buttonBack.setOnMouseClicked(event -> {
 
 				changeQuestion("-");
-				System.out.println(questionNummer);
+				System.out.println(questionNumber);
 			});
 
 			buttonNext.setOnMouseClicked(event -> {
 
 				changeQuestion("+");
-				System.out.println(questionNummer);
+				System.out.println(questionNumber);
 			});
 
 			spoilerDetection.setOnMouseEntered(event -> {
@@ -213,16 +217,18 @@ public class DoTest extends Application {
 				timerText.setStroke(Color.WHITE);
 
 			});
+		buttonNext.addEventHandler(MouseEvent.MOUSE_CLICKED, event->{
+			if(questionNumber==questions.size()-2){
+				buttonDone.setVisible(true);
+			}
+		});
 
 		}
-		
-		
-		
 
-		primaryStage.setScene(canvases.get(questionNummer));
+		// BorderPane lastPage
+
+		primaryStage.setScene(canvases.get(questionNumber));
 		primaryStage.show();
-
-		
 
 	}
 
@@ -230,21 +236,31 @@ public class DoTest extends Application {
 		launch(args);
 	}
 
+	public void showDoneButton() {
+		for (int i = 0; i <= canvases.size() - 1; i++) {
+       
+		}
+	}
+
 	public void changeQuestion(String cond) {
-		if (questionNummer < 1 & cond == "-") {
-		}
-		else if(questionNummer >= (questions.size()-1) & cond=="+"){
+		if (questionNumber < 1 & cond == "-") {
+			this.questionNumber = questions.size() - 1;
+			primaryStage.setScene(canvases.get(questionNumber));
+		} else if (questionNumber >= (questions.size() - 1) & cond == "+") {
+			this.questionNumber = 0;
+			primaryStage.setScene(canvases.get(questionNumber));
+			goneThrough = true;
 			
-		}
-		 else {
+
+		} else {
 			switch (cond) {
 			case "+":
-				questionNummer++;
-				primaryStage.setScene(canvases.get(questionNummer));
+				questionNumber++;
+				primaryStage.setScene(canvases.get(questionNumber));
 				break;
 			case "-":
-				questionNummer--;
-				primaryStage.setScene(canvases.get(questionNummer));
+				questionNumber--;
+				primaryStage.setScene(canvases.get(questionNumber));
 				break;
 			}
 		}
