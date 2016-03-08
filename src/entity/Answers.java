@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 /** Stores a question's answers
@@ -16,6 +17,7 @@ import javax.persistence.OneToOne;
  *
  */
 @Entity
+@NamedQuery(query = "Select a from Answers a where a.question = :questionId", name = "get answers")
 public class Answers {
 
 	@Id

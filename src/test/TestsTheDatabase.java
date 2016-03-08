@@ -23,7 +23,7 @@ public class TestsTheDatabase {
 		// Add a user
 		User user = new User();
 		user.setAccountType("Student");
-		user.setCity("Mölndal");
+		user.setCity("Mï¿½lndal");
 		user.setEmail("a@b.c");
 		user.setfName("Mattias");
 		user.setlName("Larsson");
@@ -45,21 +45,42 @@ public class TestsTheDatabase {
 		
 		// Add a questiontype
 		QuestionType qtype1 = new QuestionType("Radiobuttons");
+		QuestionType qtype2 = new QuestionType("Fritext");
 		
 		// Add a question
-		Question q1 = new Question(1, false, "Fråga 1", "Vad betyder JPA?", test, qtype1);
+		Question q1 = new Question(1, false, "Question 1", "Vad betyder JPA?", test, qtype1);
+		Question q2 = new Question(1, false, "Question 2", "Vad heter du?", test, qtype1);
+		Question q3 = new Question(1, false, "Question 3", "Tjenare!", test, qtype2);
 		// Add this question to the QuestionType
 		qtype1.addQuestion(q1);
+		qtype1.addQuestion(q2);
+		qtype2.addQuestion(q3);
 		// Add this question the the test
 		test.addQuestion(q1);
+		test.addQuestion(q2);
+		test.addQuestion(q3);
 		
 		// Sets the correct answer
-		Answers answers = new Answers(q1);
-		answers.addAnswer("Java Persistence API");
-		answers.addAnswer("Java Parental Accident");
-		answers.addAnswer("JUnit Practice Apple");
-		answers.setCorrectAnswer(0);
-		answers.setQuestion(q1);
+		Answers answers1 = new Answers(q1);
+		answers1.addAnswer("Java Persistence API");
+		answers1.addAnswer("Java Parental Accident");
+		answers1.addAnswer("JUnit Practice Apple");
+		answers1.addAnswer("JUnit PrDubbis");
+		answers1.setCorrectAnswer(0);
+		answers1.setQuestion(q1);
+		Answers answers2 = new Answers(q2);
+		answers2.addAnswer("Jannike");
+		answers2.addAnswer("Leo");
+		answers2.addAnswer("Robin");
+		answers2.addAnswer("Mattias");
+		answers2.setCorrectAnswer(1);
+		answers2.setQuestion(q2);
+		
+		Answers answers3 = new Answers(q3);
+		answers3.addAnswer("Det du");
+		answers3.setCorrectAnswer(0);
+		answers3.setQuestion(q3);
+		
 		
 		// The student starts the test
 		TestTime testTime = new TestTime();
@@ -86,8 +107,13 @@ public class TestsTheDatabase {
 		em.persist(class1);
 		em.persist(test);
 		em.persist(qtype1);
+		em.persist(qtype2);
 		em.persist(q1);
-		em.persist(answers);
+		em.persist(q2);
+		em.persist(q3);
+		em.persist(answers1);
+		em.persist(answers2);
+		em.persist(answers3);
 		em.persist(testTime);
 		em.persist(studentAnswer);
 		
