@@ -39,9 +39,9 @@ public class MainWindow extends Application {
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
+	private User user = null;
 	
 	public void start(Stage stage) {
-		User user = new User();
 		addUser = new AddUser();
 		logIn = new Login();
 		this.stage = stage;
@@ -67,29 +67,19 @@ public class MainWindow extends Application {
 		MenuItem mnuLogIn = new MenuItem("Log in");
 		MenuItem mnuLogOut = new MenuItem("Log out");
 		
-		MenuItem mnuAddUser = new MenuItem("Add user");
-		mnuAddUser.disableProperty().bind(canAdd.not());
-		mnuAddUser.setOnAction(addUserAction -> {
-			addUser();
-		});
-		
 		MenuItem mnuExit = new MenuItem("Exit");
 		mnuExit.setOnAction(exitAction -> {
 			System.exit(0);
 		});
 		
-		MenuItem mnuChangeUser = new MenuItem("Change user info");
-		mnuChangeUser.setOnAction(change -> {
-			userInfo = new ChangeUserInfo();			
-			root.setCenter(userInfo.showPane());
-		});
+		
 		MenuItem createQuest = new MenuItem("Create Test");
 		createQuest.setOnAction(createQ -> {
 			qMakerGUI = new QuizmakerGUI();
 			root.setCenter(qMakerGUI.showPane());
 		});
 		
-		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, mnuAddUser, new SeparatorMenuItem(), mnuExit, mnuChangeUser, createQuest);
+		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, new SeparatorMenuItem(), mnuExit);
 		stage.setTitle("Guest");
 		mnuLogIn.setOnAction(logInAction -> {
 			if (!isLoggedIn.get()) {
@@ -99,7 +89,8 @@ public class MainWindow extends Application {
 		mnuLogIn.disableProperty().bind(isLoggedIn);
 		
 		mnuLogOut.setOnAction(logOutAction -> {
-			stage.setTitle("Guest");
+			stage.setTitle("Not logged in");
+			root.setCenter(null);
 			isLoggedIn.set(false);
 			isAdmin.set(false);
 		});
@@ -109,12 +100,21 @@ public class MainWindow extends Application {
 		MenuItem adminUsers = new MenuItem("Administer Users");
 		adminUsers.setOnAction(action -> {
 			AdminUser userAdmin = new AdminUser();
-			root.setCenter(userAdmin.showPane());
+			root.setCenter(userAdmin.showPane(root));
 		});
-		adminUsers.disableProperty().bind(canAdd.not());
-		mnuAdmin.getItems().add(adminUsers);
+		mnuAdmin.disableProperty().bind(canAdd.not());
+		mnuAdmin.getItems().addAll(adminUsers, createQuest);
 		
-		menu.getMenus().addAll(mnuFile, mnuAdmin);
+		Menu mnuStudent = new Menu("Student");
+		mnuStudent.disableProperty().bind(isLoggedIn.not());
+		MenuItem mnuChangeUser = new MenuItem("Change user info");
+		mnuChangeUser.setOnAction(change -> {
+			userInfo = new ChangeUserInfo(user);			
+			root.setCenter(userInfo.showPane());
+		});
+		mnuStudent.getItems().add(mnuChangeUser);
+		
+		menu.getMenus().addAll(mnuFile, mnuAdmin, mnuStudent);
 		
 		
 		
@@ -152,7 +152,8 @@ public class MainWindow extends Application {
 		logInPane.getChildren().addAll(loginColumn);
 		
 		txtPassword.setOnAction(e -> {
-			if (logIn.login(txtUserName.getText(), txtPassword.getText())) {
+			user = logIn.login(txtUserName.getText(), txtPassword.getText());
+			if (user != null) {
 				if (logIn.getAccountType().equals("Admin")) {
 					stage.setTitle("Logged in as " + logIn.getName() + " - Admin");
 					isAdmin.set(true);
@@ -247,8 +248,6 @@ public class MainWindow extends Application {
 				}
 				addUserStage.close();
 			}
-			
-			
 		});
 		
 		VBox addUserColumn = new VBox();

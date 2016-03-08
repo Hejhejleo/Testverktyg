@@ -1,5 +1,6 @@
 package entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,9 +19,9 @@ public class TestTime {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int testTimeId;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private User user;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Test test;
 	private String testStart;
 	private String testEnd;

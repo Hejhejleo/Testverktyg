@@ -6,7 +6,6 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
 
 import entity.SchoolClass;
 import entity.User;
@@ -23,7 +22,9 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -40,18 +41,21 @@ public class AdminUser {
 	private EntityManagerFactory emf;
 	private EntityManager em;
 	
+	
 	public AdminUser() {
-		emf = Persistence.createEntityManagerFactory("Testverktyg");
-		em = emf.createEntityManager();
+		
 	}
 	
-	public GridPane showPane() {
+	public GridPane showPane(BorderPane root) {
+		emf = Persistence.createEntityManagerFactory("Testverktyg");
+		em = emf.createEntityManager();
 		GridPane adminUserPane = new GridPane();
 		
 		ComboBox<String> classCombo = new ComboBox<>();
 		classCombo.setPromptText("Choose class");
 		classCombo.setItems(classList);
 		classList.add("Create new class");
+		
 		
 		List<SchoolClass> tempClassList = em.createNamedQuery("listSchoolClasses").getResultList();
 		tempClassList.forEach(sc -> {
@@ -62,6 +66,21 @@ public class AdminUser {
 		
 		ListView<String> studentListView = new ListView<String>();
 		studentListView.setItems(userList);
+		studentListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		studentListView.setOnMouseClicked(e -> {
+			if (e.getClickCount()>1 && studentListView.getSelectionModel().getSelectedIndex()>-1) {
+				SchoolClass c = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getSelectionModel().getSelectedItem()+"'").getSingleResult();
+				String name = studentListView.getSelectionModel().getSelectedItem();
+				String fName = name.substring(0, name.indexOf("\t"));
+				String lName = name.substring(name.indexOf("\t")+1, name.length());
+				for (User user : c.getStudents()) {
+					if (user.getfName().equals(fName) && user.getlName().equals(lName)) {
+						root.setCenter(new ChangeUserInfo(user).showPane());
+						break;
+					}
+				}
+			}
+		});
 		studentListView.setMaxHeight(300);
 		classCombo.setOnAction(chooseClass -> {
 			if (classCombo.getValue().equals("Create new class")) {
@@ -89,11 +108,73 @@ public class AdminUser {
 			userList.remove(showRemoveStudent(studentListView.getSelectionModel().getSelectedItem(), classCombo.getValue()));
 		});
 		
+		Button moveStudent = new Button("Move student");
+		moveStudent.prefWidthProperty().bind(classCombo.widthProperty());
+		moveStudent.setOnAction(moveAction -> {
+			showMoveStudent(studentListView.getSelectionModel().getSelectedItem(), userList, classCombo);
+		});
+		
+		Button removeClass = new Button("Remove class");
+		removeClass.prefWidthProperty().bind(classCombo.widthProperty());
+		removeClass.setOnAction(removeClassAction -> {
+			classList.remove(showRemoveClass(classCombo.getSelectionModel().getSelectedItem()));
+		});
+		
 		VBox buttons = new VBox();
-		buttons.getChildren().addAll(classCombo, addStudent, removeStudent);
+		buttons.getChildren().addAll(classCombo, addStudent, removeStudent, 
+				moveStudent, removeClass);
 		adminUserPane.add(buttons, 0, 1);
 		
 		return adminUserPane;
+	}
+	
+	public String showRemoveClass(String className) {
+		SchoolClass sc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
+		em.getTransaction().begin();
+		em.remove(sc);
+		em.getTransaction().commit();
+		
+		return className;
+	}
+	
+	public void showMoveStudent(String studentName, ObservableList<String> userList, ComboBox<String> classCombo) {
+		ComboBox<String> newClassCombo = new ComboBox<String>();
+		Dialog<String> moveStudentDialog = new Dialog<String>();
+		moveStudentDialog.setTitle("Move student");
+		moveStudentDialog.setHeaderText("Select class to move " + studentName + " to");
+		ButtonType okButtonType = new ButtonType("Done", ButtonData.OK_DONE);
+		moveStudentDialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+		newClassCombo.setItems(classList);
+		Node okButton = moveStudentDialog.getDialogPane().lookupButton(okButtonType);
+		moveStudentDialog.getDialogPane().setContent(newClassCombo);
+		moveStudentDialog.setResultConverter(dialogButton -> {
+			if (dialogButton == okButtonType) {
+				return (String) newClassCombo.getSelectionModel().getSelectedItem();
+			}
+			return null;
+		});
+		Optional<String> result = moveStudentDialog.showAndWait();
+		result.ifPresent(className -> {
+			int indexToRemove = 0;
+			User userToMove = null;
+			em.getTransaction().begin();
+			SchoolClass oldSc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getSelectionModel().getSelectedItem() +"'").getSingleResult();
+			String fName = studentName.substring(0, studentName.indexOf("\t"));
+			String lName = studentName.substring(studentName.indexOf("\t")+1, studentName.length());
+			for (User user : oldSc.getStudents()) {
+				if (user.getfName().equals(fName) && user.getlName().equals(lName)) {
+					userToMove = user;
+				}
+			}
+			oldSc.getStudents().remove(userToMove);
+			SchoolClass newSc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + newClassCombo.getSelectionModel().getSelectedItem() + "'").getSingleResult();
+			newSc.addStudent(userToMove);
+			em.persist(newSc);
+			em.persist(oldSc);
+			em.getTransaction().commit();
+			classCombo.getSelectionModel().select(newSc.getClassName());
+			classCombo.getSelectionModel().select(oldSc.getClassName());
+		});
 	}
 	
 	public void showNewStudent(String className, ObservableList<String> userList) {
@@ -186,6 +267,7 @@ public class AdminUser {
 		
 	}
 	
+	
 	public String showRemoveStudent(String student, String className) {
 		String fName = student.substring(0, student.indexOf("\t"));
 		String lName = student.substring(student.indexOf("\t")+1, student.length());
@@ -215,6 +297,7 @@ public class AdminUser {
 		}
 		return false;
 	}
+	
 	
 	public void showNewClass() {
 		Dialog<String> newClassDialog = new Dialog<String>();

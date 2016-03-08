@@ -11,13 +11,12 @@ import javax.persistence.Query;
 
 import entity.User;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
@@ -134,12 +133,12 @@ public class ChangeUserInfo {
 			pwDialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 			
 			GridPane gridPane = new GridPane();
-			 TextField oldPw = new TextField();
-			 oldPw.setPromptText("Old password");
-			 TextField newPw = new TextField();
-			 newPw.setPromptText("New password");
-			 TextField confirmPw = new TextField();
-			 confirmPw.setPromptText("Confirm new password");
+			PasswordField oldPw = new PasswordField();
+			oldPw.setPromptText("Old password");
+			PasswordField newPw = new PasswordField();
+			newPw.setPromptText("New password");
+			PasswordField confirmPw = new PasswordField();
+			confirmPw.setPromptText("Confirm new password");
 			 
 			 gridPane.add(oldPw, 0, 0);
 			 gridPane.add(newPw, 0, 1);

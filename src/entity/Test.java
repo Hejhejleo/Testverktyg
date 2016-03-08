@@ -3,6 +3,7 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,9 +24,9 @@ public class Test {
 	private String testName;
 	private String testStart;
 	private String testEnd;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Question> questionList;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<SchoolClass> classList;
 	
 	/** Constructor

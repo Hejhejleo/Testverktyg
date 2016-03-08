@@ -1,5 +1,6 @@
 package entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,11 +18,12 @@ public class StudentAnswer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int studentAnswerId;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private User user;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Question question;
 	private String answer;
+	
 	
 	/** Constructor
 	 * 

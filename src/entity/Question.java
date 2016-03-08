@@ -1,5 +1,6 @@
 package entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,9 +23,9 @@ public class Question {
 	private boolean directFeedback;
 	private String questionTitle;
 	private String questionText;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Test test;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private QuestionType qType;
 	
 	/** Constructor
