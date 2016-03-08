@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 import entity.SchoolClass;
 import entity.User;
@@ -24,6 +25,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /** Administrates users
@@ -60,7 +62,7 @@ public class AdminUser {
 		
 		ListView<String> studentListView = new ListView<String>();
 		studentListView.setItems(userList);
-		
+		studentListView.setMaxHeight(300);
 		classCombo.setOnAction(chooseClass -> {
 			if (classCombo.getValue().equals("Create new class")) {
 				showNewClass();
@@ -73,19 +75,29 @@ public class AdminUser {
 			}
 		});
 		
-		adminUserPane.add(studentListView, 1, 0, 3, 3);
+		adminUserPane.add(studentListView, 1, 0, 3, 2);
 		
 		Button addStudent = new Button("Add student");
+		addStudent.prefWidthProperty().bind(classCombo.widthProperty());
 		addStudent.setOnAction(addAction -> {
-			showNewStudent(classCombo.getValue());
+			showNewStudent(classCombo.getValue(), userList);
 		});
 		
-		adminUserPane.add(addStudent, 0, 1);
+		Button removeStudent = new Button("Remove student");
+		removeStudent.prefWidthProperty().bind(classCombo.widthProperty());
+		removeStudent.setOnAction(removeAction -> {
+			userList.remove(showRemoveStudent(studentListView.getSelectionModel().getSelectedItem(), classCombo.getValue()));
+		});
+		
+		VBox buttons = new VBox();
+		buttons.getChildren().addAll(classCombo, addStudent, removeStudent);
+		adminUserPane.add(buttons, 0, 1);
 		
 		return adminUserPane;
 	}
 	
-	public void showNewStudent(String className) {
+	public void showNewStudent(String className, ObservableList<String> userList) {
+		User newUser = new User();
 		Stage newStudentStage = new Stage();
 		GridPane root = new GridPane();
 		Scene newStudentScene = new Scene(root, 400, 400);
@@ -138,9 +150,9 @@ public class AdminUser {
 		});
 		
 		okButton.setOnAction(ok -> {
+			
 			if (!className.equals("Create new class")) {
 				if(!checkDoubles(txtUserName.getText())) {
-					User newUser = new User();
 					newUser.setAccountType("Student");
 					newUser.setCity(txtCity.getText());
 					newUser.setEmail(txtEmail.getText());
@@ -168,7 +180,32 @@ public class AdminUser {
 					doubleUser.showAndWait();
 				}
 			}
+			userList.add(newUser.getfName()+"\t"+newUser.getlName());
 		});
+		
+		
+	}
+	
+	public String showRemoveStudent(String student, String className) {
+		String fName = student.substring(0, student.indexOf("\t"));
+		String lName = student.substring(student.indexOf("\t")+1, student.length());
+		System.out.println("Fname: " + fName);
+		System.out.println("Lname: " + lName);
+		
+		em.getTransaction().begin();
+		SchoolClass sc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
+		int indexToRemove = 0;
+		for (User user : sc.getStudents()) {
+			if (user.getfName().equals(fName) && user.getlName().equals(lName)) {
+				indexToRemove = sc.getStudents().indexOf(user);
+			}
+		}
+		
+		sc.getStudents().remove(indexToRemove);
+		em.persist(sc);
+		em.getTransaction().commit();
+			
+		return student;
 	}
 	
 	public boolean checkDoubles(String userName) {
