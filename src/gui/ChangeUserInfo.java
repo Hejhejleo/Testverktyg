@@ -78,35 +78,41 @@ public class ChangeUserInfo {
 		grid.add(lblLastName, 0, 2);
 		grid.add(txtLastName, 1, 2);
 		
+		Label lblSSN = new Label("Social Security Number: "); // TODO
+		TextField txtSSN = new TextField();
+		txtLastName.setText(user.getSSN());
+		grid.add(lblSSN, 0, 3);
+		grid.add(txtSSN, 1, 3);
+		
 		Label lblEmail = new Label("E-mail: ");
 		TextField txtEmail = new TextField();
 		txtEmail.setText(user.getEmail());
-		grid.add(lblEmail, 0, 3);
-		grid.add(txtEmail, 1, 3);
+		grid.add(lblEmail, 0, 4);
+		grid.add(txtEmail, 1, 4);
 		
 		Label lblPhone = new Label("Phone number: ");
 		TextField txtPhone = new TextField();
 		txtPhone.setText(user.getPhone());
-		grid.add(lblPhone, 0, 4);
-		grid.add(txtPhone, 1, 4);
+		grid.add(lblPhone, 0, 5);
+		grid.add(txtPhone, 1, 5);
 		
 		Label lblStreet = new Label("Street: ");
 		TextField txtStreet = new TextField();
 		txtStreet.setText(user.getAddress());
-		grid.add(lblStreet, 0, 5);
-		grid.add(txtStreet, 1, 5);
+		grid.add(lblStreet, 0, 6);
+		grid.add(txtStreet, 1, 6);
 		
 		Label lblZip = new Label("Zipcode: ");
 		TextField txtZip = new TextField();
 		txtZip.setText((Integer.toString(user.getZip())));
-		grid.add(lblZip, 0, 6);
-		grid.add(txtZip, 1, 6);
+		grid.add(lblZip, 0, 7);
+		grid.add(txtZip, 1, 7);
 		
 		Label lblCity = new Label("City: ");
 		TextField txtCity = new TextField();
 		txtCity.setText(user.getCity());
-		grid.add(lblCity, 0, 7);
-		grid.add(txtCity, 1, 7);
+		grid.add(lblCity, 0, 8);
+		grid.add(txtCity, 1, 8);
 		
 		Button saveChanges = new Button("save changes");
 		saveChanges.setOnAction(save -> {
@@ -116,6 +122,7 @@ public class ChangeUserInfo {
 				user.setfName(txtFirstName.getText());
 				user.setlName(txtLastName.getText());
 				user.setPhone(txtPhone.getText());
+				user.setSSN(txtSSN.getText()); // TODO
 				user.setStreet(txtStreet.getText());
 				user.setZip(Integer.parseInt(txtZip.getText()));
 				user.setUserName(txtUserName.getText());

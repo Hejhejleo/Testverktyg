@@ -29,6 +29,7 @@ public class User {
 	private String lName;
 	private String password;
 	private String accountType;
+	private String ssn; // TODO
 	private String email;
 	private String phone;
 	private String street;
@@ -50,6 +51,7 @@ public class User {
 		this.lName = lName;
 		this.password = password;
 		this.accountType = accountType;
+		this.ssn = ssn; // TODO 
 		this.email = email;
 		this.phone = phone;
 		this.userName = userName;
@@ -140,8 +142,25 @@ public class User {
 	 * 
 	 * @param accountType - a String with the user's accounttype
 	 */
+	
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
+	}
+	
+	/* Returns the user's social security number (personnummer)
+	 * 
+	 * @return a string with the user's social security number
+	 */
+	public String getSSN() { // TODO
+		return ssn;
+	}
+
+	/** Sets the user's social security number (personnummer)
+	 * 
+	 * @param ssn - a String with the user's social security number
+	 */
+	public void setSSN(String ssn) { //TODO
+		this.ssn = ssn;
 	}
 
 	/** Returns the user's e-mail
