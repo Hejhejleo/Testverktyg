@@ -119,8 +119,7 @@ public class ChangeUserInfo {
 				user.setStreet(txtStreet.getText());
 				user.setZip(Integer.parseInt(txtZip.getText()));
 				user.setUserName(txtUserName.getText());
-			em.getTransaction().commit();
-			
+			em.getTransaction().commit();			
 		});
 		Button changePassword = new Button("ChangePassword");
 		changePassword.setOnAction(cpwd -> {
