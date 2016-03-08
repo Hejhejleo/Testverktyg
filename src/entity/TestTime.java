@@ -24,6 +24,7 @@ public class TestTime {
 	private Test test;
 	private String testStart;
 	private String testEnd;
+	private double totalScore;
 	
 	/** Constructor
 	 * 
@@ -36,12 +37,14 @@ public class TestTime {
 	 * @param test - an instance of Test
 	 * @param testStart - a String with the student's starting time
 	 * @param testEnd - a String with the student's ending time
+	 * @param totalScore - a double with the student's total score
 	 */
-	public TestTime(User user, Test test, String testStart, String testEnd) {
+	public TestTime(User user, Test test, String testStart, String testEnd, double totalScore) {
 		this.user = user;
 		this.test = test;
 		this.testStart = testStart;
 		this.testEnd = testEnd;
+		this.totalScore = totalScore;
 	}
 
 	/** Sets the user taking the test
@@ -106,4 +109,23 @@ public class TestTime {
 	public void setTestEnd(String testEnd) {
 		this.testEnd = testEnd;
 	}
+	
+	/** Returns the student's total score on the test
+	 * 
+	 * @return a double with the student's total score
+	 */
+	public double getTotalScore() {
+		return totalScore;
+	}
+
+	/** Sets the student's total score on the test
+	 * 
+	 * @param testEnd - a String with the student's ending time
+	 */
+	public void setTotalScore(double totalScore) {
+		this.totalScore = totalScore;
+	}
+	
+	
+	
 }
