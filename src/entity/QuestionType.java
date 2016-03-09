@@ -24,7 +24,7 @@ public class QuestionType {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int qTypeId;
 	private String questionType;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany
 	private List<Question> questionList;
 	
 	/** Constructor

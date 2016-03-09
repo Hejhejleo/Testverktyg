@@ -18,9 +18,9 @@ public class StudentAnswer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int studentAnswerId;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private User user;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Question question;
 	private String answer;
 	

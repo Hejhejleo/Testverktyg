@@ -25,7 +25,7 @@ public class Question {
 	private String questionText;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Test test;
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	private QuestionType qType;
 	
 	/** Constructor

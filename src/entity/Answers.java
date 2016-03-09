@@ -22,7 +22,7 @@ public class Answers {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int answerId;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Question question;
 	private List<String> answerList;
 	private int correctAnswerIndex;

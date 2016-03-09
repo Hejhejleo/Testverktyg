@@ -25,7 +25,7 @@ public class SchoolClass {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int classId;
 	private String className;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.REFRESH)
 	private List<User> studentList;
 	
 	/** Constructor

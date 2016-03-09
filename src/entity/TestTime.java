@@ -19,9 +19,9 @@ public class TestTime {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int testTimeId;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private User user;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne
 	private Test test;
 	private String testStart;
 	private String testEnd;

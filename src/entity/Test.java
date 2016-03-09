@@ -24,9 +24,9 @@ public class Test {
 	private String testName;
 	private String testStart;
 	private String testEnd;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany
 	private List<Question> questionList;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.REFRESH)
 	private List<SchoolClass> classList;
 	
 	/** Constructor
