@@ -12,8 +12,11 @@ import entity.Answers;
 import entity.Question;
 import entity.Test;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -172,6 +175,7 @@ public class DoTest extends Application {
 				answerHolder.setCenter(toggleButtons);
 				GridPane.setConstraints(answerHolder, 0, 1, 2, 1);
 				root.getChildren().addAll(answerHolder);
+	
 			}
 
 			// ^---------------------Mall för radiobutton fråg
@@ -260,7 +264,6 @@ public class DoTest extends Application {
 		primaryStage.setScene(canvases.get(0));
 		primaryStage.show();
 		
-		
 		cancel.setOnAction(event ->{
 			primaryStage.setScene(canvases.get(0));
 			questionNumber=0;
@@ -268,21 +271,36 @@ public class DoTest extends Application {
 		endTest.setOnAction(event ->{
 			primaryStage.setScene(sceneOV);
 		});
+		yes.setOnAction(event ->{
+			getAnswersForOverview(canvases.get(0));
+		});
 		//Overview för provets svar /SLUT
 
 		primaryStage.setScene(canvases.get(questionNumber));
 		primaryStage.show();
 
 	}
+	
 
 	public static void main(String[] args) {
 		launch(args);
 	}
+	
 
 	public void showDoneButton() {
 		for (int i = 0; i <= canvases.size() - 1; i++) {
        
 		}
+	}
+	
+	public void getAnswersForOverview(Scene scene){
+		String overview;
+		String ansewr;
+		String question;
+		
+		
+		
+		
 	}
 
 	public void changeQuestion(String cond) {
