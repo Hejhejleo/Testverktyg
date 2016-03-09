@@ -3,6 +3,7 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,7 +26,7 @@ public class Test {
 	private String testEnd;
 	@OneToMany
 	private List<Question> questionList;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REFRESH)
 	private List<SchoolClass> classList;
 	
 	/** Constructor

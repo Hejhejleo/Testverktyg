@@ -1,5 +1,6 @@
 package entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,6 +23,7 @@ public class StudentAnswer {
 	@OneToOne
 	private Question question;
 	private String answer;
+	
 	
 	/** Constructor
 	 * 

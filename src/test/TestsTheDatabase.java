@@ -21,12 +21,27 @@ public class TestsTheDatabase {
 	public static void main(String[] args) {
 		
 		// Add a user
-		User user = new User("Mattias", "Larsson", "kultomten", "secret", "Student", "mattias@mail.com", "123456");
+		User user = new User();
+		user.setAccountType("Student");
+		user.setCity("Mölndal");
+		user.setEmail("a@b.c");
+		user.setfName("Mattias");
+		user.setlName("Larsson");
+		user.setPassword("hemligt");
+		user.setPhone("0735908926");
+		user.setStreet("Glasbergsgatan 188");
+		user.setUserName("kultomten");
+		user.setZip(43134);
+		
+		User user1 = new User();
+		user1.setfName("Kennet");
+		user1.setlName("Hansson");
 		
 		// Add a schoolclass
 		SchoolClass class1 = new SchoolClass("JAVAG1");
 		// Add a student to the class
 		class1.addStudent(user);
+		class1.addStudent(user1);
 		
 		// Add a test
 		Test test = new Test("Test i JPA", "20160307-09:00", "20160307-12:00");
@@ -73,6 +88,7 @@ public class TestsTheDatabase {
 		em.getTransaction().begin();
 		
 		em.persist(user);
+		em.persist(user1);
 		em.persist(class1);
 		em.persist(test);
 		em.persist(qtype1);

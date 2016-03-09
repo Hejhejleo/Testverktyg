@@ -3,10 +3,12 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 /** Creates a schoolclass
@@ -16,13 +18,14 @@ import javax.persistence.OneToMany;
  */
 
 @Entity
+@NamedQuery (name = "listSchoolClasses", query = "select schoolclass from SchoolClass schoolclass")
 public class SchoolClass {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int classId;
 	private String className;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REFRESH)
 	private List<User> studentList;
 	
 	/** Constructor

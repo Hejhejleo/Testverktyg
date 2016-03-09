@@ -15,7 +15,7 @@ public class Login {
 	
 	public Login() {}
 	
-	public boolean login(String name, String password) {
+	public User login(String name, String password) {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
 		
@@ -24,15 +24,15 @@ public class Login {
 		List<User> result = query.getResultList();
 		
 		if (result.size()>1 || result.size()<1) {
-			return false;
+			return null;
 		} else {
 			this.accountType = result.get(0).getAccountType();
 			this.name = result.get(0).getUserName();
 			if (name.equals(result.get(0).getUserName()) && password.equals(result.get(0).getPassword())) {
-				return true;
+				return result.get(0);
 			}
 		}
-		return false;
+		return null;
 	}
 	
 	public String getAccountType() {

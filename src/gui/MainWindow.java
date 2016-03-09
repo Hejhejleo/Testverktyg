@@ -32,7 +32,6 @@ import javafx.stage.StageStyle;
 public class MainWindow extends Application {
 	private AddUser addUser;
 	private Login logIn;
-	//No Comment
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
 	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
 	private Stage stage;
