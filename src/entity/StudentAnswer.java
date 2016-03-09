@@ -22,7 +22,7 @@ public class StudentAnswer {
 	@OneToOne
 	private Question question;
 	private String answer;
-	private String feedback;
+	private String teacherComment;
 	private String note;
 	private double givenPoints;
 	
@@ -36,15 +36,15 @@ public class StudentAnswer {
 	 * @param user - an instance of User
 	 * @param question - an instance of Question
 	 * @param answer - a String with the answer
-	 * @param feedback - a String with the feedback
+	 * @param teacherComment - a String with the feedback
 	 * @param note - a String with a note
 	 * @param givenPoints - a double with given points
 	 */
-	public StudentAnswer (User user, Question question, String answer, String feedback, String note, double givenPoints) { 
+	public StudentAnswer (User user, Question question, String answer, String teacherComment, String note, double givenPoints) { 
 		this.user = user;
 		this.question = question;
 		this.answer = answer;
-		this.feedback = feedback; // feedback to the student
+		this.teacherComment = teacherComment; // feedback to the student
 		this.note = note; // teacher's own note
 		this.givenPoints = givenPoints;
 	}
@@ -99,18 +99,18 @@ public class StudentAnswer {
 	
 	/** Returns the feedback from the teacher to the student
 	 * 
-	 * @return a String with the feedback
+	 * @return a String with the teacher's comment
 	 */
-	public String getFeedback() {
-		return feedback;
+	public String getTeacherComment() {
+		return teacherComment;
 	}
 
 	/** Sets the feedback from the teacher to the student
 	 * 
-	 * @param feedback - a String with the feedback
+	 * @param teacherComment - a String with the teacher's comment
 	 */
-	public void setFeedback(String feedback) {
-		this.feedback = feedback;
+	public void setTeacherComment(String teacherComment) {
+		this.teacherComment = teacherComment;
 	}
 	
 	/** Returns the teacher's own note
