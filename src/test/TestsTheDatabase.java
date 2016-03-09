@@ -29,6 +29,7 @@ public class TestsTheDatabase {
 		user.setlName("Larsson");
 		user.setPassword("hemligt");
 		user.setPhone("0735908926");
+		user.setSSN("12345678-9012"); 
 		user.setStreet("Glasbergsgatan 188");
 		user.setUserName("kultomten");
 		user.setZip(43134);

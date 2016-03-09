@@ -97,7 +97,7 @@ public class StudentAnswer {
 		this.answer = answer;
 	}
 	
-	/** Returns the feedback
+	/** Returns the feedback from the teacher to the student
 	 * 
 	 * @return a String with the feedback
 	 */
@@ -129,9 +129,9 @@ public class StudentAnswer {
 		this.note = note;
 	}
 	
-	/** Returns the points the student got on the question
+	/** Returns the points the student was awarded for the question
 	 * 
-	 * @return a double with the points on the question
+	 * @return a double with the points awarded on the question
 	 */
 	public double getGivenPoints() {
 		return givenPoints;

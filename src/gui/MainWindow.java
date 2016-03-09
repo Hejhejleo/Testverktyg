@@ -189,16 +189,16 @@ public class MainWindow extends Application {
 		addUserStage.toFront();
 		addUserStage.show();
 		
-		// Get the default toolkit
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-
-		// Get the current screen size
-		Dimension scrnsize = toolkit.getScreenSize();
-		int scrnResolotion = toolkit.getScreenResolution();
-
-		// Print the screen size
-		System.out.println ("Screen size : " + scrnsize);
-		System.out.println ("Screen resolotion: " + scrnResolotion);
+//		// Get the default toolkit // TODO testrader
+//		Toolkit toolkit = Toolkit.getDefaultToolkit();
+//
+//		// Get the current screen size
+//		Dimension scrnsize = toolkit.getScreenSize();
+//		int scrnResolotion = toolkit.getScreenResolution();
+//
+//		// Print the screen size
+//		System.out.println ("Screen size : " + scrnsize);
+//		System.out.println ("Screen resolotion: " + scrnResolotion);
 
 
 		Text titleText = new Text("Add user account");
@@ -217,7 +217,7 @@ public class MainWindow extends Application {
 		txtLastName.setMaxWidth(200);
 
 		TextField txtSSN = new TextField();
-		txtSSN.setPromptText("SSN");
+		txtSSN.setPromptText("SSN: YYYYMMDD-XXXX");
 		txtSSN.setMaxWidth(200);
 
 		TextField txtStreet = new TextField();
