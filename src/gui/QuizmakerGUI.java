@@ -1,6 +1,7 @@
 package gui;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -41,9 +42,9 @@ public class QuizmakerGUI {
 	private ObservableList<String> questTypeObList ;
 	private ObservableList<String> testList = FXCollections.observableArrayList();
 	private Test test;
-	private QuestionType questType;
-	private Question quest;
-	private Answers answer;
+	private QuestionType questType = new QuestionType();
+	private Question quest = new Question();
+	private Answers answer = new Answers();
 	private Boolean feedbackBo;
 	
 	private ListView<String> listViewClassTest = new ListView<String>();
@@ -68,12 +69,11 @@ public class QuizmakerGUI {
 	private Button saveQuestBut = new Button("Save Question");
 	private Button newTestBut = new Button("New Test");	
 	private Button saveTestBut = new Button("Save Test");
-	//private Button changeTypeQuest = new Button("Change Question type");
 	private Button editTestBut = new Button("Edit Test");
 	private ComboBox<String> questCmbBox = new ComboBox<String>();
 	private ComboBox<String> testCmbBox = new ComboBox<String>();
-	private ComboBox<String> setTypeCmbBox;
-	private ComboBox<Integer> pointCmbBox;
+	private ComboBox<String> setTypeCmbBox = new ComboBox<String>();
+	private ComboBox<Integer> pointCmbBox = new ComboBox<Integer>();
 	private VBox fieldsVBox = new VBox();
 	private VBox radButsVBox = new VBox();	
 	private VBox butsAndCmbQuest = new VBox();
@@ -112,8 +112,7 @@ public class QuizmakerGUI {
 		List <Test> tempLista = (List <Test>) em.createQuery("select t from Test t").getResultList();
 		testCmbBox.setItems(testList);		
 		for( int i = 0; i < tempLista.size(); i++){			
-			testList.add(tempLista.get(i).getTestName());
-			
+			testList.add(tempLista.get(i).getTestName());			
 		}		
 		listViewClassTest.setItems(testList);
 		
@@ -124,18 +123,20 @@ public class QuizmakerGUI {
 		questTypeObList = FXCollections.observableArrayList("4-Choice", "Essay");
 		setTypeCmbBox = new ComboBox<String>(questTypeObList);
 		
-		questType = new QuestionType(setTypeCmbBox.getValue());
+				
 		
-		
-		//quest = new Question(pointCmbBox.getValue(), feedbackBo, setTitleTxtQ.getText(), writeQuestionTxt.getText(), test, questType);
-		answer = new Answers(quest);
-		
-	    // Graphiccomponents to the questionmaker	
+	    //Graphiccomponents to the questionmaker	
 		BorderPane root = new BorderPane();
 		questFeedback.setVisible(false);
 		
 		fieldsVBox.getChildren().addAll(answer1, answer2, answer3, answer4, questFeedback);
-		
+		answer1.setPromptText("Answer one");
+		answer2.setPromptText("Answer two");
+		answer3.setPromptText("Answer three");
+		answer4.setPromptText("Answer four");
+		writeQuestionTxt.setPromptText("Write question here");
+		questFeedback.setPromptText("Write student feedback here");
+		writeAnswerTxt.setPromptText("Write answer here");
 		fieldsVBox.setPrefWidth(480.0);
 		//Organizing my radiobuttons
 		radBut1.setToggleGroup(butGroup);
@@ -188,19 +189,32 @@ public class QuizmakerGUI {
 			}
 			if(setTypeCmbBox.getValue().equals("4-Choice")){
 				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox);
+				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewClassTest);
 			}
 		});
 		
 		//Save the question to a test in the database
 		saveQuestBut.setOnAction(event -> {
 			em.getTransaction().begin();
-			answer.addAnswer(answer1.getText());
-			answer.addAnswer(answer2.getText());
-			answer.addAnswer(answer3.getText());
-			answer.addAnswer(answer4.getText());			
-			questType.addQuestion(quest);
-			test.addQuestion(quest);
+			quest.setPoints(3.0);
+			quest.setDirectFeedback(feedbackBo);
+			quest.setQuestionTitle(setTitleTxtQ.getText());
+			quest.setQuestionText(writeQuestionTxt.getText());
+			quest.setQuestionType(questType);
+			answer.addAnswer("ewqe");
+			answer.addAnswer("ewqeq");
+			answer.addAnswer("ewqe");
+			answer.addAnswer("fsa");
+			//questType.addQuestion(quest);
+			//test.addQuestion(quest);
+			em.persist(answer);
+			em.persist(quest);
+			em.getTransaction().commit();
+		});
+		setTypeCmbBox.setOnAction(event -> {
+			em.getTransaction().begin();
+			questType.setQuestionType("4-Choice");
+			em.persist(questType);
 			em.getTransaction().commit();
 		});
 		
