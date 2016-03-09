@@ -8,6 +8,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import com.sun.javafx.scene.control.skin.ToggleButtonSkin;
+
 import entity.Answers;
 import entity.Question;
 import entity.Test;
@@ -47,10 +49,16 @@ public class DoTest extends Application {
 	Boolean goneThrough = false;
 	List<Scene> canvases = new ArrayList<>();
 	List<Question> questions = new ArrayList<>();
+	List<String> testOverviewQ = new ArrayList<>();
+	List<String> testOverviewA = new ArrayList<>();
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
+		String studentAnswer;
+
+		
+		
 		
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
@@ -75,7 +83,16 @@ public class DoTest extends Application {
 		}
 		System.out.println("---------------:::5:::-----------------");
 
+		
+		//Make array-size to fit test
+		for(int i=0;i<questions.size();i++){
+			testOverviewA.add(null);
+			testOverviewQ.add(null);
+			System.out.println(testOverviewA.get(i));
+		}
 		// RootGrid
+		
+		
 
 		// Make scenes
 		System.out.println("---------------:::6:::-----------------");
@@ -86,6 +103,9 @@ public class DoTest extends Application {
 				}
 
 			}
+			TextArea questionTextArea = new TextArea();
+			ToggleGroup group = new ToggleGroup();
+			
 			GridPane root = new GridPane();
 			System.out.println("---------------:::7:::-----------------");
 
@@ -111,7 +131,7 @@ public class DoTest extends Application {
 			BorderPane top = new BorderPane();
 			HBox topRight = new HBox(10);
 			topRight.spacingProperty().set(10);
-			;
+			
 			top.setTop(topRight);
 			topRight.setAlignment(Pos.TOP_RIGHT);
 			StackPane spoilerHolder = new StackPane();
@@ -150,7 +170,6 @@ public class DoTest extends Application {
 
 			// v---------------------Mall för text fråga
 			if (questions.get(i).getquestionType().getQuestionType().equals("Fritext")) {
-				TextArea questionTextArea = new TextArea();
 				questionHolder.setCenter(questionTextArea);
 				GridPane.setConstraints(questionHolder, 0, 1, 2, 1);
 				root.getChildren().addAll(questionHolder);
@@ -159,9 +178,7 @@ public class DoTest extends Application {
 
 			// v---------------------Mall för radiobutton fråga
 			if (questions.get(i).getquestionType().getQuestionType().equals("Radiobuttons")) {
-				ToggleGroup group = new ToggleGroup();
 				VBox toggleButtons = new VBox();
-
 				RadioButton button1 = new RadioButton(answer.getAnswerList().get(0));
 				button1.setToggleGroup(group);
 				RadioButton button2 = new RadioButton(answer.getAnswerList().get(1));
@@ -200,12 +217,27 @@ public class DoTest extends Application {
 			
 
 			buttonBack.setOnMouseClicked(event -> {
-
+				testOverviewQ.set(questionNumber, questions.get(questionNumber).getQuestionText());
+				
+				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Fritext")){
+				testOverviewA.set(questionNumber,questionTextArea.getText());
+				}
+				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Radiobuttons")){
+					testOverviewA.set(questionNumber,((RadioButton)(group.getSelectedToggle())).getText());
+				}
 				changeQuestion("-");
 				System.out.println(questionNumber);
 			});
 
 			buttonNext.setOnMouseClicked(event -> {
+				testOverviewQ.set(questionNumber, questions.get(questionNumber).getQuestionText());
+				
+				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Fritext")){
+					testOverviewA.set(questionNumber,questionTextArea.getText());
+					}
+					if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Radiobuttons")){
+						testOverviewA.set(questionNumber,((RadioButton)(group.getSelectedToggle())).getText());
+					}
 
 				changeQuestion("+");
 				System.out.println(questionNumber);
@@ -269,10 +301,12 @@ public class DoTest extends Application {
 			questionNumber=0;
 		});
 		endTest.setOnAction(event ->{
+		overview.appendText(getAnswersForOverview());
 			primaryStage.setScene(sceneOV);
 		});
 		yes.setOnAction(event ->{
-			getAnswersForOverview(canvases.get(0));
+			
+			
 		});
 		//Overview för provets svar /SLUT
 
@@ -293,12 +327,15 @@ public class DoTest extends Application {
 		}
 	}
 	
-	public void getAnswersForOverview(Scene scene){
-		String overview;
+	public String getAnswersForOverview(){
+		String overview="";
 		String ansewr;
 		String question;
-		
-		
+		for(int i=0;i<testOverviewA.size();i++){
+			overview+=testOverviewQ.get(i)+": "+testOverviewA.get(i)+"\n";
+			
+		}
+		return overview;
 		
 		
 	}
