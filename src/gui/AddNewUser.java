@@ -5,18 +5,20 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 public class AddNewUser {
 
@@ -24,12 +26,16 @@ public class AddNewUser {
 	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
 			+ "-fx-background-color: #FFFFFF";
 
-	public StackPane showPane() {
+	public void showUserPane() {
 		ObservableList<String> accountType = FXCollections.observableArrayList();
 		accountType.add("Admin");
 		accountType.add("Student");
 
+		Stage newUserStage = new Stage();
 		StackPane userPane = new StackPane();
+		Scene newUserScene = new Scene(userPane,400,400);
+		newUserStage.setScene(newUserScene);
+		newUserStage.show();
 
 		Text titleText = new Text("Add user account");
 		titleText.setFont(Font.font(30));
@@ -114,7 +120,7 @@ public class AddNewUser {
 		buttons.setPadding(new Insets(5, 10, 10, 10));
 
 		cancelButton.setOnAction(cancel -> {
-//			 addUserStage.close(); // TODO knappen funkar inte, ska ändras till
+  		newUserStage.close(); // TODO knappen funkar inte, ska ï¿½ndras till
 			// tillbakaknapp
 			
 			
@@ -171,7 +177,7 @@ public class AddNewUser {
 				error.showAndWait();
 			} else {
 
-//				addUserStage.close(); 
+				newUserStage.close();
 			}
 		});
 
@@ -180,7 +186,7 @@ public class AddNewUser {
 		addUserColumn.getChildren().addAll(titleBox, enterBoxes, buttons);
 		addUserColumn.setStyle(frameStyle);// sets style for addframe
 		userPane.getChildren().add(addUserColumn);
-		return userPane;
 	}
+
 
 }

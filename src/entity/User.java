@@ -16,7 +16,7 @@ import javax.persistence.NamedQuery;
 
 
 @Entity
-@NamedQuery(query = "Select user from User user where user.userName = :uname", name="loginByName")
+@NamedQuery(query = "Select u from User u where u.userName = :uname", name="loginByName")
 
 public class User {
 
@@ -29,6 +29,7 @@ public class User {
 	private String lName;
 	private String password;
 	private String accountType;
+//	private String ssn; // TODO
 	private String email;
 	private String phone;
 	private String street;
@@ -44,12 +45,14 @@ public class User {
 	 * @param accountType - a String with the user's accounttype
 	 * @param email - a String with the user's e-mail
 	 * @param phone - a String with the user's phone number
+	 * @param SSN - a String with the user's SSN
 	 */
-	public User(String fName, String lName, String userName, String password, String accountType, String email, String phone, String street, int zip, String city) {
+	public User(String fName, String lName, String userName, String password, String accountType, String email, String phone, String street, int zip, String city/*, String ssn*/) {
 		this.fName = fName;
 		this.lName = lName;
 		this.password = password;
 		this.accountType = accountType;
+		//this.ssn = ssn; // TODO 
 		this.email = email;
 		this.phone = phone;
 		this.userName = userName;
@@ -140,9 +143,27 @@ public class User {
 	 * 
 	 * @param accountType - a String with the user's accounttype
 	 */
+	
 	public void setAccountType(String accountType) {
 		this.accountType = accountType;
 	}
+	
+	/* Returns the user's social security number (personnummer)
+	 * 
+	 * @return a string with the user's social security number
+	 */
+//	public String getSSN() { // TODO
+//		return ssn;
+//	}
+
+	/** Sets the user's social security number (personnummer) 
+	 * 19960805-7874
+	 * 
+	 * @param ssn - a String with the user's social security number
+	 */
+//	public void setSSN(String ssn) { //TODO
+//		this.ssn = ssn;
+//	}
 
 	/** Returns the user's e-mail
 	 * 
@@ -222,9 +243,5 @@ public class User {
 	 */
 	public String getCity() {
 		return this.city;
-	}
-
-	public String getStreet() {
-		return this.street;
 	}
 }

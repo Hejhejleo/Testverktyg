@@ -111,6 +111,7 @@ public class MainWindow extends Application {
 		mnuChangeUser.setOnAction(change -> {
 			userInfo = new ChangeUserInfo(user);			
 			root.setCenter(userInfo.showPane());
+			
 		});
 		mnuStudent.getItems().add(mnuChangeUser);
 		

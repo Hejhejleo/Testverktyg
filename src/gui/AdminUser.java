@@ -26,6 +26,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -35,7 +36,10 @@ import javafx.stage.Stage;
  *
  */
 public class AdminUser {
-	
+	AddNewUser addNewUser = new AddNewUser();
+	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
+	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
+			+ "-fx-background-color: #FFFFFF";
 	private ObservableList<String> userList = FXCollections.observableArrayList();
 	private ObservableList<String> classList = FXCollections.observableArrayList();
 	private EntityManagerFactory emf;
@@ -96,10 +100,15 @@ public class AdminUser {
 		
 		adminUserPane.add(studentListView, 1, 0, 3, 2);
 		
+		//TODO
 		Button addStudent = new Button("Add student");
 		addStudent.prefWidthProperty().bind(classCombo.widthProperty());
 		addStudent.setOnAction(addAction -> {
-			showNewStudent(classCombo.getValue(), userList);
+		showNewStudent(classCombo.getValue(), userList);
+			
+			
+			
+			
 		});
 		
 		Button removeStudent = new Button("Remove student");
@@ -244,6 +253,8 @@ public class AdminUser {
 					newUser.setStreet(txtAddress.getText());
 					newUser.setUserName(txtUserName.getText());
 					newUser.setZip(Integer.parseInt(txtZip.getText()));
+					//newUser.setSSN("19960805-7874");
+					//TODO
 					
 					SchoolClass sc = (SchoolClass)em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
 					sc.addStudent(newUser);
@@ -331,5 +342,10 @@ public class AdminUser {
 				classList.add(newClass.getClassName());
 			}
 		});
+	}
+	public StackPane getAddUserPane(){
+		
+		return addNewUser.showPane();
+		
 	}
 }

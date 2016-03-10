@@ -16,12 +16,19 @@ public class Login {
 	public Login() {}
 	
 	public User login(String name, String password) {
+		System.out.println("---------2----------");
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
+		System.out.println("---------2----------");
 		EntityManager em = emf.createEntityManager();
+		System.out.println("---------2----------");
 		
 		Query query = em.createNamedQuery("loginByName");
+		System.out.println("---------2----------");
 		query.setParameter("uname", name);
+		System.out.println("---------2----------");
 		List<User> result = query.getResultList();
+		System.out.println("---------2----------");
+		
 		
 		if (result.size()>1 || result.size()<1) {
 			return null;

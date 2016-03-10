@@ -15,6 +15,7 @@ import entity.Question;
 import entity.StudentAnswer;
 import entity.Test;
 import entity.User;
+import gui.AddNewUser;
 import gui.AdminUser;
 import gui.ChangeUserInfo;
 import gui.QuizmakerGUI;
@@ -71,6 +72,7 @@ public class GUITemplate extends Application {
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
+	AddNewUser addNewUser = new AddNewUser();
 	private User user = null;
 	AnchorPane centerPaneDT;
 	String testNameDT;
@@ -396,13 +398,17 @@ public class GUITemplate extends Application {
 
 		Menu mnuAdmin = new Menu("Admin");
 		MenuItem adminUsers = new MenuItem("Administer Users");
+		MenuItem addUser = new MenuItem("Add user");
+		addUser.setOnAction(event ->{
+			addNewUser.showUserPane();
+		});
 		adminUsers.setOnAction(action -> {
 			AdminUser userAdmin = new AdminUser();
 			centerPane.getChildren().clear();
 			centerPane.getChildren().addAll(userAdmin.showPane(root));
 		});
 		mnuAdmin.disableProperty().bind(canAdd.not());
-		mnuAdmin.getItems().addAll(adminUsers, createQuest);
+		mnuAdmin.getItems().addAll(adminUsers,addUser, createQuest);
 
 		Menu mnuStudent = new Menu("Student");
 		mnuStudent.disableProperty().bind(isLoggedIn.not());

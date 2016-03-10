@@ -22,10 +22,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,27 +39,26 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class DoTest extends Application {
-	Stage primaryStage;
-	boolean fade;
-	String testName;
-	int questionNumber = 0;
-	Answers answer;
-	Boolean goneThrough = false;
-	List<Scene> canvases = new ArrayList<>();
-	List<Question> questions = new ArrayList<>();
-	List<String> testOverviewQ = new ArrayList<>();
-	List<String> testOverviewA = new ArrayList<>();
-	User user;
+	AnchorPane centerPaneDT;
+	String testNameDT;
+	int questionNumberDT = 0;
+	Answers answerDT;
+	Boolean goneThroughDT = false;
+	List<Pane> canvasesDT = new ArrayList<>();
+	List<Question> questionsDT = new ArrayList<>();
+	List<String> testOverviewQDT = new ArrayList<>();
+	List<String> testOverviewADT = new ArrayList<>();
+	User userDT;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		this.primaryStage = primaryStage;
+	public void start(Stage centerPaneDT) throws Exception {
+		this.centerPaneDT = centerPane;
 		
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
 		Query test = em.createNamedQuery("get tests");
-		testName = "Test i JPA";
-		test.setParameter("name", testName);
+		testNameDT = "Test i JPA";
+		test.setParameter("name", testNameDT);
 		System.out.println("---------------:::Hello:::-----------------");
 		// get questions from DB
 		System.out.println("---------------:::1:::-----------------");
@@ -71,17 +72,17 @@ public class DoTest extends Application {
 		System.out.println("---------------:::4:::-----------------");
 
 		for (int i = 0; i < currentTest.getQuestions().size(); i++) {
-			questions.add(currentTest.getQuestions().get(i));
-			System.out.println(questions.get(i).getQuestionText());
+			questionsDT.add(currentTest.getQuestions().get(i));
+			System.out.println(questionsDT.get(i).getQuestionText());
 		}
 		System.out.println("---------------:::5:::-----------------");
 
 		
 		//Make array-size to fit test
-		for(int i=0;i<questions.size();i++){
-			testOverviewA.add(null);
-			testOverviewQ.add(null);
-			System.out.println(testOverviewA.get(i));
+		for(int i=0;i<questionsDT.size();i++){
+			testOverviewADT.add(null);
+			testOverviewQDT.add(null);
+			System.out.println(testOverviewADT.get(i));
 		}
 		// RootGrid
 		
@@ -89,10 +90,10 @@ public class DoTest extends Application {
 
 		// Make scenes
 		System.out.println("---------------:::6:::-----------------");
-		for (int i = 0; i <= (questions.size() - 1); i++) {
+		for (int i = 0; i <= (questionsDT.size() - 1); i++) {
 			for (int j = 0; j <= (answersList.size() - 1); j++) {
-				if (answersList.get(j).getQuestion() == questions.get(i)) {
-					answer = answersList.get(j);
+				if (answersList.get(j).getQuestion() == questionsDT.get(i)) {
+					answerDT = answersList.get(j);
 				}
 
 			}
@@ -105,8 +106,8 @@ public class DoTest extends Application {
 
 			// TopLeft Corner
 			VBox topLeft = new VBox();
-			Text titleText = new Text(questions.get(i).getQuestionTitle());
-			Text questionText = new Text(questions.get(i).getQuestionText());
+			Text titleText = new Text(questionsDT.get(i).getQuestionTitle());
+			Text questionText = new Text(questionsDT.get(i).getQuestionText());
 
 			// TitleStyle
 			titleText.setFont(Font.font(20));
@@ -133,7 +134,7 @@ public class DoTest extends Application {
 			timerText.setFill(Color.WHITE);
 			timerText.setStroke(Color.WHITE);
 			Label timer = new Label("18:45");
-			Label questionNr = new Label((i + 1) + "/" + (questions.size()));
+			Label questionNr = new Label((i + 1) + "/" + (questionsDT.size()));
 			spoilerHolder.getChildren().addAll(timer, spoilerTimer, timerText);
 			spoilerHolder.getChildren().add(spoilerDetection);
 			topRight.getChildren().addAll(spoilerHolder, questionNr);
@@ -161,7 +162,7 @@ public class DoTest extends Application {
 			BorderPane answerHolder = new BorderPane();
 
 			// v---------------------Mall för text fråga
-			if (questions.get(i).getquestionType().getQuestionType().equals("Fritext")) {
+			if (questionsDT.get(i).getquestionType().getQuestionType().equals("Fritext")) {
 				questionHolder.setCenter(questionTextArea);
 				GridPane.setConstraints(questionHolder, 0, 1, 2, 1);
 				root.getChildren().addAll(questionHolder);
@@ -169,15 +170,15 @@ public class DoTest extends Application {
 			// ^---------------------Mall för text fråga
 
 			// v---------------------Mall för radiobutton fråga
-			if (questions.get(i).getquestionType().getQuestionType().equals("Radiobuttons")) {
+			if (questionsDT.get(i).getquestionType().getQuestionType().equals("Radiobuttons")) {
 				VBox toggleButtons = new VBox();
-				RadioButton button1 = new RadioButton(answer.getAnswerList().get(0));
+				RadioButton button1 = new RadioButton(answerDT.getAnswerList().get(0));
 				button1.setToggleGroup(group);
-				RadioButton button2 = new RadioButton(answer.getAnswerList().get(1));
+				RadioButton button2 = new RadioButton(answerDT.getAnswerList().get(1));
 				button2.setToggleGroup(group);
-				RadioButton button3 = new RadioButton(answer.getAnswerList().get(2));
+				RadioButton button3 = new RadioButton(answerDT.getAnswerList().get(2));
 				button3.setToggleGroup(group);
-				RadioButton button4 = new RadioButton(answer.getAnswerList().get(3));
+				RadioButton button4 = new RadioButton(answerDT.getAnswerList().get(3));
 				button4.setToggleGroup(group);
 
 				toggleButtons.getChildren().addAll(button1, button2, button3, button4);
@@ -205,35 +206,35 @@ public class DoTest extends Application {
 
 			root.setGridLinesVisible(true);
 			bottomRight.setGridLinesVisible(true);
-			canvases.add(scene);
+			canvasesDT.add(root);
 			
 
 			buttonBack.setOnMouseClicked(event -> {
-				testOverviewQ.set(questionNumber, questions.get(questionNumber).getQuestionText());
+				testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
 				
-				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Fritext")){
-				testOverviewA.set(questionNumber,questionTextArea.getText());
+				if(questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")){
+				testOverviewADT.set(questionNumberDT,questionTextArea.getText());
 				}
-				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Radiobuttons")){
+				if(questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")){
 					try{
-					testOverviewA.set(questionNumber,((RadioButton)(group.getSelectedToggle())).getText());
+					testOverviewADT.set(questionNumberDT,((RadioButton)(group.getSelectedToggle())).getText());
 					}catch(Exception e){
 						System.out.println(e);
 					}
 				}
 				changeQuestion("-");
-				System.out.println(questionNumber);
+				System.out.println(questionNumberDT);
 			});
 
 			buttonNext.setOnMouseClicked(event -> {
-				testOverviewQ.set(questionNumber, questions.get(questionNumber).getQuestionText());
+				testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
 				
-				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Fritext")){
-					testOverviewA.set(questionNumber,questionTextArea.getText());
+				if(questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")){
+					testOverviewADT.set(questionNumberDT,questionTextArea.getText());
 					}
-					if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Radiobuttons")){
+					if(questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")){
 						try{
-						testOverviewA.set(questionNumber,((RadioButton)(group.getSelectedToggle())).getText());
+						testOverviewADT.set(questionNumberDT,((RadioButton)(group.getSelectedToggle())).getText());
 						}
 					catch(Exception e){
 						System.out.println(e);
@@ -241,7 +242,7 @@ public class DoTest extends Application {
 					}
 
 				changeQuestion("+");
-				System.out.println(questionNumber);
+				System.out.println(questionNumberDT);
 			});
 
 			spoilerDetection.setOnMouseEntered(event -> {
@@ -266,7 +267,7 @@ public class DoTest extends Application {
 		Scene lastCanvas = new Scene(rootLC,800,350);
 		Button endTest = new Button("End Test");
 		rootLC.setCenter(endTest);
-		canvases.add(lastCanvas);
+		canvasesDT.add(rootLC);
 		
 		//LastCanvas /SLUT
 		
@@ -294,30 +295,30 @@ public class DoTest extends Application {
 		rootOV.setLeft(leftContainer);
 		rootOV.setRight(rightContainer);
 
-		primaryStage.setScene(canvases.get(0));
-		primaryStage.show();
+		centerPaneDT.setCenter(canvasesDT.get(0));
+		centerPaneDT.show();
 		
 		cancel.setOnAction(event ->{
-			primaryStage.setScene(canvases.get(0));
-			questionNumber=0;
+			centerPaneDT.setCenter(canvasesDT.get(0));
+			questionNumberDT=0;
 			overview.setText("");
 			
 		});
 		endTest.setOnAction(event ->{
 		overview.appendText(getAnswersForOverview());
-			primaryStage.setScene(sceneOV);
+			centerPaneDT.setCenter(sceneOV);
 		});
 		
 		yes.setOnAction(event ->{
-			for(int i=0;i<questions.size();i++){
-			sendToDatabase(user,questions.get(i),testOverviewA.get(i).toString(),em);
+			for(int i=0;i<questionsDT.size();i++){
+			sendToDatabase(userDT,questionsDT.get(i),testOverviewADT.get(i).toString(),em);
 			}
 		});
 		
 		//Overview för provets svar /SLUT
 
-		primaryStage.setScene(canvases.get(questionNumber));
-		primaryStage.show();
+		centerPaneDT.setCenter(canvasesDT.get(questionNumberDT));
+		centerPaneDT.show();
 
 	}
 	
@@ -328,15 +329,15 @@ public class DoTest extends Application {
 	
 
 	public void showDoneButton() {
-		for (int i = 0; i <= canvases.size() - 1; i++) {
+		for (int i = 0; i <= canvasesDT.size() - 1; i++) {
        
 		}
 	}
 	
 	public String getAnswersForOverview(){
 		String overview="";
-		for(int i=0;i<testOverviewA.size();i++){
-			overview+=testOverviewQ.get(i)+": "+testOverviewA.get(i)+"\n";
+		for(int i=0;i<testOverviewADT.size();i++){
+			overview+=testOverviewQDT.get(i)+": "+testOverviewADT.get(i)+"\n";
 			
 		}
 		return overview;
@@ -345,24 +346,24 @@ public class DoTest extends Application {
 	}
 
 	public void changeQuestion(String cond) {
-		if (questionNumber < 1 & cond == "-") {
-			this.questionNumber = canvases.size() - 1;
-			primaryStage.setScene(canvases.get(questionNumber));
-		} else if (questionNumber >= (canvases.size() - 1) & cond == "+") {
-			this.questionNumber = 0;
-			primaryStage.setScene(canvases.get(questionNumber));
-			goneThrough = true;
+		if (questionNumberDT < 1 & cond == "-") {
+			this.questionNumberDT = canvasesDT.size() - 1;
+			centerPaneDT.setCenter(canvasesDT.get(questionNumberDT));
+		} else if (questionNumberDT >= (canvasesDT.size() - 1) & cond == "+") {
+			this.questionNumberDT = 0;
+			centerPaneDT.setCenter(canvasesDT.get(questionNumberDT));
+			goneThroughDT = true;
 			
 
 		} else {
 			switch (cond) {
 			case "+":
-				questionNumber++;
-				primaryStage.setScene(canvases.get(questionNumber));
+				questionNumberDT++;
+				centerPaneDT.setCenter(canvasesDT.get(questionNumberDT));
 				break;
 			case "-":
-				questionNumber--;
-				primaryStage.setScene(canvases.get(questionNumber));
+				questionNumberDT--;
+				centerPaneDT.setCenter(canvasesDT.get(questionNumberDT));
 				break;
 			}
 		}
@@ -378,8 +379,5 @@ public void sendToDatabase(User user, Question question, String answer, EntityMa
 		em.getTransaction().commit();
 	}
 
-	public void drawCanvas() {
-
-	}
 
 }
