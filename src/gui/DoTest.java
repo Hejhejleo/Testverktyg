@@ -8,24 +8,20 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import com.sun.javafx.scene.control.skin.ToggleButtonSkin;
-
 import entity.Answers;
 import entity.Question;
+import entity.StudentAnswer;
 import entity.Test;
+import entity.User;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -51,14 +47,11 @@ public class DoTest extends Application {
 	List<Question> questions = new ArrayList<>();
 	List<String> testOverviewQ = new ArrayList<>();
 	List<String> testOverviewA = new ArrayList<>();
+	User user;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		this.primaryStage = primaryStage;
-		String studentAnswer;
-
-		
-		
 		
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
@@ -105,7 +98,6 @@ public class DoTest extends Application {
 			}
 			TextArea questionTextArea = new TextArea();
 			ToggleGroup group = new ToggleGroup();
-			
 			GridPane root = new GridPane();
 			System.out.println("---------------:::7:::-----------------");
 
@@ -223,7 +215,11 @@ public class DoTest extends Application {
 				testOverviewA.set(questionNumber,questionTextArea.getText());
 				}
 				if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Radiobuttons")){
+					try{
 					testOverviewA.set(questionNumber,((RadioButton)(group.getSelectedToggle())).getText());
+					}catch(Exception e){
+						System.out.println(e);
+					}
 				}
 				changeQuestion("-");
 				System.out.println(questionNumber);
@@ -236,7 +232,12 @@ public class DoTest extends Application {
 					testOverviewA.set(questionNumber,questionTextArea.getText());
 					}
 					if(questions.get(questionNumber).getquestionType().getQuestionType().equals("Radiobuttons")){
+						try{
 						testOverviewA.set(questionNumber,((RadioButton)(group.getSelectedToggle())).getText());
+						}
+					catch(Exception e){
+						System.out.println(e);
+					}
 					}
 
 				changeQuestion("+");
@@ -299,15 +300,20 @@ public class DoTest extends Application {
 		cancel.setOnAction(event ->{
 			primaryStage.setScene(canvases.get(0));
 			questionNumber=0;
+			overview.setText("");
+			
 		});
 		endTest.setOnAction(event ->{
 		overview.appendText(getAnswersForOverview());
 			primaryStage.setScene(sceneOV);
 		});
+		
 		yes.setOnAction(event ->{
-			
-			
+			for(int i=0;i<questions.size();i++){
+			sendToDatabase(user,questions.get(i),testOverviewA.get(i).toString(),em);
+			}
 		});
+		
 		//Overview för provets svar /SLUT
 
 		primaryStage.setScene(canvases.get(questionNumber));
@@ -329,8 +335,6 @@ public class DoTest extends Application {
 	
 	public String getAnswersForOverview(){
 		String overview="";
-		String ansewr;
-		String question;
 		for(int i=0;i<testOverviewA.size();i++){
 			overview+=testOverviewQ.get(i)+": "+testOverviewA.get(i)+"\n";
 			
@@ -362,6 +366,16 @@ public class DoTest extends Application {
 				break;
 			}
 		}
+	}
+	
+public void sendToDatabase(User user, Question question, String answer, EntityManager em){
+		StudentAnswer studentAnswer = new StudentAnswer();
+		studentAnswer.setUser(user);
+		studentAnswer.setQuestion(question);
+		studentAnswer.setAnswer(answer);
+		em.getTransaction().begin();
+		em.persist(studentAnswer);
+		em.getTransaction().commit();
 	}
 
 	public void drawCanvas() {
