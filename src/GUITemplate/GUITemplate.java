@@ -1,32 +1,60 @@
 package GUITemplate;
 
+
+import connectivity.AddUser;
+import connectivity.Login;
+import entity.User;
+import gui.AdminUser;
+import gui.ChangeUserInfo;
+import gui.QuizmakerGUI;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class GUITemplate extends Application{
+	private AddUser addUser;
+	private Login logIn = new Login();
+	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
+	private BooleanProperty isAdmin = new SimpleBooleanProperty(false);
+	private BorderPane root;
+	private ChangeUserInfo userInfo;
+	private QuizmakerGUI qMakerGUI;
+	private User user = null;
+	
 
                 
     	Button btn1, btn2, btn3,btn4,btn5,btn6, btn7, btn8;
@@ -39,6 +67,7 @@ public class GUITemplate extends Application{
     	double clickX1;
     	double clickY1;
 
+    	Stage primaryStage;
     	
     	public static void main(String[] args) {
     		launch(args);
@@ -46,8 +75,9 @@ public class GUITemplate extends Application{
     	
     	@Override
     	public void start(Stage primaryStage) {
-    		primaryStage.getIcons().add(new Image("/Newton.png"));	
+    		//primaryStage.getIcons().add(new Image("/Newton.png"));	
     		primaryStage.setTitle("Newton test tool 0.5 Alpha");
+    		this.primaryStage = primaryStage;
     		
     		
     		
@@ -59,27 +89,6 @@ public class GUITemplate extends Application{
   		
     		//Menyer topp
     		
-    		Menu fileMenu = new Menu("_File");
-    		
-    		fileMenu.getItems().add(new MenuItem("New"));
-    		fileMenu.getItems().add(new MenuItem("Open"));
-    		fileMenu.getItems().add(new MenuItem("_Save"));
-    		fileMenu.getItems().add(new SeparatorMenuItem());
-    		MenuItem avsluta = new MenuItem("Exit");
-    		avsluta.setOnAction(e -> {
-    			boolean result4 = ConfirmPane.display("Exit program", "Do you want to exit the program?");
-    			if (result4 == true) {
-    				System.exit(0);
-    			}
-    		});
-    		fileMenu.getItems().add(avsluta);
-    		
-    		Menu editMenu = new Menu("_Edit");	
-    		
-    		editMenu.getItems().add(new MenuItem("Copy"));
-    		editMenu.getItems().add(new MenuItem("Cut"));
-    		editMenu.getItems().add(new SeparatorMenuItem());
-    		editMenu.getItems().add(new MenuItem("Paste"));
     			
     		
     	    Menu viewMenu = new Menu("_View");
@@ -101,18 +110,12 @@ public class GUITemplate extends Application{
     	    viewMenu.getItems().add(cssMenuItem);
     	   
     	    
-    		Menu hjaMenu = new Menu("_Help");
     		
-    		hjaMenu.getItems().add(new MenuItem("Help"));
-    		hjaMenu.getItems().add(new MenuItem("About"));
     		
-    		MenuBar menuBar = new MenuBar();
-    		menuBar.getMenus().addAll(fileMenu, editMenu,viewMenu , hjaMenu);
-    		menuBar.setStyle("-fx-background-color: #F47920;");
     		
 
     		
-    		//Vertikal box till vänster med knappar och funktioner
+    		//Vertikal box till vï¿½nster med knappar och funktioner
     		
     		VBox leftMenu = new VBox(20);
     		leftMenu.setStyle("-fx-background-color: #F47920;");
@@ -223,7 +226,7 @@ public class GUITemplate extends Application{
     			//CenterPane
     			
     			centerPane = new AnchorPane();
-    			centerPane.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000;");
+    			centerPane.setStyle("-fx-border-color: #000000;");
     			centerPane.getChildren().addAll();
     			
     			
@@ -344,10 +347,10 @@ public class GUITemplate extends Application{
     			
     			bottomMenu.getChildren().addAll(btn5, lbl, lbl2, btn6);
     			
-    			//Scen och Pane inställningar
+    			//Scen och Pane instÃ¤llningar
     			
     			BorderPane borderPane = new BorderPane();
-    			borderPane.setTop(menuBar);
+    			borderPane.setTop(initMenu());
     			borderPane.setLeft(leftMenu);
     			borderPane.setCenter(centerPane);
     			borderPane.setBottom(bottomMenu);
@@ -363,5 +366,206 @@ public class GUITemplate extends Application{
     		if(answer)
     				Platform.exit();
     	}
-}	
-    			
+    	public MenuBar initMenu() {
+    		BooleanBinding canAdd = isAdmin.and(isLoggedIn);
+    		MenuBar menu = new MenuBar();
+    		Menu mnuFile = new Menu("File");
+    		MenuItem mnuLogIn = new MenuItem("Log in");
+    		MenuItem mnuLogOut = new MenuItem("Log out");
+    		menu.setStyle("-fx-background-color: #F47920;");
+    		MenuItem mnuExit = new MenuItem("Exit");
+    		mnuExit.setOnAction(exitAction -> {
+    			System.exit(0);
+    		});
+    		
+    		
+    		MenuItem createQuest = new MenuItem("Create Test");
+    		createQuest.setOnAction(createQ -> {
+    			qMakerGUI = new QuizmakerGUI();
+    			centerPane.getChildren().clear();
+    			centerPane.getChildren().addAll(qMakerGUI.showPane());
+    		});
+    		
+    		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, new SeparatorMenuItem(), mnuExit);
+    		try{
+    		primaryStage.setTitle("Guest");
+    		}catch(Exception e){
+    			System.out.println(e);
+    		}
+    		mnuLogIn.setOnAction(logInAction -> {
+    			if (!isLoggedIn.get()) {
+    				showLogin();
+    			}
+    		});
+    		mnuLogIn.disableProperty().bind(isLoggedIn);
+    		
+    		mnuLogOut.setOnAction(logOutAction -> {
+    			primaryStage.setTitle("Not logged in");
+    			centerPane.getChildren().clear();
+    			isLoggedIn.set(false);
+    			isAdmin.set(false);
+    		});
+    		mnuLogOut.disableProperty().bind(isLoggedIn.not());
+    		
+    		Menu mnuAdmin = new Menu("Admin");
+    		MenuItem adminUsers = new MenuItem("Administer Users");
+    		adminUsers.setOnAction(action -> {
+    			AdminUser userAdmin = new AdminUser();
+    			centerPane.getChildren().clear();
+    			centerPane.getChildren().addAll(userAdmin.showPane(root));
+    		});
+    		mnuAdmin.disableProperty().bind(canAdd.not());
+    		mnuAdmin.getItems().addAll(adminUsers, createQuest);
+    		
+    		Menu mnuStudent = new Menu("Student");
+    		mnuStudent.disableProperty().bind(isLoggedIn.not());
+    		MenuItem mnuChangeUser = new MenuItem("Change user info");
+    		mnuChangeUser.setOnAction(change -> {
+    			centerPane.getChildren().clear();
+    			userInfo = new ChangeUserInfo(user);			
+    			centerPane.getChildren().addAll(userInfo.showPane());
+    		});
+    		mnuStudent.getItems().add(mnuChangeUser);
+    		
+    		menu.getMenus().addAll(mnuFile, mnuAdmin, mnuStudent);
+    		
+    		
+    		
+    		return menu;
+    	}
+    	
+    	public void showLogin() {
+    		Stage logInStage = new Stage();
+    		StackPane logInPane = new StackPane();
+    		Scene logInScene = new Scene(logInPane, 400, 200);
+    		logInStage.setScene(logInScene);
+    		logInStage.initStyle(StageStyle.UNDECORATED);
+    		logInStage.show();
+    		
+    		
+    		Text loginTitle = new Text("Log in");
+    		loginTitle.setFont(Font.font(50));
+    		HBox title = new HBox();
+    		title.getChildren().add(loginTitle);
+    		title.setAlignment(Pos.CENTER);
+    		TextField txtUserName = new TextField();
+    		loginTitle.requestFocus();
+    		txtUserName.setPromptText("Username");
+    		txtUserName.setMaxWidth(200);
+    		PasswordField txtPassword = new PasswordField();
+    		txtPassword.setMaxWidth(200);
+    		txtPassword.setPromptText("Password");
+    		Text wrongLogin = new Text("Wrong username/password");
+    		wrongLogin.setFont(Font.font(30));
+    		wrongLogin.setVisible(false);
+    		
+    		VBox loginColumn = new VBox();
+    		loginColumn.setAlignment(Pos.CENTER);
+    		loginColumn.getChildren().addAll(title,txtUserName, txtPassword, wrongLogin);
+    		logInPane.getChildren().addAll(loginColumn);
+    		
+    		
+    		txtPassword.setOnAction(e -> {
+    			user = logIn.login(txtUserName.getText(), txtPassword.getText());
+    			if (user != null) {
+    				if (logIn.getAccountType().equals("Admin")) {
+    					primaryStage.setTitle("Logged in as " + logIn.getName() + " - Admin");
+    					isAdmin.set(true);
+    				} else {
+    					primaryStage.setTitle("Logged in as " + logIn.getName() + " - Student");
+    				}
+    				wrongLogin.setVisible(false);
+    				logInStage.close();
+    				isLoggedIn.set(true);
+    			} else {
+    				wrongLogin.setVisible(true);
+    			}
+    		});
+    		
+    	}
+    	
+    	public void addUser() {
+    		ObservableList<String> accountType = FXCollections.observableArrayList();
+    		accountType.add("Admin");
+    		accountType.add("Student");
+    		
+    		Stage addUserStage = new Stage();
+    		StackPane userPane = new StackPane();
+    		Scene addUserScene = new Scene(userPane, 400, 250);
+    		addUserStage.setScene(addUserScene);
+    		addUserStage.initStyle(StageStyle.UNDECORATED);
+    		addUserStage.toFront();
+    		centerPane.getChildren().add(userPane);
+    		
+    		Text titleText = new Text("Add user account");
+    		titleText.setFont(Font.font(30));
+    		HBox titleBox = new HBox();
+    		titleBox.setAlignment(Pos.CENTER);
+    		titleBox.getChildren().add(titleText);
+    		
+    		TextField txtUserName = new TextField();
+    		txtUserName.setPromptText("Username");
+    		txtUserName.setMaxWidth(200);
+    		PasswordField txtPassword = new PasswordField();
+    		txtPassword.setMaxWidth(200);
+    		txtPassword.setPromptText("Password");
+    		PasswordField confirmPassword = new PasswordField();
+    		confirmPassword.setPromptText("Confirm password");
+    		confirmPassword.setMaxWidth(200);
+    		ComboBox cmbAccountType = new ComboBox();
+    		cmbAccountType.setItems(accountType);
+    		cmbAccountType.setPromptText("Account type");
+    		
+    		TextField txtEmail = new TextField();
+    		txtEmail.setMaxWidth(200);
+    		txtEmail.setPromptText("E-mail");
+    		
+    		VBox enterBox = new VBox();
+    		enterBox.getChildren().addAll(txtUserName, txtPassword, confirmPassword, txtEmail, cmbAccountType);
+    		
+    		Button okButton = new Button("OK");
+    		Button cancelButton = new Button("Cancel");
+    		HBox buttons = new HBox();
+    		okButton.requestFocus();
+    		buttons.getChildren().addAll(okButton, cancelButton);
+    		
+    		cancelButton.setOnAction(cancel -> {
+    			addUserStage.close();
+    		});
+    		
+    		okButton.setOnAction(ok -> {
+    			Alert error = new Alert(AlertType.ERROR);
+    			if (!(confirmPassword.getText().equals(txtPassword.getText()))) {
+    				error.setTitle("Password mismatch");
+    				error.setHeaderText("The passwords must be the same");
+    				error.showAndWait();
+    			} 
+    			else if (cmbAccountType.getValue()==null) {
+    				error.setTitle("No accounttype chosen");
+    				error.setHeaderText("You must choose an account type");
+    				error.showAndWait();
+    			}
+    			else if(!(txtEmail.getText().contains("@"))) {
+    				error.setTitle("Incorrect e-mail");
+    				error.setHeaderText("You have not entered a valid e-mail");
+    				error.showAndWait();
+    			}
+    			else {
+    				if (addUser.addUser(txtUserName.getText(), txtPassword.getText(), cmbAccountType.getValue().toString(), txtEmail.getText())) {
+    					error.setTitle("User added");
+    					error.setHeaderText("User " + txtUserName.getText() + " added");
+    					error.showAndWait();
+    				} else {
+    					error.setTitle("User exists");
+    					error.setHeaderText("User " + txtUserName.getText() + " already exists");
+    					error.showAndWait();
+    				}
+    				addUserStage.close();
+    			}
+    		});
+    		
+    		VBox addUserColumn = new VBox();
+    		addUserColumn.getChildren().addAll(titleBox, enterBox, buttons);
+    		userPane.getChildren().add(addUserColumn);
+    	}
+}
