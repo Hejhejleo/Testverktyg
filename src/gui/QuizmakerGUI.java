@@ -1,19 +1,14 @@
 package gui;
 
 
-import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
-
 import entity.Answers;
 import entity.Question;
 import entity.QuestionType;
 import entity.Test;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -88,10 +83,8 @@ public class QuizmakerGUI {
 	private HBox newQuestHBox = new HBox();
 	private HBox fieldsAndRadsHBox = new HBox();
 	private HBox butsAndtxtAreaHBox = new HBox();	
-	private Label titleLbl = new Label("Test title");
-	private Label titleLbl2 = new Label("Test title");
-	private Label startLbl = new Label("Test start \n YY/MM/DD-00:00");
-	private Label stopLbl = new Label("Test stop \n YY/MM/DD-00:00");
+	private Label startLbl = new Label("Test start");
+	private Label stopLbl = new Label("Test stop");
 	private Scene popUpScene;
 	private Scene popUpScene2;
 	private Stage popUpStage = new Stage();
@@ -112,6 +105,7 @@ public class QuizmakerGUI {
 		em = emf.createEntityManager();
 		
 		List <Test> tempLista = (List <Test>) em.createQuery("select t from Test t").getResultList();
+		testCmbBox.setPromptText("Select test");
 		testCmbBox.setItems(testList);		
 		for( int i = 0; i < tempLista.size(); i++){			
 			testList.add(tempLista.get(i).getTestName());			
@@ -151,7 +145,7 @@ public class QuizmakerGUI {
 		// Button VBox right of textarea		
 		butsAndCmbTest.getChildren().addAll(newTestBut, editTestBut, testCmbBox);
 		// Button VBox right of textarea
-		butsAndCmbQuest.getChildren().addAll(newQuestBut, saveQuestBut, questCmbBox);
+		butsAndCmbQuest.getChildren().addAll(newQuestBut, saveQuestBut);
 		//HBox right of textarea where u type in a question
 		butsAndtxtAreaHBox.getChildren().addAll(writeQuestionTxt, butsAndCmbQuest, butsAndCmbTest);
 		butsAndtxtAreaHBox.setSpacing(20);
@@ -166,16 +160,20 @@ public class QuizmakerGUI {
 		//Left side VBox popup NewQuest
 		setTitleVBox.getChildren().addAll(setTitleTxtQ);
 		//Right side VBox NewTest
+		stopTestTxt.setPromptText("YY/MM/DD-00:00");
+		startTestTxt.setPromptText("YY/MM/DD-00:00");
 		stopLblVBox.getChildren().addAll(stopLbl, stopTestTxt, saveTestBut);
 		//HBox for VBoxes NewTest popup
 		popUpHBox.getChildren().addAll(startLblVBox, stopLblVBox);
 		//HBox for VBox and cmbBox in newquest popup
-		newQuestHBox.getChildren().addAll(setTitleVBox, setTypeCmbBox, pointCmbBox);
+		setTypeCmbBox.setPromptText("Question type");
+		pointCmbBox.setPromptText("Point value");
+		newQuestHBox.getChildren().addAll(setTitleVBox, setTypeCmbBox, pointCmbBox, okBut);
 		//Two borderPanes for popups
 		popUpPaneNewQ.setTop(newQuestHBox);
-		popUpPaneNewT.setBottom(popUpHBox);
+		popUpPaneNewT.setTop(popUpHBox);
 		//Two scenes for popups
-		popUpScene2 = new Scene(popUpPaneNewQ, 300, 200);
+		popUpScene2 = new Scene(popUpPaneNewQ, 400, 50);
 		popUpScene = new Scene(popUpPaneNewT, 300, 200);
 		//Set the scenes for both popups
 		popUpStage.setScene(popUpScene);
