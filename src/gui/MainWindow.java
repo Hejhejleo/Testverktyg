@@ -2,6 +2,7 @@ package gui;
 
 import connectivity.AddUser;
 import connectivity.Login;
+import entity.User;
 import javafx.application.Application;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
@@ -35,6 +36,7 @@ public class MainWindow extends Application {
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
 	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
 	private Stage stage;
+	private User user;
 	
 	public void start(Stage stage) {
 		addUser = new AddUser();
@@ -126,7 +128,8 @@ public class MainWindow extends Application {
 		logInPane.getChildren().addAll(loginColumn);
 		
 		txtPassword.setOnAction(e -> {
-			if (logIn.login(txtUserName.getText(), txtPassword.getText())) {
+			user = logIn.login(txtUserName.getText(), txtPassword.getText());
+			if (user != null) {
 				if (logIn.getAccountType().equals("Admin")) {
 					stage.setTitle("Logged in as " + logIn.getName() + " - Admin");
 					isAdmin.set(true);
@@ -139,6 +142,7 @@ public class MainWindow extends Application {
 			} else {
 				wrongLogin.setVisible(true);
 			}
+			
 		});
 		
 	}
