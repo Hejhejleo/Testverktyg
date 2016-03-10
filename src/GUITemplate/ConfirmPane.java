@@ -17,7 +17,7 @@ public class ConfirmPane {
 		Stage stage = new Stage();
 		
 		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.getIcons().add(new Image("/1up.png"));
+		stage.getIcons().add(new Image("/Newton.png"));
 		stage.setTitle(title);
 		stage.setMinHeight(250);
 		stage.setMinWidth(250);

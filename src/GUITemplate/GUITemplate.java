@@ -1,15 +1,13 @@
 package GUITemplate;
 
-import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -17,7 +15,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -28,7 +25,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class GUITemplate extends Application{
 
@@ -37,7 +33,7 @@ public class GUITemplate extends Application{
     	Label lbl;
     	Label lbl2;
     	
-    	AnchorPane rectCenter;
+    	AnchorPane centerPane;
     	boolean writeLine = false;
     	
     	double clickX1;
@@ -50,8 +46,8 @@ public class GUITemplate extends Application{
     	
     	@Override
     	public void start(Stage primaryStage) {
-    		primaryStage.getIcons().add(new Image("/1up.png"));	
-    		primaryStage.setTitle("Newton test tool 1.0");
+    		primaryStage.getIcons().add(new Image("/Newton.png"));	
+    		primaryStage.setTitle("Newton test tool 0.5 Alpha");
     		
     		
     		
@@ -82,18 +78,39 @@ public class GUITemplate extends Application{
     		
     		editMenu.getItems().add(new MenuItem("Copy"));
     		editMenu.getItems().add(new MenuItem("Cut"));
-    		editMenu.getItems().add(new MenuItem("Paste"));
     		editMenu.getItems().add(new SeparatorMenuItem());
-    		editMenu.getItems().add(new MenuItem("User settings"));
-    		  		
+    		editMenu.getItems().add(new MenuItem("Paste"));
+    			
+    		
+    	    Menu viewMenu = new Menu("_View");
+    	    /*
+    	    ToggleGroup tGroup = new ToggleGroup();
+    	    RadioMenuItem mysqlItem = new RadioMenuItem("MySQL");
+    	    mysqlItem.setToggleGroup(tGroup);
+    		
+    		RadioMenuItem showCountdown = new RadioMenuItem("Javafx");
+    	    showCountdown.setToggleGroup(tGroup);
+    	    showCountdown.setSelected(true);
+    		 
+    	    viewMenu.getItems().addAll(mysqlItem, showCountdown,
+    	    		new SeparatorMenuItem());
+    	    */
+    	    
+    	    CheckMenuItem cssMenuItem = new CheckMenuItem("Show remaining time");
+    	    cssMenuItem.setSelected(true);
+    	    viewMenu.getItems().add(cssMenuItem);
+    	   
+    	    
     		Menu hjaMenu = new Menu("_Help");
     		
     		hjaMenu.getItems().add(new MenuItem("Help"));
     		hjaMenu.getItems().add(new MenuItem("About"));
     		
     		MenuBar menuBar = new MenuBar();
-    		menuBar.getMenus().addAll(fileMenu, editMenu, hjaMenu);
+    		menuBar.getMenus().addAll(fileMenu, editMenu,viewMenu , hjaMenu);
     		menuBar.setStyle("-fx-background-color: #F47920;");
+    		
+
     		
     		//Vertikal box till vänster med knappar och funktioner
     		
@@ -116,7 +133,7 @@ public class GUITemplate extends Application{
     			btn2 = new Button();
     			btn2.setLayoutX(20.0);
     			btn2.setLayoutY(110.0);
-    			btn2.setText(" Taken tests ");
+    			btn2.setText(" Login ");
     			double a = 10;
     			btn2.setShape(new Rectangle(a, a));
     			btn2.setMinSize(9*a, 3*a);
@@ -152,7 +169,7 @@ public class GUITemplate extends Application{
     			btn3.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920;");
     			DropShadow shadow1 = new DropShadow();
     			//btn2.setOnAction(this);
-    			VBox.setMargin(btn3, new Insets(0,0,0,10));
+    			VBox.setMargin(btn3, new Insets(0,0,100,10));
     			
     			
     			btn3.addEventHandler(MouseEvent.MOUSE_ENTERED, 
@@ -180,14 +197,12 @@ public class GUITemplate extends Application{
     			btn4.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
     			
     			DropShadow shadow2 = new DropShadow();
-    			
     			btn4.addEventHandler(MouseEvent.MOUSE_ENTERED, 
     			    new EventHandler<MouseEvent>() {
     			        @Override public void handle(MouseEvent e) {
     			            btn4.setEffect(shadow2);
     			        }
     			});
-    			
     			btn4.addEventHandler(MouseEvent.MOUSE_EXITED, 
     			    new EventHandler<MouseEvent>() {
     			        @Override public void handle(MouseEvent e) {
@@ -200,9 +215,18 @@ public class GUITemplate extends Application{
     			
     			leftMenu.getChildren().addAll( btn2, btn3, btn4);
     			
+    			
+    			
+    			
+    			
+    			
     			//CenterPane
     			
-    			rectCenter = new AnchorPane();
+    			centerPane = new AnchorPane();
+    			centerPane.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #000000;");
+    			centerPane.getChildren().addAll();
+    			
+    			
     			
     			
     			//Horizontal box i nedre kant
@@ -277,6 +301,19 @@ public class GUITemplate extends Application{
     			btn5.setMaxSize(8*aa, 3*aa);
     			btn5.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
     			HBox.setMargin(btn5, new Insets(2,0,0,160));
+    			DropShadow shadow3 = new DropShadow();
+    			btn5.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn5.setEffect(shadow3);
+    			        }
+    			});
+    			btn5.addEventHandler(MouseEvent.MOUSE_EXITED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn5.setEffect(null);
+    			        }
+    			});
     			//btn5.setOnAction(this)
     			
     			btn6 = new Button();
@@ -289,6 +326,19 @@ public class GUITemplate extends Application{
     			btn6.setMaxSize(8*ab, 3*ab);
     			btn6.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
     			HBox.setMargin(btn6, new Insets(2,0,0,90));
+    			DropShadow shadow4 = new DropShadow();
+    			btn6.addEventHandler(MouseEvent.MOUSE_ENTERED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn6.setEffect(shadow4);
+    			        }
+    			});
+    			btn6.addEventHandler(MouseEvent.MOUSE_EXITED, 
+    			    new EventHandler<MouseEvent>() {
+    			        @Override public void handle(MouseEvent e) {
+    			            btn6.setEffect(null);
+    			        }
+    			});
     			//btn6.setOnAction(this)
     			
     			
@@ -299,7 +349,7 @@ public class GUITemplate extends Application{
     			BorderPane borderPane = new BorderPane();
     			borderPane.setTop(menuBar);
     			borderPane.setLeft(leftMenu);
-    			borderPane.setCenter(rectCenter);
+    			borderPane.setCenter(centerPane);
     			borderPane.setBottom(bottomMenu);
     			//borderPane.setPrefSize(800,600);
     			
@@ -309,7 +359,7 @@ public class GUITemplate extends Application{
     			
     	}
     	private void Platfom() {
-    		Boolean answer = ConfirmPane.display("Avsluta Programmet", "Vill du avsluta programmet?");
+    		Boolean answer = ConfirmPane.display("Exit program", "Do you want to exit the program?");
     		if(answer)
     				Platform.exit();
     	}
