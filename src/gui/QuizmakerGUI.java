@@ -38,7 +38,7 @@ public class QuizmakerGUI {
 	private ObservableList<String> testList = FXCollections.observableArrayList();
 	private Test test;
 	private QuestionType questType = new QuestionType();
-	private Question quest = new Question();
+	private Question quest;
 	private Answers answer;
 	private int points;
 	private String questionName;
@@ -95,8 +95,7 @@ public class QuizmakerGUI {
 	public QuizmakerGUI(){	}
 	
 	public QuizmakerGUI(Test test) {
-		this.test = test;
-		
+		this.test = test;		
 	}
 	
 	public BorderPane showPane(){
@@ -195,6 +194,12 @@ public class QuizmakerGUI {
 			}
 		});
 		
+		testCmbBox.setOnAction(event -> {
+			
+			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());			
+			
+		});
+		
 		//Save the question to a test in the database
 		saveQuestBut.setOnAction(event -> {
 			em.getTransaction().begin();
@@ -204,9 +209,9 @@ public class QuizmakerGUI {
 			questionName = setTitleTxtQ.getText();
 			quest.setQuestionTitle(questionName);
 			quest.setQuestionText(writeQuestionTxt.getText());
-			
 			quest.setQuestionType(questType);
-			
+			questType.addQuestion(quest);			
+			test.addQuestion(quest);			
 			answer = new Answers(quest);
 			answer.addAnswer(answer1.getText());
 			answer.addAnswer(answer2.getText());
@@ -216,6 +221,7 @@ public class QuizmakerGUI {
 			em.persist(quest);
 			em.getTransaction().commit();
 		});
+		
 		setTypeCmbBox.setOnAction(event -> {
 			em.getTransaction().begin();
 			questType.setQuestionType("4-Choice");
@@ -242,8 +248,13 @@ public class QuizmakerGUI {
 			popUpStage.showAndWait();			
 		});
 		
+		okBut.setOnAction(event -> {
+			popUpStage2.close();
+		});
+		
 		newQuestBut.setOnAction(event -> {
-			popUpStage2.showAndWait();			
+			quest = new Question(points, true, null, null, test, null);			
+			popUpStage2.showAndWait();	
 		});
 		
 		feedbackCheck.setOnAction(event -> {			
