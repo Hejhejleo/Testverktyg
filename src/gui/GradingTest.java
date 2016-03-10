@@ -130,7 +130,7 @@ public class GradingTest {
 		gradingBoxR.setPadding(new Insets(5, 10, 5, 10));
 		gradingBoxR.getChildren().addAll(lblTestName, lblAnswerTitle, 
 				txtStudentAnswer, lblTeachersComment, txtTeachersComment, 
-				cmbGivenPoints);
+				lblGivenPoints, cmbGivenPoints);
 
 		HBox gradingBoxes = new HBox();
 		gradingBoxes.getChildren().addAll(gradingBoxL, gradingBoxR);
