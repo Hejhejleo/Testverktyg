@@ -1,13 +1,14 @@
 package entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-/** Stores when a student starts and ends a test
+/** Stores when a student starts and ends a test, 
+ * the students total score on the test and the teatcher's final
+ * comment of the whole test
  * 
  * @author Mattias Larsson
  *
@@ -25,6 +26,8 @@ public class TestTime {
 	private Test test;
 	private String testStart;
 	private String testEnd;
+	private double totalScore;
+	private String finalComment;
 	
 	/** Constructor
 	 * 
@@ -37,12 +40,16 @@ public class TestTime {
 	 * @param test - an instance of Test
 	 * @param testStart - a String with the student's starting time
 	 * @param testEnd - a String with the student's ending time
+	 * @param totalScore - a double with the student's total score
+	 * @param finalComment - a String with the final comment 
 	 */
-	public TestTime(User user, Test test, String testStart, String testEnd) {
+	public TestTime(User user, Test test, String testStart, String testEnd, double totalScore, String finalComment) {
 		this.user = user;
 		this.test = test;
 		this.testStart = testStart;
 		this.testEnd = testEnd;
+		this.totalScore = totalScore;
+		this.finalComment = finalComment;
 	}
 
 	/** Sets the user taking the test
@@ -107,4 +114,39 @@ public class TestTime {
 	public void setTestEnd(String testEnd) {
 		this.testEnd = testEnd;
 	}
+	
+	/** Returns the student's total score on the test
+	 * 
+	 * @return a double with the student's total score
+	 */
+	public double getTotalScore() {
+		return totalScore;
+	}
+
+	/** Sets the student's total score on the test
+	 * 
+	 * @param testEnd - a String with the student's ending time
+	 */
+	public void setTotalScore(double totalScore) {
+		this.totalScore = totalScore;
+	}
+
+	/** Gets the final comment of the test from the teacher
+	 * 
+	 * @return a String with the final comment
+	 */
+	public String getFinalComment() {
+		return finalComment;
+	}
+
+	/** Sets the final comment of the test from the teacher
+	 * 
+	 * @param finalComment - a String with the final comment 
+	 */
+	public void setFinalComment(String finalComment) {
+		this.finalComment = finalComment;
+	}
+	
+	
+	
 }
