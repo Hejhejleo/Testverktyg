@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -18,30 +17,20 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 public class AddNewUser {
 
 	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
-	private String whiteBackground = "-fx-background-color: #FFFFFF";
 	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
 			+ "-fx-background-color: #FFFFFF";
 
-	
 	public StackPane showPane() {
 		ObservableList<String> accountType = FXCollections.observableArrayList();
 		accountType.add("Admin");
 		accountType.add("Student");
 
-		Stage addUserStage = new Stage();
 		StackPane userPane = new StackPane();
-		Scene addUserScene = new Scene(userPane, 400, 300);
-		addUserStage.setScene(addUserScene);
-		addUserStage.initStyle(StageStyle.UNDECORATED);
-		addUserStage.toFront();
-		addUserStage.show();
-		
+
 		Text titleText = new Text("Add user account");
 		titleText.setFont(Font.font(30));
 		HBox titleBox = new HBox(10);
@@ -103,14 +92,14 @@ public class AddNewUser {
 		enterBox1.setPadding(new Insets(5, 10, 5, 10));
 		enterBox1.getChildren().addAll(txtUserName, txtFirstName, txtLastName, txtPassword, confirmPassword,
 				cmbAccountType);
-		
+
 		VBox enterBox2 = new VBox(5);
 		enterBox2.setPadding(new Insets(5, 10, 5, 10));
 		enterBox2.getChildren().addAll(txtSSN, txtEmail, txtPhoneNumber, txtStreet, txtZipCode, txtCity);
-		
-HBox enterBoxes = new HBox();
-enterBoxes.getChildren().addAll(enterBox1, enterBox2);
-		
+
+		HBox enterBoxes = new HBox();
+		enterBoxes.getChildren().addAll(enterBox1, enterBox2);
+
 		Button okButton = new Button("OK");
 		Button cancelButton = new Button("Cancel");
 		okButton.setStyle(whiteBGAndGreyBorder);
@@ -125,9 +114,13 @@ enterBoxes.getChildren().addAll(enterBox1, enterBox2);
 		buttons.setPadding(new Insets(5, 10, 10, 10));
 
 		cancelButton.setOnAction(cancel -> {
-			addUserStage.close();
+//			 addUserStage.close(); // TODO knappen funkar inte, ska ändras till
+			// tillbakaknapp
+			
+			
 		});
 
+		
 		String regex = "\\d+";
 
 		okButton.setOnAction(ok -> {
@@ -178,7 +171,7 @@ enterBoxes.getChildren().addAll(enterBox1, enterBox2);
 				error.showAndWait();
 			} else {
 
-				addUserStage.close();
+//				addUserStage.close(); 
 			}
 		});
 
@@ -190,5 +183,4 @@ enterBoxes.getChildren().addAll(enterBox1, enterBox2);
 		return userPane;
 	}
 
-	
 }
