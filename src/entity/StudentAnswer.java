@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 /** Stores a student's answer to a specific question
@@ -12,6 +13,7 @@ import javax.persistence.OneToOne;
  *
  */
 @Entity
+@NamedQuery(query="select sa from StudentAnswer sa where sa.question= :question", name="getStudentAnswer")
 public class StudentAnswer {
 
 	@Id
@@ -25,6 +27,7 @@ public class StudentAnswer {
 	private String teacherComment;
 	private String note;
 	private double givenPoints;
+	
 	
 	/** Constructor
 	 * 
