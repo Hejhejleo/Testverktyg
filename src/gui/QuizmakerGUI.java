@@ -45,6 +45,7 @@ public class QuizmakerGUI {
 	private Question quest;
 	private Answers answer;
 	private int points;
+	private int correctAnswerIndex;
 	private String questionName;	
 	private ListView<String> listViewQuest = new ListView<String>();
 	private TextArea questFeedback = new TextArea();
@@ -178,6 +179,8 @@ public class QuizmakerGUI {
 		popUpStage.setScene(popUpScene);
 		popUpStage2.setScene(popUpScene2);
 		
+		
+		
 		root.setMargin(componentsVBox, new Insets(12,12,12,12));
 		root.setCenter(componentsVBox);
 		Scene scene = new Scene(root, 1000, 600);
@@ -197,18 +200,32 @@ public class QuizmakerGUI {
 		testCmbBox.setOnAction(event -> {
 			
 			listViewQuest.getItems().clear();
-			
+			//Gets the selected string from combobox and insert into a test variable
 			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
+			//Query for getting the question according by the testname
 			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
 			
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
-			}
-			
-			
+			}			
 			
 			listViewQuest.setItems(questList);
 			
+		});
+		
+		radButsVBox.setOnMouseClicked(event -> {
+			if(radBut1.isSelected()){
+				correctAnswerIndex = 0;
+			}
+			if(radBut2.isSelected()){
+				correctAnswerIndex = 1;
+			}
+			if(radBut3.isSelected()){
+				correctAnswerIndex = 2;
+			}
+			if(radBut4.isSelected()){
+				correctAnswerIndex = 3;
+			}			
 		});
 		
 		//Save the question to a test in the database
@@ -223,7 +240,8 @@ public class QuizmakerGUI {
 			quest.setQuestionType(questType);
 			questType.addQuestion(quest);			
 			test.addQuestion(quest);			
-			answer = new Answers(quest);
+			answer = new Answers(quest);											
+			answer.setCorrectAnswer(correctAnswerIndex);
 			answer.addAnswer(answer1.getText());
 			answer.addAnswer(answer2.getText());
 			answer.addAnswer(answer3.getText());
@@ -233,7 +251,7 @@ public class QuizmakerGUI {
 			em.getTransaction().commit();
 		});
 		
-		/*listViewQuest.setOnMouseClicked(event -> {
+	/*listViewQuest.setOnMouseClicked(event -> {
 			
 			listViewQuest.getSelectionModel().getSelectedItems();
 			
@@ -247,7 +265,7 @@ public class QuizmakerGUI {
 		
 		setTypeCmbBox.setOnAction(event -> {
 			em.getTransaction().begin();
-			
+			//TODO
 			if(setTypeCmbBox.getValue().equals("Radiobuttons")){				
 				questType.setQuestionType("Radiobuttons");				
 			}else if (setTypeCmbBox.getValue().equals("Fritext")){
