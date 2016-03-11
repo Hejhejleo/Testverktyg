@@ -36,13 +36,13 @@ public class QuizmakerGUI {
 	private ObservableList<Integer> pointObList ;
 	private ObservableList<String> questTypeObList ;
 	private ObservableList<String> testList = FXCollections.observableArrayList();
-	private Test test;
+	private ObservableList<String> questList = FXCollections.observableArrayList();
+ 	private Test test;
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
 	private int points;
-	private String questionName;
-	
+	private String questionName;	
 	private ListView<String> listViewClassTest = new ListView<String>();
 	private TextArea questFeedback = new TextArea();
 	private TextArea writeQuestionTxt = new TextArea();
@@ -108,8 +108,15 @@ public class QuizmakerGUI {
 		testCmbBox.setItems(testList);		
 		for( int i = 0; i < tempLista.size(); i++){			
 			testList.add(tempLista.get(i).getTestName());			
-		}		
-		listViewClassTest.setItems(testList);
+		}
+		
+		/*List <Question> tempListaQ = (List <Question>) em.createQuery("select t from Question t where testname" + testCmbBox.getValue()).getResultList();
+		listViewClassTest.setItems(questList);
+		for(int i = 0; i < tempListaQ.size(); i++){
+			questList.add(tempListaQ.get(i).getQuestionTitle());
+		}*/
+		
+		//listViewClassTest.setItems(testList);
 		
 		//Skapar lista och combobox till poängsättare
 		pointObList = FXCollections.observableArrayList(1, 2, 3, 4, 5);
@@ -194,10 +201,14 @@ public class QuizmakerGUI {
 			}
 		});
 		
-		testCmbBox.setOnAction(event -> {
+		testCmbBox.setOnAction(event -> {			
+			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
+			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
 			
-			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());			
-			
+			for (Question q : tempTest.getQuestions()){
+				questList.add(q.getQuestionTitle());
+			}
+			listViewClassTest.setItems(questList);
 		});
 		
 		//Save the question to a test in the database
