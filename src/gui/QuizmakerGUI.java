@@ -1,6 +1,8 @@
 package gui;
 
 
+import java.awt.event.MouseEvent;
+import java.beans.EventHandler;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,12 +40,13 @@ public class QuizmakerGUI {
 	private ObservableList<String> testList = FXCollections.observableArrayList();
 	private ObservableList<String> questList = FXCollections.observableArrayList();
  	private Test test;
+ 	//private Test tempTest;
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
 	private int points;
 	private String questionName;	
-	private ListView<String> listViewClassTest = new ListView<String>();
+	private ListView<String> listViewQuest = new ListView<String>();
 	private TextArea questFeedback = new TextArea();
 	private TextArea writeQuestionTxt = new TextArea();
 	private TextArea writeAnswerTxt = new TextArea();
@@ -110,23 +113,13 @@ public class QuizmakerGUI {
 			testList.add(tempLista.get(i).getTestName());			
 		}
 		
-		/*List <Question> tempListaQ = (List <Question>) em.createQuery("select t from Question t where testname" + testCmbBox.getValue()).getResultList();
-		listViewClassTest.setItems(questList);
-		for(int i = 0; i < tempListaQ.size(); i++){
-			questList.add(tempListaQ.get(i).getQuestionTitle());
-		}*/
-		
-		//listViewClassTest.setItems(testList);
-		
 		//Skapar lista och combobox till poängsättare
 		pointObList = FXCollections.observableArrayList(1, 2, 3, 4, 5);
 		pointCmbBox = new ComboBox<Integer>(pointObList);
 		//Lägger in två typer av olika frågor
-		questTypeObList = FXCollections.observableArrayList("4-Choice", "Essay");
+		questTypeObList = FXCollections.observableArrayList("Radiobuttons", "Fritext");
 		setTypeCmbBox = new ComboBox<String>(questTypeObList);
-		
-				
-		
+								
 	    //Graphiccomponents to the questionmaker	
 		BorderPane root = new BorderPane();
 		questFeedback.setVisible(false);
@@ -156,7 +149,7 @@ public class QuizmakerGUI {
 		butsAndtxtAreaHBox.getChildren().addAll(writeQuestionTxt, butsAndCmbQuest, butsAndCmbTest);
 		butsAndtxtAreaHBox.setSpacing(20);
 		//RadioButtons and textfields where u write the answers HBox
-		fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewClassTest);		
+		fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);		
 		radButsVBox.setSpacing(10);
 		//Add my HBoxes to a big VBox
 		componentsVBox.getChildren().addAll(butsAndtxtAreaHBox, fieldsAndRadsHBox);
@@ -193,22 +186,29 @@ public class QuizmakerGUI {
 		setTypeCmbBox.setOnAction(event -> {
 			if(setTypeCmbBox.getValue().equals("Essay")){
 				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewClassTest);
+				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);
 			}
 			if(setTypeCmbBox.getValue().equals("4-Choice")){
 				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewClassTest);
+				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
 			}
 		});
 		
-		testCmbBox.setOnAction(event -> {			
+		testCmbBox.setOnAction(event -> {
+			
+			listViewQuest.getItems().clear();
+			
 			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
 			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
 			
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
 			}
-			listViewClassTest.setItems(questList);
+			
+			
+			
+			listViewQuest.setItems(questList);
+			
 		});
 		
 		//Save the question to a test in the database
@@ -233,9 +233,27 @@ public class QuizmakerGUI {
 			em.getTransaction().commit();
 		});
 		
+		/*listViewQuest.setOnMouseClicked(event -> {
+			
+			listViewQuest.getSelectionModel().getSelectedItems();
+			
+			answer1.setText("");
+			answer2.setText("");
+			answer3.setText("");
+			answer4.setText("");
+			
+		});*/
+		
+		
 		setTypeCmbBox.setOnAction(event -> {
 			em.getTransaction().begin();
-			questType.setQuestionType("4-Choice");
+			
+			if(setTypeCmbBox.getValue().equals("Radiobuttons")){				
+				questType.setQuestionType("Radiobuttons");				
+			}else if (setTypeCmbBox.getValue().equals("Fritext")){
+				questType.setQuestionType("Fritext");				
+			}
+			
 			em.persist(questType);
 			em.getTransaction().commit();
 		});
