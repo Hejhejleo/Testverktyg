@@ -29,6 +29,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -84,6 +85,9 @@ public class GUITemplate extends Application {
 	List<String> testOverviewQDT = new ArrayList<>();
 	List<String> testOverviewADT = new ArrayList<>();
 	User userDT;
+	List<Object> questionAnswersDT= new ArrayList<>();
+//	List<ToggleGroup> toggleGroupsDT = new ArrayList<>();
+//	List<TextArea> textAreasDT = new ArrayList<>();
 
 	Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
 	Label lbl;
@@ -115,17 +119,6 @@ public class GUITemplate extends Application {
 		// Menyer topp
 
 		Menu viewMenu = new Menu("_View");
-		/*
-		 * ToggleGroup tGroup = new ToggleGroup(); RadioMenuItem mysqlItem = new
-		 * RadioMenuItem("MySQL"); mysqlItem.setToggleGroup(tGroup);
-		 * 
-		 * RadioMenuItem showCountdown = new RadioMenuItem("Javafx");
-		 * showCountdown.setToggleGroup(tGroup);
-		 * showCountdown.setSelected(true);
-		 * 
-		 * viewMenu.getItems().addAll(mysqlItem, showCountdown, new
-		 * SeparatorMenuItem());
-		 */
 
 		CheckMenuItem cssMenuItem = new CheckMenuItem("Show remaining time");
 		cssMenuItem.setSelected(true);
@@ -136,12 +129,6 @@ public class GUITemplate extends Application {
 		VBox leftMenu = new VBox(20);
 		leftMenu.setStyle("-fx-background-color: #F47920;");
 		leftMenu.setPadding(new Insets(10, 10, 10, 10));
-		/*
-		 * btn1 = new Button(); btn1.setLayoutX(22.0); btn1.setLayoutY(50.0);
-		 * btn1.setText(" View tests "); double b = 15; btn1.setShape(new
-		 * Circle(b)); btn1.setMinSize(5*b, 3*b); btn1.setMaxSize(5*b, 3*b);
-		 * //btn1.setOnAction(this); VBox.setMargin(btn1, new Insets(0,0,0,3));
-		 */
 
 		btn2 = new Button();
 		btn2.setLayoutX(20.0);
@@ -153,7 +140,6 @@ public class GUITemplate extends Application {
 		btn2.setMaxSize(9 * a, 3 * a);
 		btn2.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920;");
 		DropShadow shadow = new DropShadow();
-		// btn2.setOnAction(this);
 		VBox.setMargin(btn2, new Insets(100, 0, 0, 10));
 
 		// Adding the shadow when the mouse cursor is on
@@ -169,6 +155,10 @@ public class GUITemplate extends Application {
 			public void handle(MouseEvent e) {
 				btn2.setEffect(null);
 			}
+		});
+		
+		btn2.setOnAction(event ->{
+				toggleLogin();
 		});
 
 		btn3 = new Button();
@@ -221,8 +211,10 @@ public class GUITemplate extends Application {
 				btn4.setEffect(null);
 			}
 		});
+		
 		btn4.setOnAction(event ->{
 			startTest(user,"Test i JPA");
+			setQuestionNumber();
 		});
 
 		VBox.setMargin(btn4, new Insets(0, 0, 0, 25));
@@ -240,15 +232,6 @@ public class GUITemplate extends Application {
 		HBox bottomMenu = new HBox();
 		bottomMenu.setStyle("-fx-background-color: #F47920;");
 		bottomMenu.setPadding(new Insets(10, 10, 10, 10));
-		/*
-		 * Image img1 = new
-		 * Image(this.getClass().getResourceAsStream("/exit.png")); btn8 = new
-		 * Button("Exit", new ImageView(img1)); btn8.setLayoutX(20.0);
-		 * btn8.setLayoutY(550.0); HBox.setMargin(btn8, new Insets(0,0,5,5));
-		 * btn8.setOnAction(e -> { boolean result1 = ConfirmPane.display(
-		 * "Avsluta Programmet", "Vill du avsluta programmet?"); if (result1 ==
-		 * true) { System.exit(0); } })
-		 */
 
 		lbl = new Label("Time remaining: 00:00:00");
 		lbl.setLayoutX(20.0);
@@ -261,17 +244,8 @@ public class GUITemplate extends Application {
 		lbl.setAlignment(Pos.CENTER);
 		lbl.setFont(Font.font("Myriad", 12));
 		HBox.setMargin(lbl, new Insets(2, 0, 0, 90));
-		/*
-		 * lbl.setOnMouseEntered(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent e) { lbl.setVisible(true); }
-		 * }); lbl.setOnMouseExited(new EventHandler<MouseEvent>() {
-		 * 
-		 * @Override public void handle(MouseEvent e) { lbl.setVisible(false); }
-		 * });
-		 */
 
-		lbl2 = new Label(" Question 00/00 ");
+		lbl2 = new Label(" Question 0/0 ");
 		lbl2.setLayoutX(20.0);
 		lbl2.setLayoutY(110.0);
 		double ac = 10;
@@ -342,7 +316,6 @@ public class GUITemplate extends Application {
 		borderPane.setLeft(leftMenu);
 		borderPane.setCenter(centerPane);
 		borderPane.setBottom(bottomMenu);
-		// borderPane.setPrefSize(800,600);
 
 		Scene scene = new Scene(borderPane, 800, 600, Color.rgb(56, 56, 56));
 		primaryStage.setScene(scene);
@@ -383,16 +356,13 @@ public class GUITemplate extends Application {
 		}
 		mnuLogIn.setOnAction(logInAction -> {
 			if (!isLoggedIn.get()) {
-				showLogin();
+				toggleLogin();
 			}
 		});
 		mnuLogIn.disableProperty().bind(isLoggedIn);
 
 		mnuLogOut.setOnAction(logOutAction -> {
-			primaryStage.setTitle("Not logged in");
-			centerPane.getChildren().clear();
-			isLoggedIn.set(false);
-			isAdmin.set(false);
+			toggleLogin();
 		});
 		mnuLogOut.disableProperty().bind(isLoggedIn.not());
 
@@ -466,6 +436,7 @@ public class GUITemplate extends Application {
 				wrongLogin.setVisible(false);
 				logInStage.close();
 				isLoggedIn.set(true);
+				btn2.setText("Log out");
 			} else {
 				wrongLogin.setVisible(true);
 			}
@@ -556,7 +527,8 @@ public class GUITemplate extends Application {
 		userPane.getChildren().add(addUserColumn);
 	}
 
-	// TODO----------------------------START LEO KOD!
+	
+	// TODO----------------------------START LEO KOD!--------------------------------------
 	public void startTest(User user, String testName) {
 		this.centerPaneDT = centerPane;
 
@@ -603,14 +575,17 @@ public class GUITemplate extends Application {
 			TextArea questionTextArea = new TextArea();
 			ToggleGroup group = new ToggleGroup();
 			GridPane root = new GridPane();
+			
 			System.out.println("---------------:::7:::-----------------");
 
 			Scene sceneDT = new Scene(root, 800, 350);
+			
 
 			// TopLeft Corner
 			VBox topLeft = new VBox();
 			Text titleText = new Text(questionsDT.get(i).getQuestionTitle());
 			Text questionText = new Text(questionsDT.get(i).getQuestionText());
+			questionText.setWrappingWidth(300);
 
 			// TitleStyle
 			titleText.setFont(Font.font(20));
@@ -646,35 +621,25 @@ public class GUITemplate extends Application {
 
 			// BottomRight
 			GridPane bottomRight = new GridPane();
-			HBox bottomRightButtonHolder = new HBox();
-			bottomRightButtonHolder.setAlignment(Pos.BOTTOM_RIGHT);
-			Circle buttonBack = new Circle(15);
-			Circle buttonNext = new Circle(15);
-			Button buttonDone = new Button("Lämna in");
-			buttonDone.setVisible(false);
-			GridPane.setConstraints(bottomRightButtonHolder, 1, 1);
-			GridPane.setConstraints(buttonDone, 0, 1);
-			bottomRight.getChildren().addAll(buttonDone, bottomRightButtonHolder);
-			bottomRightButtonHolder.getChildren().addAll(buttonBack, buttonNext);
-
-			GridPane.setConstraints(bottomRight, 2, 1);
 			root.getChildren().addAll(bottomRight);
 
 			// BottomLeft / BottomCenter
 			BorderPane questionHolder = new BorderPane();
 			BorderPane answerHolder = new BorderPane();
+			answerHolder.setPrefSize(500,250);
 
 			// v---------------------Mall för text fråga
 			if (questionsDT.get(i).getquestionType().getQuestionType().equals("Fritext")) {
-				questionHolder.setCenter(questionTextArea);
-				GridPane.setConstraints(questionHolder, 0, 1, 2, 1);
-				root.getChildren().addAll(questionHolder);
+				answerHolder.setCenter(questionTextArea);
+				GridPane.setConstraints(answerHolder, 0, 1, 2, 1);
+				root.getChildren().addAll(answerHolder);
+				questionAnswersDT.add(questionTextArea);
 			}
 			// ^---------------------Mall för text fråga
 
 			// v---------------------Mall för radiobutton fråga
 			if (questionsDT.get(i).getquestionType().getQuestionType().equals("Radiobuttons")) {
-				VBox toggleButtons = new VBox();
+				VBox toggleButtons = new VBox(10);
 				RadioButton button1 = new RadioButton(answerDT.getAnswerList().get(0));
 				button1.setToggleGroup(group);
 				RadioButton button2 = new RadioButton(answerDT.getAnswerList().get(1));
@@ -688,8 +653,10 @@ public class GUITemplate extends Application {
 				answerHolder.setCenter(toggleButtons);
 				GridPane.setConstraints(answerHolder, 0, 1, 2, 1);
 				root.getChildren().addAll(answerHolder);
+				questionAnswersDT.add(group);
 
 			}
+			
 
 			// ^---------------------Mall för radiobutton fråg
 
@@ -711,40 +678,6 @@ public class GUITemplate extends Application {
 			bottomRight.setGridLinesVisible(true);
 			canvasesDT.add(root);
 
-			buttonBack.setOnMouseClicked(event -> {
-				testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
-
-				if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")) {
-					testOverviewADT.set(questionNumberDT, questionTextArea.getText());
-				}
-				if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")) {
-					try {
-						testOverviewADT.set(questionNumberDT, ((RadioButton) (group.getSelectedToggle())).getText());
-					} catch (Exception e) {
-						System.out.println(e);
-					}
-				}
-				changeQuestion("-");
-				System.out.println(questionNumberDT);
-			});
-
-			buttonNext.setOnMouseClicked(event -> {
-				testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
-
-				if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")) {
-					testOverviewADT.set(questionNumberDT, questionTextArea.getText());
-				}
-				if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")) {
-					try {
-						testOverviewADT.set(questionNumberDT, ((RadioButton) (group.getSelectedToggle())).getText());
-					} catch (Exception e) {
-						System.out.println(e);
-					}
-				}
-
-				changeQuestion("+");
-				System.out.println(questionNumberDT);
-			});
 
 			spoilerDetection.setOnMouseEntered(event -> {
 				spoilerTimer.setFill(Color.TRANSPARENT);
@@ -818,8 +751,45 @@ public class GUITemplate extends Application {
 
 		// Overview för provets svar /SLUT
 
-		// centerPaneDT.getChildren().add(canvasesDT.get(questionNumberDT));
 
+		btn5.setOnMouseClicked(event -> {
+			testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
+
+			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")) {
+				testOverviewADT.set(questionNumberDT, ((TextArea) (questionAnswersDT.get(questionNumberDT))).getText());
+			}
+			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")) {
+				try {
+					testOverviewADT.set(questionNumberDT, ((RadioButton) (((ToggleGroup) questionAnswersDT.get(questionNumberDT)).getSelectedToggle())).getText());
+					
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+			changeQuestion("-");
+			System.out.println(questionNumberDT);
+		});
+
+		btn6.setOnMouseClicked(event -> {
+			testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
+
+			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")) {
+				testOverviewADT.set(questionNumberDT, ((TextArea) (questionAnswersDT.get(questionNumberDT))).getText());
+			}
+			
+			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")) {
+				try { 
+					testOverviewADT.set(questionNumberDT, ((RadioButton) (((ToggleGroup) questionAnswersDT.get(questionNumberDT)).getSelectedToggle())).getText());
+					
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}
+
+			changeQuestion("+");
+			System.out.println(questionNumberDT);
+		});
+		
 	}
 
 	public void showDoneButton() {
@@ -843,10 +813,12 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().clear();
 			this.questionNumberDT = canvasesDT.size() - 1;
 			centerPaneDT.getChildren().add(canvasesDT.get(questionNumberDT));
+			setQuestionNumber();
 		} else if (questionNumberDT >= (canvasesDT.size() - 1) & cond == "+") {
 			centerPane.getChildren().clear();
 			this.questionNumberDT = 0;
 			centerPaneDT.getChildren().add(canvasesDT.get(questionNumberDT));
+			setQuestionNumber();
 			goneThroughDT = true;
 
 		} else {
@@ -855,13 +827,31 @@ public class GUITemplate extends Application {
 				centerPane.getChildren().clear();
 				questionNumberDT++;
 				centerPaneDT.getChildren().add(canvasesDT.get(questionNumberDT));
+				setQuestionNumber();
 				break;
 			case "-":
 				centerPane.getChildren().clear();
 				questionNumberDT--;
 				centerPaneDT.getChildren().add(canvasesDT.get(questionNumberDT));
+				setQuestionNumber();
 				break;
 			}
+		}
+	}
+	public void setQuestionNumber(){
+		lbl2.setText(" Question "+(questionNumberDT + 1) + "/" + (questionsDT.size())+" ");
+	}
+	
+	public void toggleLogin(){
+		if(isLoggedIn.get()){
+			primaryStage.setTitle("Not logged in");
+			centerPane.getChildren().clear();
+			isLoggedIn.set(false);
+			isAdmin.set(false);
+			btn2.setText("Login");
+		}else if(!isLoggedIn.get()){
+			showLogin();
+			
 		}
 	}
 
@@ -875,6 +865,6 @@ public class GUITemplate extends Application {
 		em.getTransaction().commit();
 	}
 
-	// TODO----------------------------SLUT LEO KOD!
+	// TODO----------------------------SLUT LEO KOD!--------------------------------------
 
 }
