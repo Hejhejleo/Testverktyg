@@ -491,6 +491,7 @@ public class GUITemplate extends Application {
 
 		cancelButton.setOnAction(cancel -> {
 			addUserStage.close();
+			
 		});
 
 		okButton.setOnAction(ok -> {
@@ -735,6 +736,7 @@ public class GUITemplate extends Application {
 			centerPaneDT.getChildren().add(canvasesDT.get(0));
 			questionNumberDT = 0;
 			overview.setText("");
+			setQuestionNumber();
 
 		});
 		endTest.setOnAction(event -> {
