@@ -1,8 +1,6 @@
 package gui;
 
 
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,16 +36,14 @@ public class QuizmakerGUI {
 	private ObservableList<Integer> pointObList ;
 	private ObservableList<String> questTypeObList ;
 	private ObservableList<String> testList = FXCollections.observableArrayList();
-	private ObservableList<String> questList = FXCollections.observableArrayList();
- 	private Test test;
- 	//private Test tempTest;
+	private Test test;
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
 	private int points;
-	private int correctAnswerIndex;
-	private String questionName;	
-	private ListView<String> listViewQuest = new ListView<String>();
+	private String questionName;
+	
+	private ListView<String> listViewClassTest = new ListView<String>();
 	private TextArea questFeedback = new TextArea();
 	private TextArea writeQuestionTxt = new TextArea();
 	private TextArea writeAnswerTxt = new TextArea();
@@ -112,15 +108,18 @@ public class QuizmakerGUI {
 		testCmbBox.setItems(testList);		
 		for( int i = 0; i < tempLista.size(); i++){			
 			testList.add(tempLista.get(i).getTestName());			
-		}
+		}		
+		listViewClassTest.setItems(testList);
 		
 		//Skapar lista och combobox till poängsättare
 		pointObList = FXCollections.observableArrayList(1, 2, 3, 4, 5);
 		pointCmbBox = new ComboBox<Integer>(pointObList);
 		//Lägger in två typer av olika frågor
-		questTypeObList = FXCollections.observableArrayList("Radiobuttons", "Fritext");
+		questTypeObList = FXCollections.observableArrayList("4-Choice", "Essay");
 		setTypeCmbBox = new ComboBox<String>(questTypeObList);
-								
+		
+				
+		
 	    //Graphiccomponents to the questionmaker	
 		BorderPane root = new BorderPane();
 		questFeedback.setVisible(false);
@@ -150,7 +149,7 @@ public class QuizmakerGUI {
 		butsAndtxtAreaHBox.getChildren().addAll(writeQuestionTxt, butsAndCmbQuest, butsAndCmbTest);
 		butsAndtxtAreaHBox.setSpacing(20);
 		//RadioButtons and textfields where u write the answers HBox
-		fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);		
+		fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewClassTest);		
 		radButsVBox.setSpacing(10);
 		//Add my HBoxes to a big VBox
 		componentsVBox.getChildren().addAll(butsAndtxtAreaHBox, fieldsAndRadsHBox);
@@ -179,8 +178,6 @@ public class QuizmakerGUI {
 		popUpStage.setScene(popUpScene);
 		popUpStage2.setScene(popUpScene2);
 		
-		
-		
 		root.setMargin(componentsVBox, new Insets(12,12,12,12));
 		root.setCenter(componentsVBox);
 		Scene scene = new Scene(root, 1000, 600);
@@ -189,43 +186,18 @@ public class QuizmakerGUI {
 		setTypeCmbBox.setOnAction(event -> {
 			if(setTypeCmbBox.getValue().equals("Essay")){
 				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);
+				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewClassTest);
 			}
 			if(setTypeCmbBox.getValue().equals("4-Choice")){
 				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
+				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewClassTest);
 			}
 		});
 		
 		testCmbBox.setOnAction(event -> {
 			
-			listViewQuest.getItems().clear();
-			//Gets the selected string from combobox and insert into a test variable
-			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
-			//Query for getting the question according by the testname
-			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
+			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());			
 			
-			for (Question q : tempTest.getQuestions()){
-				questList.add(q.getQuestionTitle());
-			}			
-			
-			listViewQuest.setItems(questList);
-			
-		});
-		
-		radButsVBox.setOnMouseClicked(event -> {
-			if(radBut1.isSelected()){
-				correctAnswerIndex = 0;
-			}
-			if(radBut2.isSelected()){
-				correctAnswerIndex = 1;
-			}
-			if(radBut3.isSelected()){
-				correctAnswerIndex = 2;
-			}
-			if(radBut4.isSelected()){
-				correctAnswerIndex = 3;
-			}			
 		});
 		
 		//Save the question to a test in the database
@@ -240,8 +212,7 @@ public class QuizmakerGUI {
 			quest.setQuestionType(questType);
 			questType.addQuestion(quest);			
 			test.addQuestion(quest);			
-			answer = new Answers(quest);											
-			answer.setCorrectAnswer(correctAnswerIndex);
+			answer = new Answers(quest);
 			answer.addAnswer(answer1.getText());
 			answer.addAnswer(answer2.getText());
 			answer.addAnswer(answer3.getText());
@@ -251,27 +222,9 @@ public class QuizmakerGUI {
 			em.getTransaction().commit();
 		});
 		
-	/*listViewQuest.setOnMouseClicked(event -> {
-			
-			listViewQuest.getSelectionModel().getSelectedItems();
-			
-			answer1.setText("");
-			answer2.setText("");
-			answer3.setText("");
-			answer4.setText("");
-			
-		});*/
-		
-		
 		setTypeCmbBox.setOnAction(event -> {
 			em.getTransaction().begin();
-			//TODO
-			if(setTypeCmbBox.getValue().equals("Radiobuttons")){				
-				questType.setQuestionType("Radiobuttons");				
-			}else if (setTypeCmbBox.getValue().equals("Fritext")){
-				questType.setQuestionType("Fritext");				
-			}
-			
+			questType.setQuestionType("4-Choice");
 			em.persist(questType);
 			em.getTransaction().commit();
 		});
