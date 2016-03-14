@@ -1,21 +1,22 @@
 package gui;
 
 
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
+
+
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
+import javafx.scene.input.MouseEvent;
 import entity.Answers;
 import entity.Question;
 import entity.QuestionType;
 import entity.Test;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -27,7 +28,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Toggle;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -44,7 +44,6 @@ public class QuizmakerGUI {
 	private ObservableList<String> testList = FXCollections.observableArrayList();
 	private ObservableList<String> questList = FXCollections.observableArrayList();
  	private Test test;
- 	//private Test tempTest;
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
@@ -181,11 +180,11 @@ public class QuizmakerGUI {
 		popUpScene2 = new Scene(popUpPaneNewQ, 400, 50);
 		popUpScene = new Scene(popUpPaneNewT, 300, 200);
 		//Set the scenes for both popups
+		popUpStage.setTitle("Create New Test");
+		popUpStage2.setTitle("Create New Question");
 		popUpStage.setScene(popUpScene);
 		popUpStage2.setScene(popUpScene2);
-		
-		
-		
+				
 		root.setMargin(componentsVBox, new Insets(12,12,12,12));
 		root.setCenter(componentsVBox);
 		Scene scene = new Scene(root, 1000, 600);
@@ -205,16 +204,14 @@ public class QuizmakerGUI {
 		testCmbBox.setOnAction(event -> {			
 			listViewQuest.getItems().clear();
 			//Gets the selected string from combobox and insert into a test variable
-			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
+			//test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
 			//Query for getting the question according by the testname
 			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
 			
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
-			}			
-			
-			listViewQuest.setItems(questList);
-			
+			}						
+			listViewQuest.setItems(questList);			
 		});
 				
 		//Save the question to a test in the database
@@ -254,12 +251,42 @@ public class QuizmakerGUI {
 			em.getTransaction().commit();
 		});
 		
+		//TODO
+		
 		
 		
 		//TODO
-		editQuestBut.setOnAction(event -> {
+		listViewQuest.setOnMouseClicked(event -> {
 			
+			List<Answers> tempAnsView =  (List<Answers>) em.createQuery("select t from Answers t").getResultList();
+			//Question tempQuestList = (Question) em.createQuery("select t from Question t where t.questionTitle ='" + listViewQuest.getSelectionModel().getSelectedItem()+"'").getSingleResult();
 			
+			for(Answers a: tempAnsView){
+				if(a.getQuestion().getQuestionTitle().equals(listViewQuest.getSelectionModel().getSelectedItem())){
+					
+					System.out.println(a.getAnswerList().get(0));
+					System.out.println(tempAnsView);
+					
+					answer1.setText(a.getAnswerList().get(0));
+					answer2.setText(a.getAnswerList().get(1));
+					answer3.setText(a.getAnswerList().get(2));
+					answer4.setText(a.getAnswerList().get(3));					
+					writeQuestionTxt.setText(a.getQuestion().getQuestionText());
+					
+					editQuestBut.setOnAction(event2 -> {
+						a.getAnswerList().clear();
+						em.getTransaction().begin();
+						a.addAnswer(answer1.getText());
+						a.addAnswer(answer2.getText());
+						a.addAnswer(answer3.getText());
+						a.addAnswer(answer4.getText());
+						a.getQuestion().setQuestionText(writeQuestionTxt.getText());
+						em.persist(a);
+						em.getTransaction().commit();
+					});
+					
+				}				
+			}			
 		});
 	
 		
