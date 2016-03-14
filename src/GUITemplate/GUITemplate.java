@@ -19,6 +19,7 @@ import gui.AddNewUser;
 import gui.AdminUser;
 import gui.ChangeUserInfo;
 import gui.QuizmakerGUI;
+import gui.StudentHome;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
@@ -66,6 +67,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class GUITemplate extends Application {
+	private Test noTest;
 	private AddUser addUser;
 	private Login logIn = new Login();
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
@@ -73,6 +75,7 @@ public class GUITemplate extends Application {
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
+	private StudentHome studentHome;
 	AddNewUser addNewUser = new AddNewUser();
 	private User user = null;
 	AnchorPane centerPaneDT;
@@ -85,9 +88,9 @@ public class GUITemplate extends Application {
 	List<String> testOverviewQDT = new ArrayList<>();
 	List<String> testOverviewADT = new ArrayList<>();
 	User userDT;
-	List<Object> questionAnswersDT= new ArrayList<>();
-//	List<ToggleGroup> toggleGroupsDT = new ArrayList<>();
-//	List<TextArea> textAreasDT = new ArrayList<>();
+	List<Object> questionAnswersDT = new ArrayList<>();
+	// List<ToggleGroup> toggleGroupsDT = new ArrayList<>();
+	// List<TextArea> textAreasDT = new ArrayList<>();
 
 	Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
 	Label lbl;
@@ -156,9 +159,9 @@ public class GUITemplate extends Application {
 				btn2.setEffect(null);
 			}
 		});
-		
-		btn2.setOnAction(event ->{
-				toggleLogin();
+
+		btn2.setOnAction(event -> {
+			toggleLogin();
 		});
 
 		btn3 = new Button();
@@ -179,6 +182,10 @@ public class GUITemplate extends Application {
 			public void handle(MouseEvent e) {
 				btn3.setEffect(shadow1);
 			}
+		});
+		btn3.setOnAction(event -> {
+			centerPane.getChildren().clear();
+
 		});
 
 		btn3.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
@@ -211,9 +218,16 @@ public class GUITemplate extends Application {
 				btn4.setEffect(null);
 			}
 		});
-		
-		btn4.setOnAction(event ->{
-			startTest(user,"Test i JPA");
+		// START BUTTON
+		btn4.setOnAction(event -> {
+			questionAnswersDT.clear();
+			canvasesDT.clear();
+			questionNumberDT = 0;
+			questionsDT.clear();
+			testOverviewADT.clear();
+			testOverviewQDT.clear();
+
+			startTest(user, studentHome.getTest().getTestName());
 			setQuestionNumber();
 		});
 
@@ -369,7 +383,7 @@ public class GUITemplate extends Application {
 		Menu mnuAdmin = new Menu("Admin");
 		MenuItem adminUsers = new MenuItem("Administer Users");
 		MenuItem addUser = new MenuItem("Add user");
-		addUser.setOnAction(event ->{
+		addUser.setOnAction(event -> {
 			addNewUser.showUserPane();
 		});
 		adminUsers.setOnAction(action -> {
@@ -378,7 +392,7 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().addAll(userAdmin.showPane(root));
 		});
 		mnuAdmin.disableProperty().bind(canAdd.not());
-		mnuAdmin.getItems().addAll(adminUsers,addUser, createQuest);
+		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest);
 
 		Menu mnuStudent = new Menu("Student");
 		mnuStudent.disableProperty().bind(isLoggedIn.not());
@@ -424,6 +438,7 @@ public class GUITemplate extends Application {
 		loginColumn.getChildren().addAll(title, txtUserName, txtPassword, wrongLogin);
 		logInPane.getChildren().addAll(loginColumn);
 
+		// After Login
 		txtPassword.setOnAction(e -> {
 			user = logIn.login(txtUserName.getText(), txtPassword.getText());
 			if (user != null) {
@@ -437,6 +452,9 @@ public class GUITemplate extends Application {
 				logInStage.close();
 				isLoggedIn.set(true);
 				btn2.setText("Log out");
+				studentHome = new StudentHome();
+				centerPane.getChildren().add(studentHome.showPane(user));
+
 			} else {
 				wrongLogin.setVisible(true);
 			}
@@ -491,7 +509,7 @@ public class GUITemplate extends Application {
 
 		cancelButton.setOnAction(cancel -> {
 			addUserStage.close();
-			
+
 		});
 
 		okButton.setOnAction(ok -> {
@@ -528,8 +546,8 @@ public class GUITemplate extends Application {
 		userPane.getChildren().add(addUserColumn);
 	}
 
-	
-	// TODO----------------------------START LEO KOD!--------------------------------------
+	// TODO----------------------------START LEO
+	// KOD!--------------------------------------
 	public void startTest(User user, String testName) {
 		this.centerPaneDT = centerPane;
 
@@ -576,11 +594,10 @@ public class GUITemplate extends Application {
 			TextArea questionTextArea = new TextArea();
 			ToggleGroup group = new ToggleGroup();
 			GridPane root = new GridPane();
-			
+
 			System.out.println("---------------:::7:::-----------------");
 
 			Scene sceneDT = new Scene(root, 800, 350);
-			
 
 			// TopLeft Corner
 			VBox topLeft = new VBox();
@@ -627,7 +644,7 @@ public class GUITemplate extends Application {
 			// BottomLeft / BottomCenter
 			BorderPane questionHolder = new BorderPane();
 			BorderPane answerHolder = new BorderPane();
-			answerHolder.setPrefSize(500,250);
+			answerHolder.setPrefSize(500, 250);
 
 			// v---------------------Mall för text fråga
 			if (questionsDT.get(i).getquestionType().getQuestionType().equals("Fritext")) {
@@ -657,7 +674,6 @@ public class GUITemplate extends Application {
 				questionAnswersDT.add(group);
 
 			}
-			
 
 			// ^---------------------Mall för radiobutton fråg
 
@@ -678,7 +694,6 @@ public class GUITemplate extends Application {
 			root.setGridLinesVisible(true);
 			bottomRight.setGridLinesVisible(true);
 			canvasesDT.add(root);
-
 
 			spoilerDetection.setOnMouseEntered(event -> {
 				spoilerTimer.setFill(Color.TRANSPARENT);
@@ -753,7 +768,6 @@ public class GUITemplate extends Application {
 
 		// Overview för provets svar /SLUT
 
-
 		btn5.setOnMouseClicked(event -> {
 			testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
 
@@ -762,8 +776,10 @@ public class GUITemplate extends Application {
 			}
 			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")) {
 				try {
-					testOverviewADT.set(questionNumberDT, ((RadioButton) (((ToggleGroup) questionAnswersDT.get(questionNumberDT)).getSelectedToggle())).getText());
-					
+					testOverviewADT.set(questionNumberDT,
+							((RadioButton) (((ToggleGroup) questionAnswersDT.get(questionNumberDT))
+									.getSelectedToggle())).getText());
+
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -778,11 +794,13 @@ public class GUITemplate extends Application {
 			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Fritext")) {
 				testOverviewADT.set(questionNumberDT, ((TextArea) (questionAnswersDT.get(questionNumberDT))).getText());
 			}
-			
+
 			if (questionsDT.get(questionNumberDT).getquestionType().getQuestionType().equals("Radiobuttons")) {
-				try { 
-					testOverviewADT.set(questionNumberDT, ((RadioButton) (((ToggleGroup) questionAnswersDT.get(questionNumberDT)).getSelectedToggle())).getText());
-					
+				try {
+					testOverviewADT.set(questionNumberDT,
+							((RadioButton) (((ToggleGroup) questionAnswersDT.get(questionNumberDT))
+									.getSelectedToggle())).getText());
+
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -791,7 +809,7 @@ public class GUITemplate extends Application {
 			changeQuestion("+");
 			System.out.println(questionNumberDT);
 		});
-		
+
 	}
 
 	public void showDoneButton() {
@@ -840,20 +858,22 @@ public class GUITemplate extends Application {
 			}
 		}
 	}
-	public void setQuestionNumber(){
-		lbl2.setText(" Question "+(questionNumberDT + 1) + "/" + (questionsDT.size())+" ");
+
+	public void setQuestionNumber() {
+		lbl2.setText(" Question " + (questionNumberDT + 1) + "/" + (questionsDT.size()) + " ");
 	}
-	
-	public void toggleLogin(){
-		if(isLoggedIn.get()){
+
+	public void toggleLogin() {
+		if (isLoggedIn.get()) {
 			primaryStage.setTitle("Not logged in");
 			centerPane.getChildren().clear();
 			isLoggedIn.set(false);
 			isAdmin.set(false);
 			btn2.setText("Login");
-		}else if(!isLoggedIn.get()){
+			studentHome.setTest(noTest);
+		} else if (!isLoggedIn.get()) {
 			showLogin();
-			
+
 		}
 	}
 
@@ -867,6 +887,7 @@ public class GUITemplate extends Application {
 		em.getTransaction().commit();
 	}
 
-	// TODO----------------------------SLUT LEO KOD!--------------------------------------
+	// TODO----------------------------SLUT LEO
+	// KOD!--------------------------------------
 
 }
