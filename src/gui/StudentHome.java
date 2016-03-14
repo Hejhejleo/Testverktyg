@@ -29,6 +29,10 @@ public class StudentHome {
 
 	
 	public BorderPane showPane(User user){
+		tests.clear();
+		classes.clear();
+		testsForStudent.clear();
+		obsTestsList.clear();
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
 		tests = (List<Test>) em.createQuery("select t from Test t").getResultList();
