@@ -70,12 +70,12 @@ public class GUITemplate extends Application {
 	private Test noTest;
 	private AddUser addUser;
 	private Login logIn = new Login();
-	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
-	private BooleanProperty isAdmin = new SimpleBooleanProperty(false);
+	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
+	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
-	private StudentHome studentHome;
+	private StudentHome studentHome = new StudentHome();
 	AddNewUser addNewUser = new AddNewUser();
 	private User user = null;
 	AnchorPane centerPaneDT;
@@ -89,6 +89,7 @@ public class GUITemplate extends Application {
 	List<String> testOverviewADT = new ArrayList<>();
 	User userDT;
 	List<Object> questionAnswersDT = new ArrayList<>();
+	
 	// List<ToggleGroup> toggleGroupsDT = new ArrayList<>();
 	// List<TextArea> textAreasDT = new ArrayList<>();
 
@@ -167,7 +168,7 @@ public class GUITemplate extends Application {
 		btn3 = new Button();
 		btn3.setLayoutX(20.0);
 		btn3.setLayoutY(110.0);
-		btn3.setText(" Update ");
+		btn3.setText(" Home ");
 		double ae = 10;
 		btn3.setShape(new Rectangle(ae, ae));
 		btn3.setMinSize(9 * ae, 3 * ae);
@@ -185,6 +186,7 @@ public class GUITemplate extends Application {
 		});
 		btn3.setOnAction(event -> {
 			centerPane.getChildren().clear();
+			centerPane.getChildren().add(studentHome.showPane(user));
 
 		});
 
@@ -452,7 +454,6 @@ public class GUITemplate extends Application {
 				logInStage.close();
 				isLoggedIn.set(true);
 				btn2.setText("Log out");
-				studentHome = new StudentHome();
 				centerPane.getChildren().add(studentHome.showPane(user));
 
 			} else {
@@ -618,23 +619,23 @@ public class GUITemplate extends Application {
 
 			// TopRight Corner
 			BorderPane top = new BorderPane();
-			HBox topRight = new HBox(10);
-			topRight.spacingProperty().set(10);
-
-			top.setTop(topRight);
-			topRight.setAlignment(Pos.TOP_RIGHT);
-			StackPane spoilerHolder = new StackPane();
-			Rectangle spoilerTimer = new Rectangle(40, 15, Color.BLACK);
-			Rectangle spoilerDetection = new Rectangle(40, 15, Color.TRANSPARENT);
-			Text timerText = new Text("time");
-			timerText.setFill(Color.WHITE);
-			timerText.setStroke(Color.WHITE);
-			Label timer = new Label("18:45");
-			Label questionNr = new Label((i + 1) + "/" + (questionsDT.size()));
-			spoilerHolder.getChildren().addAll(timer, spoilerTimer, timerText);
-			spoilerHolder.getChildren().add(spoilerDetection);
-			topRight.getChildren().addAll(spoilerHolder, questionNr);
-			GridPane.setConstraints(top, 2, 0);
+//			HBox topRight = new HBox(10);
+//			topRight.spacingProperty().set(10);
+//
+//			top.setTop(topRight);
+//			topRight.setAlignment(Pos.TOP_RIGHT);
+//			StackPane spoilerHolder = new StackPane();
+//			Rectangle spoilerTimer = new Rectangle(40, 15, Color.BLACK);
+//			Rectangle spoilerDetection = new Rectangle(40, 15, Color.TRANSPARENT);
+//			Text timerText = new Text("time");
+//			timerText.setFill(Color.WHITE);
+//			timerText.setStroke(Color.WHITE);
+//			Label timer = new Label("18:45");
+//			Label questionNr = new Label((i + 1) + "/" + (questionsDT.size()));
+//			spoilerHolder.getChildren().addAll(timer, spoilerTimer, timerText);
+//			spoilerHolder.getChildren().add(spoilerDetection);
+//			topRight.getChildren().addAll(spoilerHolder, questionNr);
+//			GridPane.setConstraints(top, 2, 0);
 			root.getChildren().addAll(top);
 
 			// BottomRight
@@ -695,18 +696,18 @@ public class GUITemplate extends Application {
 			bottomRight.setGridLinesVisible(true);
 			canvasesDT.add(root);
 
-			spoilerDetection.setOnMouseEntered(event -> {
-				spoilerTimer.setFill(Color.TRANSPARENT);
-				timerText.setFill(Color.TRANSPARENT);
-				timerText.setStroke(Color.TRANSPARENT);
-
-			});
-			spoilerDetection.setOnMouseExited(event -> {
-				spoilerTimer.setFill(Color.BLACK);
-				timerText.setFill(Color.WHITE);
-				timerText.setStroke(Color.WHITE);
-
-			});
+//			spoilerDetection.setOnMouseEntered(event -> {
+//				spoilerTimer.setFill(Color.TRANSPARENT);
+//				timerText.setFill(Color.TRANSPARENT);
+//				timerText.setStroke(Color.TRANSPARENT);
+//
+//			});
+//			spoilerDetection.setOnMouseExited(event -> {
+//				spoilerTimer.setFill(Color.BLACK);
+//				timerText.setFill(Color.WHITE);
+//				timerText.setStroke(Color.WHITE);
+//
+//			});
 
 		}
 
