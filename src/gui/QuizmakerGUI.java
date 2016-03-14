@@ -47,6 +47,7 @@ public class QuizmakerGUI {
 	private ObservableList<String> testList = FXCollections.observableArrayList();
 	private ObservableList<String> questList = FXCollections.observableArrayList();
  	private Test test;
+ 	private AssignTest assignTest = new AssignTest();
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
@@ -73,11 +74,11 @@ public class QuizmakerGUI {
 	private CheckBox feedbackCheck = new CheckBox();
 	private ToggleGroup butGroup = new ToggleGroup();
 	private Button newQuestBut = new Button("New Question");	
-	private Button saveQuestBut = new Button("Save Question");
+	private Button saveQuestBut = new Button("Save QuestionChanges");
 	private Button editQuestBut = new Button("Edit Question");
 	private Button newTestBut = new Button("New Test");	
 	private Button saveTestBut = new Button("Save Test");
-	private Button assignTest = new Button("Assign Test");
+	private Button assignTestBut = new Button("Assign Test");
 	private Button deleteTestBut = new Button("Delete Test");
 	private Button okBut = new Button("OK");
 	private ComboBox<String> questCmbBox = new ComboBox<String>();
@@ -152,7 +153,7 @@ public class QuizmakerGUI {
 		radBut4.setToggleGroup(butGroup);		
 		radButsVBox.getChildren().addAll(radBut1, radBut2, radBut3, radBut4, feedbackCheck);		
 		// Button VBox right of textarea		
-		butsAndCmbTest.getChildren().addAll(newTestBut, deleteTestBut, assignTest, testCmbBox);
+		butsAndCmbTest.getChildren().addAll(newTestBut, deleteTestBut, assignTestBut, testCmbBox);
 		// Button VBox right of textarea
 		butsAndCmbQuest.getChildren().addAll(newQuestBut, saveQuestBut, editQuestBut);
 		//HBox right of textarea where u type in a question
@@ -331,6 +332,9 @@ public class QuizmakerGUI {
 		
 		okBut.setOnAction(event -> {			
 			popUpStage2.close();
+		});
+		assignTestBut.setOnAction(event -> {			
+			assignTest.doAssign(test, em);			
 		});
 		
 		newQuestBut.setOnAction(event -> {
