@@ -4,8 +4,11 @@ package gui;
 
 
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.OneToOne;
 import javax.persistence.Persistence;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -51,6 +54,7 @@ public class QuizmakerGUI {
 	private int correctAnswerIndex;
 	private String questionName;	
 	private ListView<String> listViewQuest = new ListView<String>();
+	private ListView<String> listViewClass = new ListView<String>();
 	private TextArea questFeedback = new TextArea();
 	private TextArea writeQuestionTxt = new TextArea();
 	private TextArea writeAnswerTxt = new TextArea();
@@ -73,7 +77,8 @@ public class QuizmakerGUI {
 	private Button editQuestBut = new Button("Edit Question");
 	private Button newTestBut = new Button("New Test");	
 	private Button saveTestBut = new Button("Save Test");
-	private Button editTestBut = new Button("Edit Test");
+	private Button assignTest = new Button("Assign Test");
+	private Button deleteTestBut = new Button("Delete Test");
 	private Button okBut = new Button("OK");
 	private ComboBox<String> questCmbBox = new ComboBox<String>();
 	private ComboBox<String> testCmbBox = new ComboBox<String>();
@@ -147,7 +152,7 @@ public class QuizmakerGUI {
 		radBut4.setToggleGroup(butGroup);		
 		radButsVBox.getChildren().addAll(radBut1, radBut2, radBut3, radBut4, feedbackCheck);		
 		// Button VBox right of textarea		
-		butsAndCmbTest.getChildren().addAll(newTestBut, editTestBut, testCmbBox);
+		butsAndCmbTest.getChildren().addAll(newTestBut, deleteTestBut, assignTest, testCmbBox);
 		// Button VBox right of textarea
 		butsAndCmbQuest.getChildren().addAll(newQuestBut, saveQuestBut, editQuestBut);
 		//HBox right of textarea where u type in a question
@@ -204,7 +209,7 @@ public class QuizmakerGUI {
 		testCmbBox.setOnAction(event -> {			
 			listViewQuest.getItems().clear();
 			//Gets the selected string from combobox and insert into a test variable
-			//test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
+			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
 			//Query for getting the question according by the testname
 			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
 			
@@ -251,15 +256,16 @@ public class QuizmakerGUI {
 			em.getTransaction().commit();
 		});
 		
-		//TODO
+		deleteTestBut.setOnAction(event -> {
+						
+			
+		});
 		
 		
 		
-		//TODO
 		listViewQuest.setOnMouseClicked(event -> {
 			
 			List<Answers> tempAnsView =  (List<Answers>) em.createQuery("select t from Answers t").getResultList();
-			//Question tempQuestList = (Question) em.createQuery("select t from Question t where t.questionTitle ='" + listViewQuest.getSelectionModel().getSelectedItem()+"'").getSingleResult();
 			
 			for(Answers a: tempAnsView){
 				if(a.getQuestion().getQuestionTitle().equals(listViewQuest.getSelectionModel().getSelectedItem())){
@@ -305,7 +311,7 @@ public class QuizmakerGUI {
 		
 		
 		//Save the test to the database
-		saveTestBut.setOnAction(event -> {
+		saveTestBut.setOnAction(event -> {			
 			test = new Test();
 			em.getTransaction().begin();
 			test.setTestName(setTitleTxt.getText());
