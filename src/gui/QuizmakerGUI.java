@@ -55,7 +55,6 @@ public class QuizmakerGUI {
 	private int correctAnswerIndex;
 	private String questionName;	
 	private ListView<String> listViewQuest = new ListView<String>();
-	private ListView<String> listViewClass = new ListView<String>();
 	private TextArea questFeedback = new TextArea();
 	private TextArea writeQuestionTxt = new TextArea();
 	private TextArea writeAnswerTxt = new TextArea();
@@ -74,14 +73,13 @@ public class QuizmakerGUI {
 	private CheckBox feedbackCheck = new CheckBox();
 	private ToggleGroup butGroup = new ToggleGroup();
 	private Button newQuestBut = new Button("New Question");	
-	private Button saveQuestBut = new Button("Save QuestionChanges");
-	private Button editQuestBut = new Button("Edit Question");
+	private Button saveQuestBut = new Button("Save Question");
+	private Button editQuestBut = new Button("Save Changes");
 	private Button newTestBut = new Button("New Test");	
 	private Button saveTestBut = new Button("Save Test");
 	private Button assignTestBut = new Button("Assign Test");
 	private Button deleteTestBut = new Button("Delete Test");
 	private Button okBut = new Button("OK");
-	private ComboBox<String> questCmbBox = new ComboBox<String>();
 	private ComboBox<String> testCmbBox = new ComboBox<String>();
 	private ComboBox<String> setTypeCmbBox = new ComboBox<String>();
 	private ComboBox<Integer> pointCmbBox = new ComboBox<Integer>();
@@ -117,11 +115,11 @@ public class QuizmakerGUI {
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
 		
-		List <Test> tempLista = (List <Test>) em.createQuery("select t from Test t").getResultList();
+		List <Test> tempTestLista = (List <Test>) em.createQuery("select t from Test t").getResultList();
 		testCmbBox.setPromptText("Select test");
-		testCmbBox.setItems(testList);		
-		for( int i = 0; i < tempLista.size(); i++){			
-			testList.add(tempLista.get(i).getTestName());			
+		testCmbBox.setItems(testList);
+		for( int i = 0; i < tempTestLista.size(); i++){			
+			testList.add(tempTestLista.get(i).getTestName());			
 		}
 		
 		//Skapar lista och combobox till poängsättare
@@ -210,13 +208,13 @@ public class QuizmakerGUI {
 		testCmbBox.setOnAction(event -> {			
 			listViewQuest.getItems().clear();
 			//Gets the selected string from combobox and insert into a test variable
-			test = tempLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
+			test = tempTestLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
 			//Query for getting the question according by the testname
 			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
 			
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
-			}						
+			}
 			listViewQuest.setItems(questList);			
 		});
 				
@@ -253,13 +251,16 @@ public class QuizmakerGUI {
 			answer.addAnswer(answer3.getText());
 			answer.addAnswer(answer4.getText());
 			em.persist(answer);
-			em.persist(quest);
+			em.persist(quest);			
 			em.getTransaction().commit();
+				
+			
 		});
 		
 		deleteTestBut.setOnAction(event -> {
-						
 			
+			Test testDelete = (Test) em.createQuery("delete t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
+								
 		});
 		
 		
@@ -314,7 +315,7 @@ public class QuizmakerGUI {
 		//Save the test to the database
 		saveTestBut.setOnAction(event -> {			
 			test = new Test();
-			em.getTransaction().begin();
+			em.getTransaction().begin();			
 			test.setTestName(setTitleTxt.getText());
 			setTitleTxt.setText("");
 			test.setTestStart(startTestTxt.getText());
@@ -324,6 +325,9 @@ public class QuizmakerGUI {
 			popUpStage.close();			
 			em.persist(test);			
 			em.getTransaction().commit();
+			testList.add(test.getTestName());
+			tempTestLista.add(test);
+			testCmbBox.getSelectionModel().select(testList.size()-1);
 		});
 		
 		newTestBut.setOnAction(event -> {			
