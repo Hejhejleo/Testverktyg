@@ -26,7 +26,7 @@ public class Test {
 	private String testName;
 	private String testStart;
 	private String testEnd;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.REMOVE)
 	private List<Question> questionList;
 	@OneToMany(cascade = CascadeType.REFRESH)
 	private List<SchoolClass> classList;
