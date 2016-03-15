@@ -3,6 +3,7 @@ package gui;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -75,7 +76,7 @@ public class QuizmakerGUI {
 	private ToggleGroup butGroup = new ToggleGroup();
 	private Button newQuestBut = new Button("New Question");	
 	private Button saveQuestBut = new Button("Save Question");
-	private Button editQuestBut = new Button("Save Changes");
+	private Button changeQuestBut = new Button("Save Changes");
 	private Button newTestBut = new Button("New Test");	
 	private Button saveTestBut = new Button("Save Test");
 	private Button assignTestBut = new Button("Assign Test");
@@ -135,6 +136,7 @@ public class QuizmakerGUI {
 		questFeedback.setVisible(false);
 		
 		fieldsVBox.getChildren().addAll(answer1, answer2, answer3, answer4, questFeedback);
+		fieldsVBox.setVisible(false);
 		answer1.setPromptText("Answer one");
 		answer2.setPromptText("Answer two");
 		answer3.setPromptText("Answer three");
@@ -142,6 +144,7 @@ public class QuizmakerGUI {
 		writeQuestionTxt.setPromptText("Write question here");
 		questFeedback.setPromptText("Write student feedback here");
 		writeAnswerTxt.setPromptText("Write answer here");
+		writeAnswerTxt.setVisible(false);
 		setTitleTxt.setPromptText("Test Name");
 		setTitleTxtQ.setPromptText("Question Name");
 		fieldsVBox.setPrefWidth(480.0);
@@ -150,14 +153,16 @@ public class QuizmakerGUI {
 		radBut2.setToggleGroup(butGroup);
 		radBut3.setToggleGroup(butGroup);
 		radBut4.setToggleGroup(butGroup);		
-		radButsVBox.getChildren().addAll(radBut1, radBut2, radBut3, radBut4, feedbackCheck);		
+		radButsVBox.getChildren().addAll(radBut1, radBut2, radBut3, radBut4, feedbackCheck);
+		radButsVBox.setVisible(false);
 		// Button VBox right of textarea		
 		butsAndCmbTest.getChildren().addAll(newTestBut, deleteTestBut, assignTestBut, testCmbBox);
 		// Button VBox right of textarea
-		butsAndCmbQuest.getChildren().addAll(newQuestBut, saveQuestBut, editQuestBut);
+		butsAndCmbQuest.getChildren().addAll(newQuestBut, saveQuestBut, changeQuestBut);
 		//HBox right of textarea where u type in a question
 		butsAndtxtAreaHBox.getChildren().addAll(writeQuestionTxt, butsAndCmbQuest, butsAndCmbTest);
 		butsAndtxtAreaHBox.setSpacing(20);
+		writeQuestionTxt.setVisible(false);
 		//RadioButtons and textfields where u write the answers HBox
 		fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);		
 		radButsVBox.setSpacing(10);
@@ -185,7 +190,7 @@ public class QuizmakerGUI {
 		popUpScene2 = new Scene(popUpPaneNewQ, 400, 50);
 		popUpScene = new Scene(popUpPaneNewT, 300, 200);
 		//Set the scenes for both popups
-		popUpStage.setTitle("Create New Test");
+		popUpStage.setTitle("Set Test title");
 		popUpStage2.setTitle("Create New Question");
 		popUpStage.setScene(popUpScene);
 		popUpStage2.setScene(popUpScene2);
@@ -220,8 +225,9 @@ public class QuizmakerGUI {
 		});
 				
 		//Save the question to a test in the database
-		saveQuestBut.setOnAction(event -> {
-			em.getTransaction().begin();
+		saveQuestBut.setOnAction(event -> {			
+			
+			em.getTransaction().begin();			
 			points = pointCmbBox.getValue();
 			quest.setPoints(points);
 			quest.setDirectFeedback(feedbackCheck.isSelected());
@@ -251,21 +257,40 @@ public class QuizmakerGUI {
 			answer.addAnswer(answer2.getText());
 			answer.addAnswer(answer3.getText());
 			answer.addAnswer(answer4.getText());
+			answer1.setText("");
+			answer2.setText("");
+			answer3.setText("");
+			answer4.setText("");
+			setTitleTxtQ.setText("");
+			writeQuestionTxt.setText("");
+			questFeedback.setText("");
 			em.persist(answer);
 			em.persist(quest);			
-			em.getTransaction().commit();
-				
-			
-		});
-		
-		deleteTestBut.setOnAction(event -> {			
-			
-			em.getTransaction().begin();
-			em.createQuery("delete from Test t where t.testName ='" + testCmbBox.getValue()+"'").executeUpdate();
 			em.getTransaction().commit();			
 		});
 		
-		
+		deleteTestBut.setOnAction(event -> {
+			em.getTransaction().begin();
+			//Query query = em.createQuery("delete from Test t where t.testName ='" + testCmbBox.getValue()+"'");
+			
+			//int deleted = query.executeUpdate();
+			
+			Test t = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();						
+			System.out.println(t.getTestName());
+			for (Question q : t.getQuestions()) {
+				System.out.println(q.getQuestionText());
+			
+				em.createNativeQuery("delete from questiontype_question where questionlist_QUESTIONID = " + q.getId()).executeUpdate();
+				em.createNativeQuery("delete from test_question where test_testid = " + t.getTestId()).executeUpdate();
+				em.createNativeQuery("delete from question where test_testid = " + t.getTestId()).executeUpdate();
+				em.createNativeQuery("delete from studentanswer where question_questionID =" + q.getId()).executeUpdate();
+				em.createNativeQuery("delete from answers where QUESTION_QUESTIONID =" + q.getId()).executeUpdate();
+			}	
+			em.createNativeQuery("delete from testtime where test_testid =" + t.getTestId()).executeUpdate();
+			em.createNativeQuery("delete from test where testid =" + t.getTestId()).executeUpdate();
+			//em.remove(t);
+			em.getTransaction().commit();
+		});
 		
 		listViewQuest.setOnMouseClicked(event -> {
 			
@@ -283,7 +308,7 @@ public class QuizmakerGUI {
 					answer4.setText(a.getAnswerList().get(3));					
 					writeQuestionTxt.setText(a.getQuestion().getQuestionText());
 					
-					editQuestBut.setOnAction(event2 -> {
+					changeQuestBut.setOnAction(event2 -> {
 						a.getAnswerList().clear();
 						em.getTransaction().begin();
 						a.addAnswer(answer1.getText());
@@ -332,7 +357,11 @@ public class QuizmakerGUI {
 			testCmbBox.getSelectionModel().select(testList.size()-1);
 		});
 		
-		newTestBut.setOnAction(event -> {			
+		newTestBut.setOnAction(event -> {
+			fieldsVBox.setVisible(false);
+			radButsVBox.setVisible(false);
+			writeQuestionTxt.setVisible(false);
+			writeAnswerTxt.setVisible(false);
 			popUpStage.showAndWait();			
 		});
 		
@@ -344,6 +373,10 @@ public class QuizmakerGUI {
 		});
 		
 		newQuestBut.setOnAction(event -> {
+			fieldsVBox.setVisible(true);
+			radButsVBox.setVisible(true);
+			writeQuestionTxt.setVisible(true);
+			writeAnswerTxt.setVisible(true);
 			quest = new Question(points, true, null, null, test, null);			
 			popUpStage2.showAndWait();	
 		});
