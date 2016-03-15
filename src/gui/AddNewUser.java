@@ -1,41 +1,60 @@
 package gui;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+import entity.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class AddNewUser {
-
 	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
 	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
 			+ "-fx-background-color: #FFFFFF";
+	private EntityManagerFactory emf;
+	private EntityManager em;
 
-	public void showUserPane() {
+	private boolean checkDouble(String userName, EntityManager em) {
+		Query query = em.createNamedQuery("loginByName");
+		query.setParameter("uname", userName);
+		List<User> userList = query.getResultList();
+		for (User user : userList) {
+			if (userName.equals(user.getUserName()))
+				return true;
+		}
+		
+		return false;
+	}
+
+	
+	public StackPane showPane() {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
+		EntityManager em = emf.createEntityManager();
+
 		ObservableList<String> accountType = FXCollections.observableArrayList();
 		accountType.add("Admin");
 		accountType.add("Student");
 
-		Stage newUserStage = new Stage();
 		StackPane userPane = new StackPane();
-		Scene newUserScene = new Scene(userPane,400,400);
-		newUserStage.setScene(newUserScene);
-		newUserStage.show();
 
 		Text titleText = new Text("Add user account");
 		titleText.setFont(Font.font(30));
@@ -94,6 +113,8 @@ public class AddNewUser {
 		txtEmail.setMaxWidth(200);
 		txtEmail.setPromptText("E-mail");
 
+		
+		
 		VBox enterBox1 = new VBox(5);
 		enterBox1.setPadding(new Insets(5, 10, 5, 10));
 		enterBox1.getChildren().addAll(txtUserName, txtFirstName, txtLastName, txtPassword, confirmPassword,
@@ -120,7 +141,7 @@ public class AddNewUser {
 		buttons.setPadding(new Insets(5, 10, 10, 10));
 
 		cancelButton.setOnAction(cancel -> {
-  		newUserStage.close(); // TODO knappen funkar inte, ska ï¿½ndras till
+//			 addUserStage.close(); // TODO knappen funkar inte, ska ändras till
 			// tillbakaknapp
 			
 			
@@ -128,10 +149,14 @@ public class AddNewUser {
 
 		
 		String regex = "\\d+";
-
+//TODO ska det finnas poster som inte behöver vara ifyllda?
 		okButton.setOnAction(ok -> {
 			Alert error = new Alert(AlertType.ERROR);
-			if (txtUserName.getText().equals("")) {
+			if (checkDouble(txtUserName.getText(), em)) {
+				error.setTitle("Username not unique");
+				error.setHeaderText("Try enter an other username");
+				error.showAndWait();
+			} else if (txtUserName.getText().equals("")) {
 				error.setTitle("No username chosen");
 				error.setHeaderText("You must enter a username");
 				error.showAndWait();
@@ -176,8 +201,28 @@ public class AddNewUser {
 				error.setHeaderText("You must enter a city");
 				error.showAndWait();
 			} else {
+				User newUser = new User();
+				newUser.setfName(txtFirstName.getText());
+				newUser.setlName(txtLastName.getText());
+				newUser.setUserName(txtUserName.getText());
+				newUser.setPassword(txtPassword.getText());
+				newUser.setAccountType((String) cmbAccountType.getValue());
+				newUser.setSSN(txtSSN.getText());
+				newUser.setEmail(txtEmail.getText());
+				newUser.setPhone(txtPhoneNumber.getText());
+				newUser.setStreet(txtStreet.getText());
+				newUser.setZip(Integer.parseInt(txtZipCode.getText()));
+				newUser.setCity(txtCity.getText());
+				
+				em.getTransaction().begin();
+				
+				em.persist(newUser);
+				
+				em.getTransaction().commit();
+				
+				em.close();
+				emf.close();
 
-				newUserStage.close();
 			}
 		});
 
@@ -186,7 +231,7 @@ public class AddNewUser {
 		addUserColumn.getChildren().addAll(titleBox, enterBoxes, buttons);
 		addUserColumn.setStyle(frameStyle);// sets style for addframe
 		userPane.getChildren().add(addUserColumn);
+		return userPane;
 	}
-
 
 }
