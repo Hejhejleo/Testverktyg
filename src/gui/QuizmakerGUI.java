@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.OneToOne;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javafx.scene.input.MouseEvent;
@@ -257,10 +258,11 @@ public class QuizmakerGUI {
 			
 		});
 		
-		deleteTestBut.setOnAction(event -> {
+		deleteTestBut.setOnAction(event -> {			
 			
-			Test testDelete = (Test) em.createQuery("delete t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
-								
+			em.getTransaction().begin();
+			em.createQuery("delete from Test t where t.testName ='" + testCmbBox.getValue()+"'").executeUpdate();
+			em.getTransaction().commit();			
 		});
 		
 		
