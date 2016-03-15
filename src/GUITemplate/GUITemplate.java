@@ -386,7 +386,7 @@ public class GUITemplate extends Application {
 		MenuItem adminUsers = new MenuItem("Administer Users");
 		MenuItem addUser = new MenuItem("Add user");
 		addUser.setOnAction(event -> {
-			addNewUser.showUserPane();
+			centerPane.getChildren().add(addNewUser.showPane());
 		});
 		adminUsers.setOnAction(action -> {
 			AdminUser userAdmin = new AdminUser();
@@ -692,8 +692,8 @@ public class GUITemplate extends Application {
 			bottomRight.getColumnConstraints().addAll(column1, column1);
 			bottomRight.getRowConstraints().addAll(row50, row50);
 
-			root.setGridLinesVisible(true);
-			bottomRight.setGridLinesVisible(true);
+//			root.setGridLinesVisible(true);
+//			bottomRight.setGridLinesVisible(true);
 			canvasesDT.add(root);
 
 //			spoilerDetection.setOnMouseEntered(event -> {
@@ -738,7 +738,6 @@ public class GUITemplate extends Application {
 		Button yes = new Button("Skicka in");
 		Button cancel = new Button("Cancel");
 		rightContainer.getChildren().addAll(yes, cancel);
-		// leftContainer.getChildren().addAll(overviewTitle,overview);
 		leftContainer.setTop(overviewTitle);
 		leftContainer.setCenter(overview);
 
@@ -889,6 +888,5 @@ public class GUITemplate extends Application {
 	}
 
 	// TODO----------------------------SLUT LEO
-	// KOD!--------------------------------------
 
 }
