@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
  *
  */
 @Entity
-@NamedQuery(query="select sa from StudentAnswer sa where sa.question= :question", name="getStudentAnswer")
+@NamedQuery(query="select sa from StudentAnswer sa where sa.question= :question and sa.user= :user", name="getStudentAnswer")
 public class StudentAnswer {
 
 	@Id
@@ -26,7 +26,7 @@ public class StudentAnswer {
 	private String answer;
 	private String teacherComment;
 	private String note;
-	private double givenPoints;
+	private Double givenPoints;
 	
 	
 	/** Constructor
@@ -41,9 +41,9 @@ public class StudentAnswer {
 	 * @param answer - a String with the answer
 	 * @param teacherComment - a String with the feedback
 	 * @param note - a String with a note
-	 * @param givenPoints - a double with given points
+	 * @param givenPoints - a Double with given points
 	 */
-	public StudentAnswer (User user, Question question, String answer, String teacherComment, String note, double givenPoints) { 
+	public StudentAnswer (User user, Question question, String answer, String teacherComment, String note, Double givenPoints) { 
 		this.user = user;
 		this.question = question;
 		this.answer = answer;
@@ -136,7 +136,7 @@ public class StudentAnswer {
 	 * 
 	 * @return a double with the points awarded on the question
 	 */
-	public double getGivenPoints() {
+	public Double getGivenPoints() {
 		return givenPoints;
 	}
 
@@ -144,7 +144,7 @@ public class StudentAnswer {
 	 * 
 	 * @param givenPoints - a double with the points awarded
 	 */
-	public void setGivenPoints(double givenPoints) {
+	public void setGivenPoints(Double givenPoints) {
 		this.givenPoints = givenPoints;
 	}
 	
