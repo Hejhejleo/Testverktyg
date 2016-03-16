@@ -230,6 +230,7 @@ public class QuizmakerGUI {
 		});
 				
 		//Save the question to a test in the database
+		
 		saveQuestBut.setOnAction(event -> {						
 			em.getTransaction().begin();						
 			points = pointCmbBox.getValue();
@@ -237,9 +238,10 @@ public class QuizmakerGUI {
 			quest.setDirectFeedback(feedbackCheck.isSelected());
 			questionName = setTitleTxtQ.getText();
 			quest.setQuestionTitle(questionName);
-			quest.setQuestionText(writeQuestionTxt.getText());		
+			quest.setQuestionText(writeQuestionTxt.getText());			
 			test.addQuestion(quest);			
-			answer = new Answers(quest);			
+			answer = new Answers(quest);
+			quest.setAnswer(answer);
 			if(radBut1.isSelected()){
 				correctAnswerIndex = 0;
 				System.out.println(correctAnswerIndex);
@@ -286,23 +288,8 @@ public class QuizmakerGUI {
 		
 		deleteTestBut.setOnAction(event -> {
 			em.getTransaction().begin();
-			//Query query = em.createQuery("delete from Test t where t.testName ='" + testCmbBox.getValue()+"'");
-			
-			//int deleted = query.executeUpdate();
-			
-			Test t = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();						
-			System.out.println(t.getTestName());
-			for (Question q : t.getQuestions()) {
-				System.out.println(q.getQuestionText());
-			
-				em.createNativeQuery("delete from questiontype_question where questionlist_QUESTIONID = " + q.getId()).executeUpdate();
-				em.createNativeQuery("delete from test_question where test_testid = " + t.getTestId()).executeUpdate();
-				em.createNativeQuery("delete from question where test_testid = " + t.getTestId()).executeUpdate();
-				em.createNativeQuery("delete from studentanswer where question_questionID =" + q.getId()).executeUpdate();
-				em.createNativeQuery("delete from answers where QUESTION_QUESTIONID =" + q.getId()).executeUpdate();
-			}	
-			em.createNativeQuery("delete from testtime where test_testid =" + t.getTestId()).executeUpdate();
-			em.createNativeQuery("delete from test where testid =" + t.getTestId()).executeUpdate();
+			 Test t = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
+			 em.remove(t);	
 			em.getTransaction().commit();
 		});
 		
@@ -318,7 +305,8 @@ public class QuizmakerGUI {
 					fieldsAndRadsHBox.getChildren().clear();
 					fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
 				}
-						
+			
+				
 			fieldsVBox.setVisible(true);
 			radButsVBox.setVisible(true);
 			writeQuestionTxt.setVisible(true);
@@ -338,7 +326,7 @@ public class QuizmakerGUI {
 						answer1.setText(a.getAnswerList().get(0));
 						answer2.setText(a.getAnswerList().get(1));
 						answer3.setText(a.getAnswerList().get(2));
-						answer4.setText(a.getAnswerList().get(3));					
+						answer4.setText(a.getAnswerList().get(3));
 						writeQuestionTxt.setText(a.getQuestion().getQuestionText());
 						
 					}					
@@ -409,10 +397,8 @@ public class QuizmakerGUI {
 			writeAnswerTxt.setVisible(false);
 			popUpStage.showAndWait();			
 		});
-		
-		okBut.setOnAction(event -> {
-			
-			
+		//TODO töm answers
+		okBut.setOnAction(event -> {			
 			
 			if(setTypeCmbBox.getValue().equals("Fritext")){
 				fieldsAndRadsHBox.getChildren().clear();
@@ -434,7 +420,7 @@ public class QuizmakerGUI {
 			radButsVBox.setVisible(true);
 			writeQuestionTxt.setVisible(true);
 			writeAnswerTxt.setVisible(true);
-			quest = new Question(points, true, null, null, test, null);			
+			quest = new Question(points, true, null, null, test, null, answer);		
 			popUpStage2.show();	
 		});
 		
