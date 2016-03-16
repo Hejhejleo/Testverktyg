@@ -33,6 +33,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -134,7 +135,7 @@ public class QuizmakerGUI {
 	    //Graphiccomponents to the questionmaker	
 		BorderPane root = new BorderPane();
 		questFeedback.setVisible(false);
-		
+		listViewQuest.setVisible(false);
 		fieldsVBox.getChildren().addAll(answer1, answer2, answer3, answer4, questFeedback);
 		fieldsVBox.setVisible(false);
 		answer1.setPromptText("Answer one");
@@ -195,6 +196,7 @@ public class QuizmakerGUI {
 		popUpStage2.setTitle("Create New Question");
 		popUpStage.setScene(popUpScene);
 		popUpStage2.setScene(popUpScene2);
+		
 				
 		root.setMargin(componentsVBox, new Insets(12,12,12,12));
 		root.setCenter(componentsVBox);
@@ -210,7 +212,7 @@ public class QuizmakerGUI {
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
 			}
-		
+			listViewQuest.setVisible(true);
 			listViewQuest.setItems(questList);			
 		});
 		saveQuestBut.setOnMouseReleased(event2->{
@@ -222,7 +224,8 @@ public class QuizmakerGUI {
 			
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
-			}			
+			}
+			listViewQuest.setVisible(true);
 			listViewQuest.setItems(questList);
 		});
 				
@@ -270,7 +273,12 @@ public class QuizmakerGUI {
 			setTitleTxtQ.setText("");
 			writeQuestionTxt.setText("");
 			writeAnswerTxt.setText("");
-			questFeedback.setText("");			
+			questFeedback.setText("");
+			radBut1.setSelected(false);
+			radBut2.setSelected(false);
+			radBut3.setSelected(false);
+			radBut4.setSelected(false);
+			feedbackCheck.setSelected(false);
 			em.persist(answer);
 			em.persist(quest);			
 			em.getTransaction().commit();
@@ -295,7 +303,6 @@ public class QuizmakerGUI {
 			}	
 			em.createNativeQuery("delete from testtime where test_testid =" + t.getTestId()).executeUpdate();
 			em.createNativeQuery("delete from test where testid =" + t.getTestId()).executeUpdate();
-			//em.remove(t);
 			em.getTransaction().commit();
 		});
 		
@@ -405,6 +412,8 @@ public class QuizmakerGUI {
 		
 		okBut.setOnAction(event -> {
 			
+			
+			
 			if(setTypeCmbBox.getValue().equals("Fritext")){
 				fieldsAndRadsHBox.getChildren().clear();
 				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);
@@ -412,11 +421,8 @@ public class QuizmakerGUI {
 			else if(setTypeCmbBox.getValue().equals("Radiobuttons")){
 				fieldsAndRadsHBox.getChildren().clear();
 				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
-			}		
-			
-			
-			
-			
+			}					
+						
 			popUpStage2.close();
 		});
 		assignTestBut.setOnAction(event -> {			
