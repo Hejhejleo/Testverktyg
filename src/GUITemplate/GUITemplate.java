@@ -428,9 +428,11 @@ public class GUITemplate extends Application {
 		mnuStudent.disableProperty().bind(isLoggedIn.not());
 		MenuItem mnuChangeUser = new MenuItem("Change user info");
 		mnuChangeUser.setOnAction(change -> {
-			centerPane.getChildren().clear();
-			userInfo = new ChangeUserInfo(user);
-			centerPane.getChildren().addAll(userInfo.showPane());
+			if (user != null) {
+				centerPane.getChildren().clear();
+				userInfo = new ChangeUserInfo(user);
+				centerPane.getChildren().addAll(userInfo.showPane());
+			}
 		});
 		mnuStudent.getItems().add(mnuChangeUser);
 
