@@ -145,6 +145,7 @@ public class QuizmakerGUI {
 		questFeedback.setPromptText("Write student feedback here");
 		writeAnswerTxt.setPromptText("Write answer here");
 		writeAnswerTxt.setVisible(false);
+		writeAnswerTxt.setPrefSize(480, 100);
 		setTitleTxt.setPromptText("Test Name");
 		setTitleTxtQ.setPromptText("Question Name");
 		fieldsVBox.setPrefWidth(480.0);
@@ -198,19 +199,7 @@ public class QuizmakerGUI {
 		root.setMargin(componentsVBox, new Insets(12,12,12,12));
 		root.setCenter(componentsVBox);
 		Scene scene = new Scene(root, 1000, 600);
-		
-		//Changes the interface of the question input
-		setTypeCmbBox.setOnAction(event -> {
-			if(setTypeCmbBox.getValue().equals("Essay")){
-				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);
-			}
-			if(setTypeCmbBox.getValue().equals("4-Choice")){
-				fieldsAndRadsHBox.getChildren().clear();
-				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
-			}
-		});
-		
+			
 		testCmbBox.setOnAction(event -> {			
 			listViewQuest.getItems().clear();
 			//Gets the selected string from combobox and insert into a test variable
@@ -227,7 +216,7 @@ public class QuizmakerGUI {
 		//Save the question to a test in the database
 		saveQuestBut.setOnAction(event -> {			
 			
-			em.getTransaction().begin();			
+			em.getTransaction().begin();						
 			points = pointCmbBox.getValue();
 			quest.setPoints(points);
 			quest.setDirectFeedback(feedbackCheck.isSelected());
@@ -235,7 +224,7 @@ public class QuizmakerGUI {
 			quest.setQuestionTitle(questionName);
 			quest.setQuestionText(writeQuestionTxt.getText());		
 			test.addQuestion(quest);			
-			answer = new Answers(quest);
+			answer = new Answers(quest);			
 			if(radBut1.isSelected()){
 				correctAnswerIndex = 0;
 				System.out.println(correctAnswerIndex);
@@ -251,18 +240,24 @@ public class QuizmakerGUI {
 			else if(radBut4.isSelected()){
 				correctAnswerIndex = 3;
 				System.out.println(correctAnswerIndex);				
-			}				
+			}
+			if(setTypeCmbBox.getValue().equals("Fritext")){
+				answer.addAnswer(writeAnswerTxt.getText());								
+			}
+			else if(setTypeCmbBox.getValue().equals("Radiobuttons")){
 			answer.setCorrectAnswer(correctAnswerIndex);
 			answer.addAnswer(answer1.getText());
 			answer.addAnswer(answer2.getText());
 			answer.addAnswer(answer3.getText());
 			answer.addAnswer(answer4.getText());
+			}
 			answer1.setText("");
 			answer2.setText("");
 			answer3.setText("");
 			answer4.setText("");
 			setTitleTxtQ.setText("");
 			writeQuestionTxt.setText("");
+			writeAnswerTxt.setText("");
 			questFeedback.setText("");
 			em.persist(answer);
 			em.persist(quest);			
@@ -325,7 +320,7 @@ public class QuizmakerGUI {
 		});
 	
 		
-		setTypeCmbBox.setOnAction(event -> {
+		setTypeCmbBox.setOnAction(event -> {			
 			//Get a questType from questionType
 			QuestionType tempQuestType = (QuestionType) em.createQuery("select t from QuestionType t where t.questionType ='" + setTypeCmbBox.getValue()+"'").getSingleResult();
 			em.getTransaction().begin();
@@ -365,7 +360,20 @@ public class QuizmakerGUI {
 			popUpStage.showAndWait();			
 		});
 		
-		okBut.setOnAction(event -> {			
+		okBut.setOnAction(event -> {
+			
+			if(setTypeCmbBox.getValue().equals("Fritext")){
+				fieldsAndRadsHBox.getChildren().clear();
+				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);
+			}
+			else if(setTypeCmbBox.getValue().equals("Radiobuttons")){
+				fieldsAndRadsHBox.getChildren().clear();
+				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
+			}		
+			
+			
+			
+			
 			popUpStage2.close();
 		});
 		assignTestBut.setOnAction(event -> {			
@@ -378,7 +386,7 @@ public class QuizmakerGUI {
 			writeQuestionTxt.setVisible(true);
 			writeAnswerTxt.setVisible(true);
 			quest = new Question(points, true, null, null, test, null);			
-			popUpStage2.showAndWait();	
+			popUpStage2.show();	
 		});
 		
 		feedbackCheck.setOnAction(event -> {			
