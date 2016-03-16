@@ -26,7 +26,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -36,10 +35,7 @@ import javafx.stage.Stage;
  *
  */
 public class AdminUser {
-	AddNewUser addNewUser = new AddNewUser();
-	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
-	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
-			+ "-fx-background-color: #FFFFFF";
+	
 	private ObservableList<String> userList = FXCollections.observableArrayList();
 	private ObservableList<String> classList = FXCollections.observableArrayList();
 	private EntityManagerFactory emf;
@@ -50,7 +46,7 @@ public class AdminUser {
 		
 	}
 	
-	public GridPane showPane(BorderPane root) {
+	public GridPane showPane(BorderPane root, List<SchoolClass> allClasses, List<User> allUsers) {
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
 		GridPane adminUserPane = new GridPane();
@@ -61,7 +57,7 @@ public class AdminUser {
 		classList.add("Create new class");
 		
 		
-		List<SchoolClass> tempClassList = em.createNamedQuery("listSchoolClasses").getResultList();
+		List<SchoolClass> tempClassList = allClasses;
 		tempClassList.forEach(sc -> {
 			classList.add(sc.getClassName());
 		});
@@ -71,24 +67,10 @@ public class AdminUser {
 		ListView<String> studentListView = new ListView<String>();
 		studentListView.setItems(userList);
 		studentListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		studentListView.setOnMouseClicked(e -> {
-			if (e.getClickCount()>1 && studentListView.getSelectionModel().getSelectedIndex()>-1) {
-				SchoolClass c = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getSelectionModel().getSelectedItem()+"'").getSingleResult();
-				String name = studentListView.getSelectionModel().getSelectedItem();
-				String fName = name.substring(0, name.indexOf("\t"));
-				String lName = name.substring(name.indexOf("\t")+1, name.length());
-				for (User user : c.getStudents()) {
-					if (user.getfName().equals(fName) && user.getlName().equals(lName)) {
-						root.setCenter(new ChangeUserInfo(user).showPane());
-						break;
-					}
-				}
-			}
-		});
 		studentListView.setMaxHeight(300);
 		classCombo.setOnAction(chooseClass -> {
 			if (classCombo.getValue().equals("Create new class")) {
-				showNewClass();
+				showNewClass(allClasses);
 			} else {
 				userList.clear();
 				SchoolClass tempClass = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getValue() + "'").getSingleResult();
@@ -100,15 +82,10 @@ public class AdminUser {
 		
 		adminUserPane.add(studentListView, 1, 0, 3, 2);
 		
-		//TODO
 		Button addStudent = new Button("Add student");
 		addStudent.prefWidthProperty().bind(classCombo.widthProperty());
 		addStudent.setOnAction(addAction -> {
-		showNewStudent(classCombo.getValue(), userList);
-			
-			
-			
-			
+			showNewStudent(classCombo.getValue(), userList);
 		});
 		
 		Button removeStudent = new Button("Remove student");
@@ -126,7 +103,7 @@ public class AdminUser {
 		Button removeClass = new Button("Remove class");
 		removeClass.prefWidthProperty().bind(classCombo.widthProperty());
 		removeClass.setOnAction(removeClassAction -> {
-			classList.remove(showRemoveClass(classCombo.getSelectionModel().getSelectedItem()));
+			classList.remove(showRemoveClass(classCombo.getSelectionModel().getSelectedItem(), allClasses));
 		});
 		
 		VBox buttons = new VBox();
@@ -137,12 +114,12 @@ public class AdminUser {
 		return adminUserPane;
 	}
 	
-	public String showRemoveClass(String className) {
+	public String showRemoveClass(String className, List<SchoolClass> allClasses) {
 		SchoolClass sc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
 		em.getTransaction().begin();
 		em.remove(sc);
 		em.getTransaction().commit();
-		
+		allClasses.remove(sc);
 		return className;
 	}
 	
@@ -253,8 +230,6 @@ public class AdminUser {
 					newUser.setStreet(txtAddress.getText());
 					newUser.setUserName(txtUserName.getText());
 					newUser.setZip(Integer.parseInt(txtZip.getText()));
-					//newUser.setSSN("19960805-7874");
-					//TODO
 					
 					SchoolClass sc = (SchoolClass)em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
 					sc.addStudent(newUser);
@@ -310,7 +285,7 @@ public class AdminUser {
 	}
 	
 	
-	public void showNewClass() {
+	public void showNewClass(List<SchoolClass> allClasses) {
 		Dialog<String> newClassDialog = new Dialog<String>();
 		newClassDialog.setTitle("Create new class");
 		newClassDialog.setHeaderText("Enter a name for the new class");
@@ -339,13 +314,9 @@ public class AdminUser {
 				em.getTransaction().begin();
 				em.persist(newClass);
 				em.getTransaction().commit();
+				allClasses.add(newClass);
 				classList.add(newClass.getClassName());
 			}
 		});
-	}
-	public StackPane getAddUserPane(){
-		
-		return addNewUser.showPane();
-		
 	}
 }
