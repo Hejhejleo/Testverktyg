@@ -1,17 +1,12 @@
 package gui;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-
-import com.sun.tools.xjc.api.ClassNameAllocator;
 
 import entity.SchoolClass;
-import entity.Test;
 import entity.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,13 +15,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -43,15 +38,10 @@ public class AddNewUser {
 	private String releaseButtonStyle = "-fx-border-color: #D3D3D3; " + "-fx-border-width: 1px; "
 			+ "-fx-background-color: #FFFFFF";
 
-	private EntityManagerFactory emf;
-	private EntityManager em;
 	private SchoolClass sc;
 
-	private boolean checkDouble(String userName, EntityManager em) {
-		Query query = em.createNamedQuery("loginByName");
-		query.setParameter("uname", userName);
-		List<User> userList = query.getResultList();
-		for (User user : userList) {
+	private boolean checkDouble(String userName, List<User> allUsers) {
+		for (User user : allUsers) {
 			if (userName.equals(user.getUserName()))
 				return true;
 		}
@@ -59,14 +49,14 @@ public class AddNewUser {
 		return false;
 	}
 
-	private List<SchoolClass> getAvailableClasses(EntityManager em) {
-		this.em = em;
-		Query findSchoolclasses = em.createQuery("Select sc from SchoolClass sc"); // TODO
-		List<SchoolClass> scList = findSchoolclasses.getResultList();
-		return scList;
-	}
+//	private List<SchoolClass> getAvailableClasses(List<SchoolClass> allClasses) {
+//		Query findSchoolclasses = em.createQuery("Select sc from SchoolClass sc"); // TODO
+//		List<SchoolClass> scList = findSchoolclasses.getResultList();
+//		
+//		return scList;
+//	}
 
-	public StackPane showPane() {
+	public StackPane showPane(List<SchoolClass> allClasses, List<User> allUsers, AnchorPane centerPane) {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
 
@@ -76,8 +66,8 @@ public class AddNewUser {
 
 		// Get available schoolclasses for a student // TODO
 		ObservableList<String> availableSchoolClasses = FXCollections.observableArrayList();
-		List<SchoolClass> scList = getAvailableClasses(em);
-		for (SchoolClass sc : scList) {
+		
+		for (SchoolClass sc : allClasses) {
 			availableSchoolClasses.add(sc.getClassName());
 		}
 
@@ -144,9 +134,9 @@ public class AddNewUser {
 		cmbStudentsClass.setItems(availableSchoolClasses);
 		cmbStudentsClass.setStyle(whiteBGAndGreyBorder);
 		cmbStudentsClass.setCursor(Cursor.HAND);
-		cmbStudentsClass.setPromptText("For student - choose schoolclass"); 
-		// TODO
-
+		cmbStudentsClass.setPromptText("Select SchoolClass"); 
+		cmbStudentsClass.disableProperty().bind(cmbAccountType.valueProperty().isEqualTo("Admin"));
+		
 		VBox enterBox1 = new VBox(5);
 		enterBox1.setPadding(new Insets(5, 10, 5, 10));
 		enterBox1.getChildren().addAll(txtUserName, txtFirstName, txtLastName, txtPassword, confirmPassword,
@@ -161,31 +151,46 @@ public class AddNewUser {
 
 		Button saveButton = new Button("Save");
 		Button cancelButton = new Button("Cancel");
+		Button clearButton = new Button("Clear");
 		saveButton.setStyle(whiteBGAndGreyBorder);
 		BorderPane buttons = new BorderPane();
 		saveButton.requestFocus();
 		saveButton.setCursor(Cursor.HAND);
 		cancelButton.setStyle(whiteBGAndGreyBorder);
 		cancelButton.setCursor(Cursor.HAND);
-
+		clearButton.setStyle(whiteBGAndGreyBorder);
+		clearButton.setCursor(Cursor.HAND);
+		
 		buttons.setLeft(saveButton);
 		buttons.setRight(cancelButton);
+		buttons.setCenter(clearButton);
 		buttons.setPadding(new Insets(5, 10, 10, 10));
 
 		cancelButton.setOnAction(cancel -> {
-			Alert notSaved = new Alert(AlertType.CONFIRMATION);
-			notSaved.setTitle("Content not saved");
-			notSaved.setHeaderText("Your input has not been saved");
-			notSaved.setContentText("If you want to add the user, push the Save button instead");
-
-			Optional<ButtonType> result = notSaved.showAndWait();
-			if (result.get() == ButtonType.OK) {
-			} else {
-				// ... user chose CANCEL or closed the
-				// dialog TODO
-			}
-		}); // TODO knappen funkar inte, ändra till
-			// tillbakaknapp?
+				Alert notSaved = new Alert(AlertType.INFORMATION);
+				notSaved.setTitle("Content not saved");
+				notSaved.setHeaderText("No user added");
+				notSaved.setContentText("Your inputs will not be saved");
+				notSaved.showAndWait();
+				centerPane.getChildren().clear();
+			});
+		
+		clearButton.setOnAction(clear -> {
+			titleText.setText("");
+			txtFirstName.setText("");
+			txtLastName.setText("");
+			txtSSN.setText("");
+			txtStreet.setText("");
+			txtZipCode.setText("");
+			txtCity.setText("");
+			txtPhoneNumber.setText("");
+			txtUserName.setText("");
+			txtPassword.setText("");
+			confirmPassword.setText("");
+			cmbAccountType.getSelectionModel().clearSelection();
+			txtEmail.setText("");
+			cmbStudentsClass.getSelectionModel().clearSelection();
+		});
 
 		saveButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 			@Override
@@ -198,6 +203,20 @@ public class AddNewUser {
 			@Override
 			public void handle(MouseEvent e) {
 				saveButton.setStyle(releaseButtonStyle);
+			}
+		});
+		
+		clearButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent> () {
+			@Override
+			public void handle(MouseEvent e) {
+				clearButton.setStyle(pushButtonStyle);
+			}
+		});
+		
+		clearButton.addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				clearButton.setStyle(releaseButtonStyle);
 			}
 		});
 
@@ -217,11 +236,11 @@ public class AddNewUser {
 
 		String regex = "\\d+";
 		
-		// TODO ska det finnas poster som inte behöver vara ifyllda?
+		// TODO ska det finnas poster som inte behÃ¶ver vara ifyllda?
 
 		saveButton.setOnAction(ok -> {
 			Alert error = new Alert(AlertType.ERROR);
-			if (checkDouble(txtUserName.getText(), em)) {
+			if (checkDouble(txtUserName.getText(), allUsers)) {
 				error.setTitle("Username not unique");
 				error.setHeaderText("Try enter an other username");
 				error.showAndWait();
