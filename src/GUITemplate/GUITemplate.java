@@ -8,7 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import connectivity.AddUser;
+
 import connectivity.Login;
 import connectivity.StartUp;
 import connectivity.Timer;
@@ -72,7 +72,6 @@ public class GUITemplate extends Application {
 	static Timer timer = new Timer();
 	private StartUp startUp;
 	private Test noTest;
-	private AddUser addUser;
 	private Login logIn = new Login();
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
 	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
@@ -406,7 +405,7 @@ public class GUITemplate extends Application {
 		MenuItem adminUsers = new MenuItem("Administer Users");
 		MenuItem addUser = new MenuItem("Add user");
 		addUser.setOnAction(event -> {
-			centerPane.getChildren().add(addNewUser.showPane());
+			centerPane.getChildren().add(addNewUser.showPane(allClasses, allUsers, centerPane));
 		});
 		adminUsers.setOnAction(action -> {
 			AdminUser userAdmin = new AdminUser();
@@ -462,7 +461,7 @@ public class GUITemplate extends Application {
 
 		// After Login
 		txtPassword.setOnAction(e -> {
-			user = logIn.login(txtUserName.getText(), txtPassword.getText());
+			user = logIn.login(txtUserName.getText(), txtPassword.getText(), allUsers);
 			if (user != null) {
 				if (logIn.getAccountType().equals("Admin")) {
 					primaryStage.setTitle("Logged in as " + logIn.getName() + " - Admin");
@@ -483,89 +482,7 @@ public class GUITemplate extends Application {
 
 	}
 
-	public void addUser() {
-		ObservableList<String> accountType = FXCollections.observableArrayList();
-		accountType.add("Admin");
-		accountType.add("Student");
 
-		Stage addUserStage = new Stage();
-		StackPane userPane = new StackPane();
-		Scene addUserScene = new Scene(userPane, 400, 250);
-		addUserStage.setScene(addUserScene);
-		addUserStage.initStyle(StageStyle.UNDECORATED);
-		addUserStage.toFront();
-		centerPane.getChildren().add(userPane);
-
-		Text titleText = new Text("Add user account");
-		titleText.setFont(Font.font(30));
-		HBox titleBox = new HBox();
-		titleBox.setAlignment(Pos.CENTER);
-		titleBox.getChildren().add(titleText);
-
-		TextField txtUserName = new TextField();
-		txtUserName.setPromptText("Username");
-		txtUserName.setMaxWidth(200);
-		PasswordField txtPassword = new PasswordField();
-		txtPassword.setMaxWidth(200);
-		txtPassword.setPromptText("Password");
-		PasswordField confirmPassword = new PasswordField();
-		confirmPassword.setPromptText("Confirm password");
-		confirmPassword.setMaxWidth(200);
-		ComboBox cmbAccountType = new ComboBox();
-		cmbAccountType.setItems(accountType);
-		cmbAccountType.setPromptText("Account type");
-
-		TextField txtEmail = new TextField();
-		txtEmail.setMaxWidth(200);
-		txtEmail.setPromptText("E-mail");
-
-		VBox enterBox = new VBox();
-		enterBox.getChildren().addAll(txtUserName, txtPassword, confirmPassword, txtEmail, cmbAccountType);
-
-		Button okButton = new Button("OK");
-		Button cancelButton = new Button("Cancel");
-		HBox buttons = new HBox();
-		okButton.requestFocus();
-		buttons.getChildren().addAll(okButton, cancelButton);
-
-		cancelButton.setOnAction(cancel -> {
-			addUserStage.close();
-
-		});
-
-		okButton.setOnAction(ok -> {
-			Alert error = new Alert(AlertType.ERROR);
-			if (!(confirmPassword.getText().equals(txtPassword.getText()))) {
-				error.setTitle("Password mismatch");
-				error.setHeaderText("The passwords must be the same");
-				error.showAndWait();
-			} else if (cmbAccountType.getValue() == null) {
-				error.setTitle("No accounttype chosen");
-				error.setHeaderText("You must choose an account type");
-				error.showAndWait();
-			} else if (!(txtEmail.getText().contains("@"))) {
-				error.setTitle("Incorrect e-mail");
-				error.setHeaderText("You have not entered a valid e-mail");
-				error.showAndWait();
-			} else {
-				if (addUser.addUser(txtUserName.getText(), txtPassword.getText(), cmbAccountType.getValue().toString(),
-						txtEmail.getText())) {
-					error.setTitle("User added");
-					error.setHeaderText("User " + txtUserName.getText() + " added");
-					error.showAndWait();
-				} else {
-					error.setTitle("User exists");
-					error.setHeaderText("User " + txtUserName.getText() + " already exists");
-					error.showAndWait();
-				}
-				addUserStage.close();
-			}
-		});
-
-		VBox addUserColumn = new VBox();
-		addUserColumn.getChildren().addAll(titleBox, enterBox, buttons);
-		userPane.getChildren().add(addUserColumn);
-	}
 
 	// TODO----------------------------START LEO
 	// KOD!--------------------------------------
