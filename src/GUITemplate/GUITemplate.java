@@ -419,7 +419,7 @@ public class GUITemplate extends Application {
 		adminUsers.setOnAction(action -> {
 			AdminUser userAdmin = new AdminUser();
 			centerPane.getChildren().clear();
-			centerPane.getChildren().addAll(userAdmin.showPane(root));
+			centerPane.getChildren().addAll(userAdmin.showPane(root, allClasses, allUsers));
 		});
 		mnuAdmin.disableProperty().bind(canAdd.not());
 		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest, gradingTest);
