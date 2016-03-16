@@ -19,7 +19,7 @@ public class ConfirmPane {
 		stage.initModality(Modality.APPLICATION_MODAL);
 		//stage.getIcons().add(new Image("/Newton.png"));
 		stage.setTitle(title);
-		stage.setMinHeight(250);
+		stage.setMinHeight(150);
 		stage.setMinWidth(250);
 		Label label = new Label();
 		label.setText(message);

@@ -10,8 +10,11 @@ import javax.persistence.Query;
 
 import connectivity.AddUser;
 import connectivity.Login;
+import connectivity.StartUp;
+import connectivity.Timer;
 import entity.Answers;
 import entity.Question;
+import entity.SchoolClass;
 import entity.StudentAnswer;
 import entity.Test;
 import entity.User;
@@ -30,7 +33,6 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -67,6 +69,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class GUITemplate extends Application {
+	static Timer timer = new Timer();
+	private StartUp startUp;
 	private Test noTest;
 	private AddUser addUser;
 	private Login logIn = new Login();
@@ -77,6 +81,9 @@ public class GUITemplate extends Application {
 	private QuizmakerGUI qMakerGUI;
 	private StudentHome studentHome = new StudentHome();
 	AddNewUser addNewUser = new AddNewUser();
+	List<SchoolClass> allClasses = new ArrayList<>();
+	List<User> allUsers = new ArrayList<>();
+	List<Test> allTests = new ArrayList<>();
 	private User user = null;
 	AnchorPane centerPaneDT;
 	String testNameDT;
@@ -94,7 +101,9 @@ public class GUITemplate extends Application {
 	// List<TextArea> textAreasDT = new ArrayList<>();
 
 	Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
-	Label lbl;
+	static Button endTest;
+	static Button yes;
+	static Label lbl;
 	Label lbl2;
 
 	AnchorPane centerPane;
@@ -111,7 +120,11 @@ public class GUITemplate extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		// primaryStage.getIcons().add(new Image("/Newton.png"));
+		startUp= new StartUp();
+		allClasses = startUp.getClasses();
+		allTests = startUp.getTests();
+		allUsers = startUp.getUsers();
+		
 		primaryStage.setTitle("Newton test tool 0.5 Alpha");
 		this.primaryStage = primaryStage;
 
@@ -186,7 +199,7 @@ public class GUITemplate extends Application {
 		});
 		btn3.setOnAction(event -> {
 			centerPane.getChildren().clear();
-			centerPane.getChildren().add(studentHome.showPane(user));
+			centerPane.getChildren().add(studentHome.showPane(user, allTests));
 
 		});
 
@@ -222,6 +235,14 @@ public class GUITemplate extends Application {
 		});
 		// START BUTTON
 		btn4.setOnAction(event -> {
+			Test temp=studentHome.getTest();
+			centerPane.getChildren().clear();
+			timer.setTest(temp);
+			timer.setLabel(lbl);
+			System.out.println("\nStart\n");
+			timer.setRun(true);
+			timer.start();
+			lbl.setText(timer.timerText);
 			questionAnswersDT.clear();
 			canvasesDT.clear();
 			questionNumberDT = 0;
@@ -229,7 +250,7 @@ public class GUITemplate extends Application {
 			testOverviewADT.clear();
 			testOverviewQDT.clear();
 
-			startTest(user, studentHome.getTest().getTestName());
+			startTest(user, temp.getTestName());
 			setQuestionNumber();
 		});
 
@@ -255,7 +276,6 @@ public class GUITemplate extends Application {
 		double ad = 10;
 		lbl.setShape(new Rectangle(ad, ad));
 		lbl.setMinSize(14 * ad, 3 * ad);
-		lbl.setMaxSize(14 * ad, 3 * ad);
 		lbl.setStyle("-fx-border-color: #000000;" + "-fx-background-color: #F47920;" + "-fx-text-fill: #000000");
 		lbl.setAlignment(Pos.CENTER);
 		lbl.setFont(Font.font("Myriad", 12));
@@ -454,7 +474,7 @@ public class GUITemplate extends Application {
 				logInStage.close();
 				isLoggedIn.set(true);
 				btn2.setText("Log out");
-				centerPane.getChildren().add(studentHome.showPane(user));
+				centerPane.getChildren().add(studentHome.showPane(user,allTests));
 
 			} else {
 				wrongLogin.setVisible(true);
@@ -715,7 +735,7 @@ public class GUITemplate extends Application {
 
 		BorderPane rootLC = new BorderPane();
 		Scene lastCanvas = new Scene(rootLC, 800, 350);
-		Button endTest = new Button("End Test");
+		endTest = new Button("End Test");
 		rootLC.setCenter(endTest);
 		canvasesDT.add(rootLC);
 
@@ -735,7 +755,7 @@ public class GUITemplate extends Application {
 		rightContainer.setPadding(new Insets(0, 3000, 20, 30));
 		rightContainer.setAlignment(Pos.BOTTOM_LEFT);
 
-		Button yes = new Button("Skicka in");
+		yes = new Button("Skicka in");
 		Button cancel = new Button("Cancel");
 		rightContainer.getChildren().addAll(yes, cancel);
 		leftContainer.setTop(overviewTitle);
@@ -761,9 +781,16 @@ public class GUITemplate extends Application {
 		});
 
 		yes.setOnAction(event -> {
+			
 			for (int i = 0; i < questionsDT.size(); i++) {
+				try{
 				sendToDatabase(user, questionsDT.get(i), testOverviewADT.get(i).toString(), em);
+				}catch(NullPointerException e){
+					System.out.println(e);
+				}
 			}
+			centerPaneDT.getChildren().clear();
+			centerPane.getChildren().clear();
 		});
 
 		// Overview för provets svar /SLUT
@@ -886,6 +913,27 @@ public class GUITemplate extends Application {
 		em.persist(studentAnswer);
 		em.getTransaction().commit();
 	}
+	
+	public static void setLabelTime(long days, long hours, long minutes, long seconds){
+		lbl.setText("Time remaining: "+days+":"+ hours+":"+ minutes+":"+ seconds);
+		checkTime(days,hours,minutes,seconds);
+	}
+	
+	public static void checkTime(long days, long hours, long minutes, long seconds){
+		if(seconds<1){
+			if(minutes<1){
+				if(hours<1){
+					if(days<1){
+						endTest.fire();
+						yes.fire();
+						timer.setRun(false);
+					}
+				}
+			}
+		}
+		
+	}
+	
 
 	// TODO----------------------------SLUT LEO
 
