@@ -210,12 +210,24 @@ public class QuizmakerGUI {
 			for (Question q : tempTest.getQuestions()){
 				questList.add(q.getQuestionTitle());
 			}
+		
 			listViewQuest.setItems(questList);			
+		});
+		saveQuestBut.setOnMouseReleased(event2->{
+			listViewQuest.getItems().clear();
+			//Gets the selected string from combobox and insert into a test variable
+			test = tempTestLista.get(testCmbBox.getSelectionModel().getSelectedIndex());
+			//Query for getting the question according by the testname
+			Test tempTest = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
+			
+			for (Question q : tempTest.getQuestions()){
+				questList.add(q.getQuestionTitle());
+			}			
+			listViewQuest.setItems(questList);
 		});
 				
 		//Save the question to a test in the database
-		saveQuestBut.setOnAction(event -> {			
-			
+		saveQuestBut.setOnAction(event -> {						
 			em.getTransaction().begin();						
 			points = pointCmbBox.getValue();
 			quest.setPoints(points);
@@ -258,10 +270,10 @@ public class QuizmakerGUI {
 			setTitleTxtQ.setText("");
 			writeQuestionTxt.setText("");
 			writeAnswerTxt.setText("");
-			questFeedback.setText("");
+			questFeedback.setText("");			
 			em.persist(answer);
 			em.persist(quest);			
-			em.getTransaction().commit();			
+			em.getTransaction().commit();
 		});
 		
 		deleteTestBut.setOnAction(event -> {
@@ -289,32 +301,62 @@ public class QuizmakerGUI {
 		
 		listViewQuest.setOnMouseClicked(event -> {
 			
+			Question tempSelcQuest = (Question) em.createQuery("select t from Question t where t.questionTitle ='" + listViewQuest.getSelectionModel().getSelectedItem() +"'").getSingleResult();
+			
+				if(tempSelcQuest.getquestionType().getQuestionType().equals("Fritext")){
+					fieldsAndRadsHBox.getChildren().clear();
+					fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);				
+				}
+				else if (tempSelcQuest.getquestionType().getQuestionType().equals("Radiobuttons")){
+					fieldsAndRadsHBox.getChildren().clear();
+					fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
+				}
+						
+			fieldsVBox.setVisible(true);
+			radButsVBox.setVisible(true);
+			writeQuestionTxt.setVisible(true);
+			writeAnswerTxt.setVisible(true);
+			
 			List<Answers> tempAnsView =  (List<Answers>) em.createQuery("select t from Answers t").getResultList();
 			
 			for(Answers a: tempAnsView){
 				if(a.getQuestion().getQuestionTitle().equals(listViewQuest.getSelectionModel().getSelectedItem())){
 					
-					System.out.println(a.getAnswerList().get(0));
-					System.out.println(tempAnsView);
+					if(tempSelcQuest.getquestionType().getQuestionType().equals("Fritext")){
+						writeAnswerTxt.setText(a.getAnswerList().get(0));
+						writeQuestionTxt.setText(a.getQuestion().getQuestionText());
+					}
 					
-					answer1.setText(a.getAnswerList().get(0));
-					answer2.setText(a.getAnswerList().get(1));
-					answer3.setText(a.getAnswerList().get(2));
-					answer4.setText(a.getAnswerList().get(3));					
-					writeQuestionTxt.setText(a.getQuestion().getQuestionText());
+					else if (tempSelcQuest.getquestionType().getQuestionType().equals("Radiobuttons")){
+						answer1.setText(a.getAnswerList().get(0));
+						answer2.setText(a.getAnswerList().get(1));
+						answer3.setText(a.getAnswerList().get(2));
+						answer4.setText(a.getAnswerList().get(3));					
+						writeQuestionTxt.setText(a.getQuestion().getQuestionText());
+						
+					}					
 					
 					changeQuestBut.setOnAction(event2 -> {
 						a.getAnswerList().clear();
-						em.getTransaction().begin();
-						a.addAnswer(answer1.getText());
-						a.addAnswer(answer2.getText());
-						a.addAnswer(answer3.getText());
-						a.addAnswer(answer4.getText());
-						a.getQuestion().setQuestionText(writeQuestionTxt.getText());
-						em.persist(a);
-						em.getTransaction().commit();
-					});
-					
+						if(tempSelcQuest.getquestionType().getQuestionType().equals("Radiobuttons")){
+							em.getTransaction().begin();
+							a.addAnswer(answer1.getText());
+							a.addAnswer(answer2.getText());
+							a.addAnswer(answer3.getText());
+							a.addAnswer(answer4.getText());
+							a.getQuestion().setQuestionText(writeQuestionTxt.getText());
+							em.persist(a);
+							em.getTransaction().commit();
+						}
+						else if (tempSelcQuest.getquestionType().getQuestionType().equals("Fritext")){
+							em.getTransaction().begin();
+							a.addAnswer(writeAnswerTxt.getText());
+							a.getQuestion().setQuestionText(writeQuestionTxt.getText());
+							em.persist(a);
+							em.getTransaction().commit();
+						}					
+												
+					});					
 				}				
 			}			
 		});
@@ -332,6 +374,7 @@ public class QuizmakerGUI {
 			em.persist(quest);
 			em.getTransaction().commit();			
 		});
+		
 		
 		
 		//Save the test to the database
