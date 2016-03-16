@@ -28,17 +28,10 @@ public class StudentHome {
 	private ObservableList<String> obsTestsList = FXCollections.observableArrayList();
 
 	
-	public BorderPane showPane(User user){
-		tests.clear();
-		classes.clear();
-		testsForStudent.clear();
-		obsTestsList.clear();
-		emf = Persistence.createEntityManagerFactory("Testverktyg");
-		em = emf.createEntityManager();
-		tests = (List<Test>) em.createQuery("select t from Test t").getResultList();
-		classes = (List<SchoolClass>) em.createQuery("select sc from SchoolClass sc").getResultList();
+	public BorderPane showPane(User user, List<Test> allTests){
+		obsTestsList.clear();		
 		
-		for(Test t:tests){
+		for(Test t:allTests){
 			for(SchoolClass s:t.getClasses()){
 				for(User u : s.getStudents()){
 					if(u.getUserName()==user.getUserName()){
@@ -56,7 +49,11 @@ public class StudentHome {
 		root.setCenter(testsComboBox);
 		
 		testsComboBox.setOnAction(event ->{
-			setTest(tests.get(testsComboBox.getSelectionModel().getSelectedIndex()));
+			for(Test t: allTests){
+				if(t.getTestName().equals(testsComboBox.getValue())){
+					setTest(t);
+				}
+			}
 		});
 		
 		

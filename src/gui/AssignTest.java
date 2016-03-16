@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -22,8 +23,10 @@ public class AssignTest {
 	List<CheckBox> checkBoxes;
 	List<SchoolClass> allClasses;
 	Button saveChanges;
+	Button cancel;
 	List<SchoolClass> assignedClasses;
 	CheckBox tempBox;
+	HBox buttonContainer;
 
 	public void doAssign(Test currentTest, EntityManager em) {
 		allClasses = new ArrayList<>();
@@ -33,10 +36,12 @@ public class AssignTest {
 		checkBoxes = new ArrayList<>();
 		scrollPane = new ScrollPane();
 		scrollPane.setPrefSize(300, 500);
-		container = new VBox();
+		container = new VBox(4);
 		popUpScene = new Scene(scrollPane, 300, 500);
 		popUpStage = new Stage();
 		saveChanges = new Button("Save Changes");
+		cancel = new Button("Cancel");
+		buttonContainer = new HBox(10);
 
 		for (SchoolClass sc : allClasses) {
 			CheckBox checkBox = new CheckBox();
@@ -52,7 +57,8 @@ public class AssignTest {
 		}
 
 		container.getChildren().addAll(checkBoxes);
-		container.getChildren().add(saveChanges);
+		buttonContainer.getChildren().addAll(cancel,saveChanges);
+		container.getChildren().add(buttonContainer);
 		scrollPane.setContent(container);
 		popUpStage.setScene(popUpScene);
 
@@ -67,9 +73,13 @@ public class AssignTest {
 					currentTest.addClass(allClasses.get(i));
 				}
 			}
+			
 			em.getTransaction().begin();
 			em.persist(currentTest);
 			em.getTransaction().commit();
+			popUpStage.close();
+		});
+		cancel.setOnAction(event ->{
 			popUpStage.close();
 		});
 	}
