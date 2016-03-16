@@ -378,6 +378,19 @@ public class GUITemplate extends Application {
 			System.exit(0);
 		});
 
+		Menu mnuAdmin = new Menu("Admin");
+		MenuItem adminUsers = new MenuItem("Administer Users");
+		MenuItem addUser = new MenuItem("Add user");
+		addUser.setOnAction(event -> {
+			centerPane.getChildren().add(addNewUser.showPane(allClasses, allUsers, centerPane));
+		});
+		adminUsers.setOnAction(action -> {
+			AdminUser userAdmin = new AdminUser();
+			centerPane.getChildren().clear();
+			centerPane.getChildren().addAll(userAdmin.showPane(root, allClasses, allUsers));
+		});
+		mnuAdmin.disableProperty().bind(canAdd.not());
+
 		MenuItem createQuest = new MenuItem("Create Test");
 		createQuest.setOnAction(createQ -> {
 			qMakerGUI = new QuizmakerGUI();
@@ -385,12 +398,13 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().addAll(qMakerGUI.showPane());
 		});
 		
-		MenuItem gradingTest = new MenuItem("Grade Test"); // TODO
+		Menu gradingTest = new Menu("Grade Test"); // TODO
 		gradingTest.setOnAction(gradeEvent -> {
-			gTest = new GradingTest(mnuFile);
+			gTest = new GradingTest(gradingTest);
 			centerPane.getChildren().clear();
 			centerPane.getChildren().addAll(gTest.showGradingPane());
 		});
+		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest, gradingTest);
 
 		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, new SeparatorMenuItem(), mnuExit);
 		try {
@@ -409,20 +423,6 @@ public class GUITemplate extends Application {
 			toggleLogin();
 		});
 		mnuLogOut.disableProperty().bind(isLoggedIn.not());
-
-		Menu mnuAdmin = new Menu("Admin");
-		MenuItem adminUsers = new MenuItem("Administer Users");
-		MenuItem addUser = new MenuItem("Add user");
-		addUser.setOnAction(event -> {
-			centerPane.getChildren().add(addNewUser.showPane(allClasses, allUsers, centerPane));
-		});
-		adminUsers.setOnAction(action -> {
-			AdminUser userAdmin = new AdminUser();
-			centerPane.getChildren().clear();
-			centerPane.getChildren().addAll(userAdmin.showPane(root, allClasses, allUsers));
-		});
-		mnuAdmin.disableProperty().bind(canAdd.not());
-		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest, gradingTest);
 
 		Menu mnuStudent = new Menu("Student");
 		mnuStudent.disableProperty().bind(isLoggedIn.not());
