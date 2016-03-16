@@ -51,10 +51,10 @@ public class GradingTest {
 	private EntityManagerFactory emf;
 	private EntityManager em;
 	private Menu gradingTestMenu;
-	private Menu mnuFile;
+	private Menu gradingTest;
 
-	public GradingTest(Menu mnuFile) {
-		this.mnuFile = mnuFile;
+	public GradingTest(Menu gradingTest) {
+		this.gradingTest = gradingTest;
 
 	}
 
@@ -77,8 +77,8 @@ public class GradingTest {
 		em = emf.createEntityManager();
 		StackPane gradingPane = new StackPane();
 
-		gradingTestMenu = new Menu("Available tests");
-		mnuFile.getItems().add(gradingTestMenu);
+		gradingTestMenu = new Menu("Available tests"); // TODO
+		gradingTest.getItems().add(gradingTestMenu);
 		Query findTests = em.createQuery("Select t from Test t");
 		List<Test> testList = findTests.getResultList();
 
