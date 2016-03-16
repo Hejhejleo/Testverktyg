@@ -236,7 +236,7 @@ public class AddNewUser {
 
 		String regex = "\\d+";
 		
-		// TODO ska det finnas poster som inte behÃ¶ver vara ifyllda?
+		// TODO ska det finnas poster som inte behöver vara ifyllda?
 
 		saveButton.setOnAction(ok -> {
 			Alert error = new Alert(AlertType.ERROR);
@@ -296,8 +296,7 @@ public class AddNewUser {
 
 			} else {
 				User newUser = new User();
-				SchoolClass sc = (SchoolClass) em.createQuery("Select sc from SchoolClass sc where sc.className = '" + cmbStudentsClass.getValue() + "'").getSingleResult();
-
+				
 				newUser.setfName(txtFirstName.getText());
 				newUser.setlName(txtLastName.getText());
 				newUser.setUserName(txtUserName.getText());
@@ -310,12 +309,17 @@ public class AddNewUser {
 				newUser.setZip(Integer.parseInt(txtZipCode.getText()));
 				newUser.setCity(txtCity.getText());
 				if (cmbAccountType.getValue() == "Student") {
+					SchoolClass sc = (SchoolClass) em.createQuery("Select sc from SchoolClass sc where sc.className = '" + cmbStudentsClass.getValue() + "'").getSingleResult();
+
 					sc.addStudent(newUser);
 				}
 				em.getTransaction().begin();
 
 				em.persist(newUser);
-				em.persist(sc);
+				if (sc != null) {
+					em.persist(sc);
+				}
+				
 
 				em.getTransaction().commit();
 
