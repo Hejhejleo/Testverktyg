@@ -21,6 +21,7 @@ import entity.User;
 import gui.AddNewUser;
 import gui.AdminUser;
 import gui.ChangeUserInfo;
+import gui.GradingTest;
 import gui.QuizmakerGUI;
 import gui.StudentHome;
 import javafx.application.Application;
@@ -78,6 +79,7 @@ public class GUITemplate extends Application {
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
+	private GradingTest gTest;
 	private StudentHome studentHome = new StudentHome();
 	AddNewUser addNewUser = new AddNewUser();
 	List<SchoolClass> allClasses = new ArrayList<>();
@@ -382,6 +384,13 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().clear();
 			centerPane.getChildren().addAll(qMakerGUI.showPane());
 		});
+		
+		MenuItem gradingTest = new MenuItem("Grade Test"); // TODO
+		gradingTest.setOnAction(gradeEvent -> {
+			gTest = new GradingTest(mnuFile);
+			centerPane.getChildren().clear();
+			centerPane.getChildren().addAll(gTest.showGradingPane());
+		});
 
 		mnuFile.getItems().addAll(mnuLogIn, mnuLogOut, new SeparatorMenuItem(), mnuExit);
 		try {
@@ -413,7 +422,7 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().addAll(userAdmin.showPane(root));
 		});
 		mnuAdmin.disableProperty().bind(canAdd.not());
-		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest);
+		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest, gradingTest);
 
 		Menu mnuStudent = new Menu("Student");
 		mnuStudent.disableProperty().bind(isLoggedIn.not());
