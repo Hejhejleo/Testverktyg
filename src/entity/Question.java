@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /** Stores a question
  * 
@@ -25,8 +26,10 @@ public class Question {
 	private String questionText;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Test test;
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	private QuestionType qType;
+	@OneToOne (cascade = CascadeType.ALL)
+	private Answers answer;
 	
 	/** Constructor
 	 * 
@@ -42,13 +45,14 @@ public class Question {
 	 * @param test - An instance of Test, which test contains the question
 	 * @param questionType - An instance of QuestionType, which type of question is it
 	 */
-	public Question(double points, boolean directFeedback, String questionTitle, String questionText, Test test, QuestionType questionType) {
+	public Question(double points, boolean directFeedback, String questionTitle, String questionText, Test test, QuestionType questionType, Answers answer) {
 		this.points = points;
 		this.directFeedback = directFeedback;
 		this.questionTitle = questionTitle;
 		this.questionText = questionText;
 		this.test = test;
 		this.qType = questionType;
+		this.answer = answer;
 	}
 	
 	/** Returns the value of the question
@@ -57,6 +61,12 @@ public class Question {
 	 */
 	public double getPoints() {
 		return points;
+	}
+	public int getId(){
+		return questionId;		
+	}
+	public void setAnswer(Answers answer){
+		this.answer = answer;
 	}
 
 	/** Sets the value of this question
