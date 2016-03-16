@@ -1,23 +1,31 @@
 package gui;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import com.sun.tools.xjc.api.ClassNameAllocator;
+
+import entity.SchoolClass;
+import entity.Test;
 import entity.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -30,8 +38,14 @@ public class AddNewUser {
 	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
 	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
 			+ "-fx-background-color: #FFFFFF";
+	private String pushButtonStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
+			+ "-fx-background-color: #FFFFFF";
+	private String releaseButtonStyle = "-fx-border-color: #D3D3D3; " + "-fx-border-width: 1px; "
+			+ "-fx-background-color: #FFFFFF";
+
 	private EntityManagerFactory emf;
 	private EntityManager em;
+	private SchoolClass sc;
 
 	private boolean checkDouble(String userName, EntityManager em) {
 		Query query = em.createNamedQuery("loginByName");
@@ -41,11 +55,17 @@ public class AddNewUser {
 			if (userName.equals(user.getUserName()))
 				return true;
 		}
-		
+
 		return false;
 	}
 
-	
+	private List<SchoolClass> getAvailableClasses(EntityManager em) {
+		this.em = em;
+		Query findSchoolclasses = em.createQuery("Select sc from SchoolClass sc"); // TODO
+		List<SchoolClass> scList = findSchoolclasses.getResultList();
+		return scList;
+	}
+
 	public StackPane showPane() {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
@@ -53,6 +73,13 @@ public class AddNewUser {
 		ObservableList<String> accountType = FXCollections.observableArrayList();
 		accountType.add("Admin");
 		accountType.add("Student");
+
+		// Get available schoolclasses for a student // TODO
+		ObservableList<String> availableSchoolClasses = FXCollections.observableArrayList();
+		List<SchoolClass> scList = getAvailableClasses(em);
+		for (SchoolClass sc : scList) {
+			availableSchoolClasses.add(sc.getClassName());
+		}
 
 		StackPane userPane = new StackPane();
 
@@ -113,12 +140,17 @@ public class AddNewUser {
 		txtEmail.setMaxWidth(200);
 		txtEmail.setPromptText("E-mail");
 
-		
-		
+		ComboBox cmbStudentsClass = new ComboBox();
+		cmbStudentsClass.setItems(availableSchoolClasses);
+		cmbStudentsClass.setStyle(whiteBGAndGreyBorder);
+		cmbStudentsClass.setCursor(Cursor.HAND);
+		cmbStudentsClass.setPromptText("For student - choose schoolclass"); 
+		// TODO
+
 		VBox enterBox1 = new VBox(5);
 		enterBox1.setPadding(new Insets(5, 10, 5, 10));
 		enterBox1.getChildren().addAll(txtUserName, txtFirstName, txtLastName, txtPassword, confirmPassword,
-				cmbAccountType);
+				cmbAccountType, cmbStudentsClass);
 
 		VBox enterBox2 = new VBox(5);
 		enterBox2.setPadding(new Insets(5, 10, 5, 10));
@@ -127,30 +159,67 @@ public class AddNewUser {
 		HBox enterBoxes = new HBox();
 		enterBoxes.getChildren().addAll(enterBox1, enterBox2);
 
-		Button okButton = new Button("OK");
+		Button saveButton = new Button("Save");
 		Button cancelButton = new Button("Cancel");
-		okButton.setStyle(whiteBGAndGreyBorder);
+		saveButton.setStyle(whiteBGAndGreyBorder);
 		BorderPane buttons = new BorderPane();
-		okButton.requestFocus();
-		okButton.setCursor(Cursor.HAND);
+		saveButton.requestFocus();
+		saveButton.setCursor(Cursor.HAND);
 		cancelButton.setStyle(whiteBGAndGreyBorder);
 		cancelButton.setCursor(Cursor.HAND);
 
-		buttons.setLeft(okButton);
+		buttons.setLeft(saveButton);
 		buttons.setRight(cancelButton);
 		buttons.setPadding(new Insets(5, 10, 10, 10));
 
 		cancelButton.setOnAction(cancel -> {
-//			 addUserStage.close(); // TODO knappen funkar inte, ska ändras till
-			// tillbakaknapp
-			
-			
+			Alert notSaved = new Alert(AlertType.CONFIRMATION);
+			notSaved.setTitle("Content not saved");
+			notSaved.setHeaderText("Your input has not been saved");
+			notSaved.setContentText("If you want to add the user, push the Save button instead");
+
+			Optional<ButtonType> result = notSaved.showAndWait();
+			if (result.get() == ButtonType.OK) {
+			} else {
+				// ... user chose CANCEL or closed the
+				// dialog TODO
+			}
+		}); // TODO knappen funkar inte, ändra till
+			// tillbakaknapp?
+
+		saveButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				saveButton.setStyle(pushButtonStyle);
+			}
 		});
 
-		
+		saveButton.addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				saveButton.setStyle(releaseButtonStyle);
+			}
+		});
+
+		cancelButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				cancelButton.setStyle(pushButtonStyle);
+			}
+		});
+
+		cancelButton.addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				cancelButton.setStyle(releaseButtonStyle);
+			}
+		});
+
 		String regex = "\\d+";
-//TODO ska det finnas poster som inte behöver vara ifyllda?
-		okButton.setOnAction(ok -> {
+		
+		// TODO ska det finnas poster som inte behöver vara ifyllda?
+
+		saveButton.setOnAction(ok -> {
 			Alert error = new Alert(AlertType.ERROR);
 			if (checkDouble(txtUserName.getText(), em)) {
 				error.setTitle("Username not unique");
@@ -200,8 +269,16 @@ public class AddNewUser {
 				error.setTitle("No city was entered");
 				error.setHeaderText("You must enter a city");
 				error.showAndWait();
+			} else if (cmbAccountType.getValue() == "Student" && cmbStudentsClass.getValue() == null) { 
+				// TODO klassplacering 
+				error.setTitle("No schoolclass was chosen");
+				error.setHeaderText("You must chose a schoolclass");
+				error.showAndWait();
+
 			} else {
 				User newUser = new User();
+				SchoolClass sc = (SchoolClass) em.createQuery("Select sc from SchoolClass sc where sc.className = '" + cmbStudentsClass.getValue() + "'").getSingleResult();
+
 				newUser.setfName(txtFirstName.getText());
 				newUser.setlName(txtLastName.getText());
 				newUser.setUserName(txtUserName.getText());
@@ -213,15 +290,24 @@ public class AddNewUser {
 				newUser.setStreet(txtStreet.getText());
 				newUser.setZip(Integer.parseInt(txtZipCode.getText()));
 				newUser.setCity(txtCity.getText());
-				
+				if (cmbAccountType.getValue() == "Student") {
+					sc.addStudent(newUser);
+				}
 				em.getTransaction().begin();
-				
+
 				em.persist(newUser);
-				
+				em.persist(sc);
+
 				em.getTransaction().commit();
-				
+
 				em.close();
 				emf.close();
+
+				Alert addedUser = new Alert(AlertType.INFORMATION);
+				addedUser.setTitle("New user added");
+				addedUser.setHeaderText(null);
+				addedUser.setContentText("The user \"" + txtUserName.getText() + "\" has been added");
+				addedUser.showAndWait();
 
 			}
 		});
@@ -231,6 +317,7 @@ public class AddNewUser {
 		addUserColumn.getChildren().addAll(titleBox, enterBoxes, buttons);
 		addUserColumn.setStyle(frameStyle);// sets style for addframe
 		userPane.getChildren().add(addUserColumn);
+
 		return userPane;
 	}
 
