@@ -54,6 +54,8 @@ public class QuizmakerGUI {
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
+	private QuestionType questionType = new QuestionType();
+	private QuestionType questionType2 = new QuestionType();
 	private int points;
 	private int correctAnswerIndex;
 	private String questionName;	
@@ -229,8 +231,7 @@ public class QuizmakerGUI {
 			listViewQuest.setItems(questList);
 		});
 				
-		//Save the question to a test in the database
-		
+		//Save the question to a test in the database		
 		saveQuestBut.setOnAction(event -> {						
 			em.getTransaction().begin();						
 			points = pointCmbBox.getValue();
@@ -262,7 +263,7 @@ public class QuizmakerGUI {
 				answer.addAnswer(writeAnswerTxt.getText());								
 			}
 			else if(setTypeCmbBox.getValue().equals("Radiobuttons")){
-			answer.setCorrectAnswer(correctAnswerIndex);
+			answer.setCorrectAnswer(correctAnswerIndex);			
 			answer.addAnswer(answer1.getText());
 			answer.addAnswer(answer2.getText());
 			answer.addAnswer(answer3.getText());
@@ -288,9 +289,17 @@ public class QuizmakerGUI {
 		
 		deleteTestBut.setOnAction(event -> {
 			em.getTransaction().begin();
-			 Test t = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();
-			 em.remove(t);	
-			em.getTransaction().commit();
+			 Test t = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();			 
+			 
+			 for (Question q : t.getQuestions()){
+				 q.setTest(null);
+				 em.persist(q);
+			 }
+			 
+			 t.getQuestions().clear();
+			 em.persist(t);
+			 em.remove(t);
+			 em.getTransaction().commit();
 		});
 		
 		listViewQuest.setOnMouseClicked(event -> {
@@ -355,23 +364,7 @@ public class QuizmakerGUI {
 				}				
 			}			
 		});
-	
-		
-		setTypeCmbBox.setOnAction(event -> {			
-			//Get a questType from questionType
-			QuestionType tempQuestType = (QuestionType) em.createQuery("select t from QuestionType t where t.questionType ='" + setTypeCmbBox.getValue()+"'").getSingleResult();
-			em.getTransaction().begin();
-			//Assign our questtype variable to the fetched qType and create connect the two entities
-			questType = tempQuestType;
-			questType.addQuestion(quest);
-			quest.setQuestionType(questType);
-			em.persist(questType);
-			em.persist(quest);
-			em.getTransaction().commit();			
-		});
-		
-		
-		
+			
 		//Save the test to the database
 		saveTestBut.setOnAction(event -> {			
 			test = new Test();
@@ -395,11 +388,22 @@ public class QuizmakerGUI {
 			radButsVBox.setVisible(false);
 			writeQuestionTxt.setVisible(false);
 			writeAnswerTxt.setVisible(false);
+			
+				
 			popUpStage.showAndWait();			
 		});
 		//TODO töm answers
-		okBut.setOnAction(event -> {			
-			
+		okBut.setOnAction(event -> {
+			//Get a questType from questionType
+			QuestionType tempQuestType = (QuestionType) em.createQuery("select t from QuestionType t where t.questionType ='" + setTypeCmbBox.getValue()+"'").getSingleResult();
+			em.getTransaction().begin();
+			//Assign our questtype variable to the fetched qType and create connect the two entities
+			questType = tempQuestType;
+			questType.addQuestion(quest);
+			quest.setQuestionType(questType);
+			em.persist(questType);
+			em.persist(quest);
+			em.getTransaction().commit();			
 			if(setTypeCmbBox.getValue().equals("Fritext")){
 				fieldsAndRadsHBox.getChildren().clear();
 				fieldsAndRadsHBox.getChildren().addAll(writeAnswerTxt, listViewQuest);
