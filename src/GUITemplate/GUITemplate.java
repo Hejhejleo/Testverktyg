@@ -104,7 +104,7 @@ public class GUITemplate extends Application {
 	Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
 	static Button endTest;
 	static Button yes;
-	static Label lbl;
+	static Label lbl1;
 	Label lbl2;
 
 	AnchorPane centerPane;
@@ -145,7 +145,7 @@ public class GUITemplate extends Application {
 		// Vertikal box till v�nster med knappar och funktioner
 
 		VBox leftMenu = new VBox(20);
-		leftMenu.setStyle("-fx-background-color: #F47920;");
+		//leftMenu.setStyle("-fx-background-color: #f69651;");
 		leftMenu.setPadding(new Insets(10, 10, 10, 10));
 
 		btn2 = new Button();
@@ -156,7 +156,7 @@ public class GUITemplate extends Application {
 		btn2.setShape(new Rectangle(a, a));
 		btn2.setMinSize(9 * a, 3 * a);
 		btn2.setMaxSize(9 * a, 3 * a);
-		btn2.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920;");
+		btn2.setStyle("-fx-font: 12 Myriad; -fx-base: #f69651;");
 		DropShadow shadow = new DropShadow();
 		VBox.setMargin(btn2, new Insets(100, 0, 0, 10));
 
@@ -187,7 +187,7 @@ public class GUITemplate extends Application {
 		btn3.setShape(new Rectangle(ae, ae));
 		btn3.setMinSize(9 * ae, 3 * ae);
 		btn3.setMaxSize(9 * ae, 3 * ae);
-		btn3.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920;");
+		btn3.setStyle("-fx-font: 12 Myriad; -fx-base: #f69651;");
 		DropShadow shadow1 = new DropShadow();
 		// btn2.setOnAction(this);
 		VBox.setMargin(btn3, new Insets(0, 0, 100, 10));
@@ -215,11 +215,11 @@ public class GUITemplate extends Application {
 		btn4.setLayoutX(30.0);
 		btn4.setLayoutY(235.0);
 		btn4.setText(" START ");
-		double r = 30;
+		double r = 35;
 		btn4.setShape(new Circle(r));
 		btn4.setMinSize(2 * r, 2 * r);
 		btn4.setMaxSize(2 * r, 2 * r);
-		btn4.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
+		btn4.setStyle("-fx-font: 12 Myriad; -fx-base: #f69651; -fx-font-weight: bold");
 
 		DropShadow shadow2 = new DropShadow();
 		btn4.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
@@ -240,11 +240,11 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().clear();
 			timer = new Timer();
 			timer.setTest(temp);
-			timer.setLabel(lbl);
+			timer.setLabel(lbl1);
 			System.out.println("\nStart\n");
 			timer.setRun(true);
 			timer.start();
-			lbl.setText(timer.timerText);
+			lbl1.setText(timer.timerText);
 			questionAnswersDT.clear();
 			canvasesDT.clear();
 			questionNumberDT = 0;
@@ -263,25 +263,25 @@ public class GUITemplate extends Application {
 		// CenterPane
 
 		centerPane = new AnchorPane();
-		centerPane.setStyle("-fx-border-color: #000000;");
+		//centerPane.setStyle("-fx-border-color: #000000;");
 		centerPane.getChildren().addAll();
 
 		// Horizontal box i nedre kant
 
 		HBox bottomMenu = new HBox();
-		bottomMenu.setStyle("-fx-background-color: #F47920;");
+		bottomMenu.setStyle("-fx-background-color: #f69651;");
 		bottomMenu.setPadding(new Insets(10, 10, 10, 10));
 
-		lbl = new Label("Time remaining: 00:00:00");
-		lbl.setLayoutX(20.0);
-		lbl.setLayoutY(100.0);
+		lbl1 = new Label("Time remaining: 00:00:00");
+		lbl1.setLayoutX(20.0);
+		lbl1.setLayoutY(100.0);
 		double ad = 10;
-		lbl.setShape(new Rectangle(ad, ad));
-		lbl.setMinSize(14 * ad, 3 * ad);
-		lbl.setStyle("-fx-border-color: #000000;" + "-fx-background-color: #F47920;" + "-fx-text-fill: #000000");
-		lbl.setAlignment(Pos.CENTER);
-		lbl.setFont(Font.font("Myriad", 12));
-		HBox.setMargin(lbl, new Insets(2, 0, 0, 90));
+		lbl1.setShape(new Rectangle(ad, ad));
+		lbl1.setMinSize(14 * ad, 3 * ad);
+		lbl1.setStyle("-fx-border-color: #000000;" + "-fx-background-color: #f69651;" + "-fx-text-fill: #000000");
+		lbl1.setAlignment(Pos.CENTER);
+		lbl1.setFont(Font.font("Myriad", 12));
+		HBox.setMargin(lbl1, new Insets(2, 0, 0, 90));
 
 		lbl2 = new Label(" Question 0/0 ");
 		lbl2.setLayoutX(20.0);
@@ -290,7 +290,7 @@ public class GUITemplate extends Application {
 		lbl2.setShape(new Rectangle(ac, ac));
 		lbl2.setMinSize(10 * ac, 3 * ac);
 		lbl2.setMaxSize(10 * ac, 3 * ac);
-		lbl2.setStyle("-fx-border-color: #000000;" + "-fx-background-color: #F47920;" + "-fx-text-fill: #000000");
+		lbl2.setStyle("-fx-border-color: #000000;" + "-fx-background-color: #f69651;" + "-fx-text-fill: #000000");
 		lbl2.setAlignment(Pos.CENTER);
 		lbl2.setFont(Font.font("Myriad", 12));
 		HBox.setMargin(lbl2, new Insets(2, 0, 0, 3));
@@ -303,7 +303,7 @@ public class GUITemplate extends Application {
 		btn5.setShape(new Rectangle(aa, aa));
 		btn5.setMinSize(8 * aa, 3 * aa);
 		btn5.setMaxSize(8 * aa, 3 * aa);
-		btn5.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
+		btn5.setStyle("-fx-font: 12 Myriad; -fx-base: #f69651; -fx-font-weight: bold");
 		HBox.setMargin(btn5, new Insets(2, 0, 0, 160));
 		DropShadow shadow3 = new DropShadow();
 		btn5.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
@@ -328,7 +328,7 @@ public class GUITemplate extends Application {
 		btn6.setShape(new Rectangle(ab, ab));
 		btn6.setMinSize(8 * ab, 3 * ab);
 		btn6.setMaxSize(8 * ab, 3 * ab);
-		btn6.setStyle("-fx-font: 12 Myriad; -fx-base: #F47920; -fx-font-weight: bold");
+		btn6.setStyle("-fx-font: 12 Myriad; -fx-base: #f69651; -fx-font-weight: bold");
 		HBox.setMargin(btn6, new Insets(2, 0, 0, 90));
 		DropShadow shadow4 = new DropShadow();
 		btn6.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
@@ -345,7 +345,7 @@ public class GUITemplate extends Application {
 		});
 		// btn6.setOnAction(this)
 
-		bottomMenu.getChildren().addAll(btn5, lbl, lbl2, btn6);
+		bottomMenu.getChildren().addAll(btn5, lbl1, lbl2, btn6);
 
 		// Scen och Pane inställningar
 
@@ -355,7 +355,7 @@ public class GUITemplate extends Application {
 		borderPane.setCenter(centerPane);
 		borderPane.setBottom(bottomMenu);
 
-		Scene scene = new Scene(borderPane, 800, 600, Color.rgb(56, 56, 56));
+		Scene scene = new Scene(borderPane, 1000, 800, Color.rgb(56, 56, 56));
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
@@ -373,7 +373,7 @@ public class GUITemplate extends Application {
 		Menu mnuFile = new Menu("File");
 		MenuItem mnuLogIn = new MenuItem("Log in");
 		MenuItem mnuLogOut = new MenuItem("Log out");
-		menu.setStyle("-fx-background-color: #F47920;");
+		menu.setStyle("-fx-background-color: #f69651;");
 		MenuItem mnuExit = new MenuItem("Exit");
 		mnuExit.setOnAction(exitAction -> {
 			System.exit(0);
@@ -383,6 +383,7 @@ public class GUITemplate extends Application {
 		MenuItem adminUsers = new MenuItem("Administer Users");
 		MenuItem addUser = new MenuItem("Add user");
 		addUser.setOnAction(event -> {
+			centerPane.getChildren().clear();
 			centerPane.getChildren().add(addNewUser.showPane(allClasses, allUsers, centerPane));
 		});
 		adminUsers.setOnAction(action -> {
@@ -392,7 +393,7 @@ public class GUITemplate extends Application {
 		});
 		mnuAdmin.disableProperty().bind(canAdd.not());
 
-		MenuItem createQuest = new MenuItem("Create Test");
+		MenuItem createQuest = new MenuItem("Manage Tests");
 		createQuest.setOnAction(createQ -> {
 			qMakerGUI = new QuizmakerGUI();
 			centerPane.getChildren().clear();
@@ -485,6 +486,14 @@ public class GUITemplate extends Application {
 				logInStage.close();
 				isLoggedIn.set(true);
 				btn2.setText("Log out");
+				btn3.setVisible(true);
+				btn4.setVisible(true);
+				btn5.setVisible(true);
+				btn6.setVisible(true);
+				btn7.setVisible(true);
+				btn8.setVisible(true);
+				lbl1.setVisible(true);
+				lbl2.setVisible(true);
 				centerPane.getChildren().add(studentHome.showPane(user,allTests));
 
 			} else {
@@ -723,7 +732,7 @@ public class GUITemplate extends Application {
 			centerPaneDT.getChildren().clear();
 			centerPane.getChildren().clear();
 			timer.setRun(false);
-			lbl.setText("Time remaining: 00:00:00");
+			lbl1.setText("Time remaining: 00:00:00");
 		//TODO
 		});
 
@@ -831,6 +840,15 @@ public class GUITemplate extends Application {
 			isLoggedIn.set(false);
 			isAdmin.set(false);
 			btn2.setText("Login");
+			btn3.setVisible(false);
+			btn4.setVisible(false);
+			btn5.setVisible(false);
+			btn6.setVisible(false);
+			btn7.setVisible(false);
+			btn8.setVisible(false);
+			lbl1.setVisible(false);
+			lbl2.setVisible(false);
+			
 			studentHome.setTest(noTest);
 		} else if (!isLoggedIn.get()) {
 			showLogin();
@@ -849,7 +867,7 @@ public class GUITemplate extends Application {
 	}
 	
 	public static void setLabelTime(long days, long hours, long minutes, long seconds){
-		lbl.setText("Time remaining: "+days+":"+ hours+":"+ minutes+":"+ seconds);
+		lbl1.setText("Time remaining: "+days+":"+ hours+":"+ minutes+":"+ seconds);
 		checkTime(days,hours,minutes,seconds);
 	}
 	
