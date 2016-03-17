@@ -82,12 +82,6 @@ public class AdminUser {
 		
 		adminUserPane.add(studentListView, 1, 0, 3, 2);
 		
-		Button addStudent = new Button("Add student");
-		addStudent.prefWidthProperty().bind(classCombo.widthProperty());
-		addStudent.setOnAction(addAction -> {
-			showNewStudent(classCombo.getValue(), userList);
-		});
-		
 		Button removeStudent = new Button("Remove student");
 		removeStudent.prefWidthProperty().bind(classCombo.widthProperty());
 		removeStudent.setOnAction(removeAction -> {
@@ -107,7 +101,7 @@ public class AdminUser {
 		});
 		
 		VBox buttons = new VBox();
-		buttons.getChildren().addAll(classCombo, addStudent, removeStudent, 
+		buttons.getChildren().addAll(classCombo, removeStudent, 
 				moveStudent, removeClass);
 		adminUserPane.add(buttons, 0, 1);
 		
@@ -163,95 +157,7 @@ public class AdminUser {
 		});
 	}
 	
-	public void showNewStudent(String className, ObservableList<String> userList) {
-		User newUser = new User();
-		Stage newStudentStage = new Stage();
-		GridPane root = new GridPane();
-		Scene newStudentScene = new Scene(root, 400, 400);
-		newStudentStage.setScene(newStudentScene);
-		newStudentStage.show();
 		
-		TextField txtFname = new TextField();
-		txtFname.setPromptText("First name");
-		root.add(txtFname, 0, 0);
-		
-		TextField txtLname = new TextField();
-		txtLname.setPromptText("Last name");
-		root.add(txtLname, 1, 0);
-		
-		TextField txtEmail = new TextField();
-		txtEmail.setPromptText("E-mail");
-		root.add(txtEmail, 0, 1);
-		
-		TextField txtPhone = new TextField();
-		txtPhone.setPromptText("Phonenumber");
-		root.add(txtPhone, 1, 1);
-		
-		TextField txtAddress = new TextField();
-		txtAddress.setPromptText("Street Address");
-		root.add(txtAddress, 0, 2);
-		
-		TextField txtZip = new TextField();
-		txtZip.setPromptText("Zip");
-		root.add(txtZip, 1, 2);
-		
-		TextField txtCity = new TextField();
-		txtCity.setPromptText("City");
-		root.add(txtCity, 0, 3);
-		
-		TextField txtUserName = new TextField();
-		txtUserName.setPromptText("Username");
-		root.add(txtUserName, 0, 4);
-		
-		PasswordField txtPassword = new PasswordField();
-		txtPassword.setPromptText("Password");
-		root.add(txtPassword, 1, 4);
-		
-		Button okButton = new Button("OK");
-		Button cancelButton = new Button("Cancel");
-		root.add(okButton, 0, 5);
-		root.add(cancelButton, 1, 5);
-		
-		cancelButton.setOnAction(c -> {
-			newStudentStage.close();
-		});
-		
-		okButton.setOnAction(ok -> {
-			
-			if (!className.equals("Create new class")) {
-				if(!checkDoubles(txtUserName.getText())) {
-					newUser.setAccountType("Student");
-					newUser.setCity(txtCity.getText());
-					newUser.setEmail(txtEmail.getText());
-					newUser.setfName(txtFname.getText());
-					newUser.setlName(txtLname.getText());
-					newUser.setPassword(txtPassword.getText());
-					newUser.setPhone(txtPhone.getText());
-					newUser.setStreet(txtAddress.getText());
-					newUser.setUserName(txtUserName.getText());
-					newUser.setZip(Integer.parseInt(txtZip.getText()));
-					
-					SchoolClass sc = (SchoolClass)em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
-					sc.addStudent(newUser);
-					
-					em.getTransaction().begin();
-					em.persist(newUser);
-					em.persist(sc);
-					em.getTransaction().commit();
-					
-					newStudentStage.close();
-				} else {
-					Alert doubleUser = new Alert(AlertType.ERROR);
-					doubleUser.setTitle("Username already exists");
-					doubleUser.setHeaderText("The username already exists");
-					doubleUser.showAndWait();
-				}
-			}
-			userList.add(newUser.getfName()+"\t"+newUser.getlName());
-		});
-		
-		
-	}
 	
 	
 	public String showRemoveStudent(String student, String className) {
