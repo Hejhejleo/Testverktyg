@@ -20,8 +20,8 @@ public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int questionId;
-	private boolean directFeedback;
 	private double points;
+	private boolean directFeedback;
 	private String questionTitle;
 	private String questionText;
 	@ManyToOne(cascade = CascadeType.ALL)
@@ -139,5 +139,9 @@ public class Question {
 	 */
 	public QuestionType getquestionType() {
 		return qType;
+	}
+	
+	public void setTest(Test test) {
+		this.test = test;
 	}
 }
