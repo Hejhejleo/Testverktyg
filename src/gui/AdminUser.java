@@ -93,6 +93,7 @@ public class AdminUser {
 					if ((u.getfName() + "\t" + u.getlName()).equals(studentListView.getSelectionModel().getSelectedItem())) {
 						System.out.println("hej");
 						ChangeUserInfo cu = new ChangeUserInfo(u);
+						// Show user credentials
 						adminUserPane.add(cu.showPane(), 0, 4, 3, 3);
 						break;
 					}
@@ -102,18 +103,21 @@ public class AdminUser {
 		
 		adminUserPane.add(studentListView, 1, 0, 3, 2);
 		
+		// Remove student
 		Button removeStudent = new Button("Remove student");
 		removeStudent.prefWidthProperty().bind(classCombo.widthProperty());
 		removeStudent.setOnAction(removeAction -> {
 			userList.remove(showRemoveStudent(studentListView.getSelectionModel().getSelectedItem(), classCombo.getValue()));
 		});
 		
+		// Move student from a class to another
 		Button moveStudent = new Button("Move student");
 		moveStudent.prefWidthProperty().bind(classCombo.widthProperty());
 		moveStudent.setOnAction(moveAction -> {
 			showMoveStudent(studentListView.getSelectionModel().getSelectedItem(), userList, classCombo);
 		});
 		
+		// Remove class
 		Button removeClass = new Button("Remove class");
 		removeClass.prefWidthProperty().bind(classCombo.widthProperty());
 		removeClass.setOnAction(removeClassAction -> {
@@ -128,6 +132,12 @@ public class AdminUser {
 		return adminUserPane;
 	}
 	
+	/** Deletes a SchoolClass from the database
+	 * 
+	 * @param className
+	 * @param allClasses
+	 * @return SchoolClass
+	 */
 	public String showRemoveClass(String className, List<SchoolClass> allClasses) {
 		SchoolClass sc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
 		em.getTransaction().begin();
@@ -137,6 +147,12 @@ public class AdminUser {
 		return className;
 	}
 	
+	/** Moves a student
+	 * 
+	 * @param studentName
+	 * @param userList
+	 * @param classCombo
+	 */
 	public void showMoveStudent(String studentName, ObservableList<String> userList, ComboBox<String> classCombo) {
 		ComboBox<String> newClassCombo = new ComboBox<String>();
 		Dialog<String> moveStudentDialog = new Dialog<String>();
@@ -177,9 +193,12 @@ public class AdminUser {
 		});
 	}
 	
-		
-	
-	
+	/** Deletes a student
+	 * 
+	 * @param student
+	 * @param className
+	 * @return User
+	 */
 	public String showRemoveStudent(String student, String className) {
 		String fName = student.substring(0, student.indexOf("\t"));
 		String lName = student.substring(student.indexOf("\t")+1, student.length());
@@ -202,6 +221,11 @@ public class AdminUser {
 		return student;
 	}
 	
+	/** Checks if the user already exists
+	 * 
+	 * @param userName
+	 * @return Boolean
+	 */
 	public boolean checkDoubles(String userName) {
 		List<User> tempUserList = em.createQuery("select u from User u").getResultList();
 		for (int i = 0; i < tempUserList.size(); i++) {
@@ -210,7 +234,10 @@ public class AdminUser {
 		return false;
 	}
 	
-	
+	/** Adds a SchoolClass
+	 * 
+	 * @param allClasses
+	 */
 	public void showNewClass(List<SchoolClass> allClasses) {
 		Dialog<String> newClassDialog = new Dialog<String>();
 		newClassDialog.setTitle("Create new class");
