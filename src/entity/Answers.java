@@ -87,4 +87,7 @@ public class Answers {
 	public String getCorrectAnswer() {
 		return answerList.get(correctAnswerIndex);
 	}
+	public int getCorrectAnswerIndex(){
+		return correctAnswerIndex;
+	}
 }
