@@ -1,3 +1,11 @@
+/* Timer class receives via GUITemplate class a String containing start & endTime from the database. 
+* String contains date & time for start and end of the test. This gets parsed into int's and 
+* each value get striped off the string by position. It takes that value and divide it by /1000
+* to get seconds. today value subtract from that day equals remaining milliseconds.
+* Milliseconds then gets decreased for each loop by a thread. Milliseconds gets converted back
+* to day, hour, minute and second that will be displayed on a label in GUITemplate class.
+*/
+
 package connectivity;
 
 import java.util.Calendar;
