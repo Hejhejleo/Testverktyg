@@ -27,6 +27,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
@@ -122,7 +123,7 @@ public class GradingTest {
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
 		StackPane gradingPane = new StackPane();
-
+		
 		// Starting point for the menu where which test to grade is chosen
 		gradingTestMenu = new Menu("Available tests");
 		gradingTest.getItems().add(gradingTestMenu);
@@ -140,15 +141,14 @@ public class GradingTest {
 				Menu itemChooseFocusQuestionMenu = new Menu("Focus on a question");
 				Menu itemChooseFocusStudentMenu = new Menu("Focus on a student");
 				itemForClassMenu.getItems().addAll(itemChooseFocusQuestionMenu, itemChooseFocusStudentMenu);
-				// ------ Focus on a question ------
+				// ------ Focus on a question ------ // TODO
 				// List all questions in the test
 				for (Question q : t.getQuestions()) {
-					focusStudent = false;
 					MenuItem itemForQuestionMenu = new MenuItem(q.getQuestionTitle());
 					itemChooseFocusQuestionMenu.getItems().add(itemForQuestionMenu);
 					// Question is chosen, presentation of the answers from all
 					// students in the class
-					itemChooseFocusQuestionMenu.setOnAction(event -> {
+					itemForQuestionMenu.setOnAction(event -> {
 						Text titleText = new Text("Grading test - focus on question");
 						titleText.setFont(Font.font(30));
 						HBox titleBox = new HBox(10);
@@ -156,17 +156,19 @@ public class GradingTest {
 						titleBox.setAlignment(Pos.CENTER);
 						titleBox.getChildren().add(titleText);
 
-						// Name of the question
-						Label lblQuestionName = new Label(q.getQuestionTitle());
-						lblQuestionName.setMaxWidth(200);
-
-						// The question
-						TextArea txtQuestion = new TextArea(q.getQuestionText());
-						txtQuestion.setDisable(true);
-						txtQuestion.setMaxWidth(200);
-						txtQuestion.setMaxHeight(100);
-
+						gradingTestComponentsQuestion.getChildren().addAll(titleBox);
+						
 						for (User u : sc.getStudents()) {
+							// Name of the question
+							Label lblQuestionName = new Label(q.getQuestionTitle());
+							lblQuestionName.setMaxWidth(200);
+
+							// The question
+							TextArea txtQuestion = new TextArea(q.getQuestionText());
+							txtQuestion.setDisable(true);
+							txtQuestion.setMaxWidth(200);
+							txtQuestion.setMaxHeight(100);
+
 							// Name of the student
 							Label lblName = new Label(u.getfName() + " " + u.getlName());
 							lblName.setFont(Font.font(18));
@@ -315,21 +317,21 @@ public class GradingTest {
 							separator.setPadding(new Insets(5));
 							separator.setStyle("-fx-background-color: #FFA500");
 							gradingTestComponentsQuestion.setPadding(new Insets(0));
-							gradingTestComponentsQuestion.getChildren().addAll(titleBox, gradingBoxes, buttons,
+							gradingTestComponentsQuestion.getChildren().addAll(gradingBoxes, buttons,
 									separator);
 							gradingTestComponentsQuestion.setStyle("-fx-background-color: #FFFFFF");
 						}
+						gradingPane.getChildren().add(gradingTestComponentsQuestion);
 					});
 				}
 				// ------ Focus on a student ------ //TODO
-				focusStudent = true;
 				// all students in the schoolclass are listed
 				for (User u : sc.getStudents()) {
 					MenuItem itemForStudentMenu = new MenuItem(u.getfName() + " " + u.getlName());
 					itemChooseFocusStudentMenu.getItems().add(itemForStudentMenu);
 					// choose student to focus on
 					// Student is chosen, presentation of the students answer to all question in the test
-					itemChooseFocusStudentMenu.setOnAction(event -> {
+					itemForStudentMenu.setOnAction(event -> {
 						Text titleText = new Text("Grading test - focus on student");
 						titleText.setFont(Font.font(30));
 						HBox titleBox = new HBox(10);
@@ -337,17 +339,19 @@ public class GradingTest {
 						titleBox.setAlignment(Pos.CENTER);
 						titleBox.getChildren().add(titleText);
 
-						// Name of the student
-						Label lblName = new Label(u.getfName() + " " + u.getlName());
-						lblName.setFont(Font.font(18));
-						lblName.setMaxWidth(200);
+						gradingTestComponentsStudent.getChildren().addAll(titleBox);
 
-						// Name of the test
-						Label lblTestName = new Label(t.getTestName());
-						lblTestName.setFont(Font.font(18));
-						lblTestName.setMaxWidth(200);
-						
 						for (Question q : t.getQuestions()) {
+							// Name of the student
+							Label lblName = new Label(u.getfName() + " " + u.getlName());
+							lblName.setFont(Font.font(18));
+							lblName.setMaxWidth(200);
+
+							// Name of the test
+							Label lblTestName = new Label(t.getTestName());
+							lblTestName.setFont(Font.font(18));
+							lblTestName.setMaxWidth(200);
+
 							// Name of the question
 							Label lblQuestionName = new Label(q.getQuestionTitle());
 							lblQuestionName.setMaxWidth(200);
@@ -489,19 +493,15 @@ public class GradingTest {
 							separator.setPadding(new Insets(5));
 							separator.setStyle("-fx-background-color: #FFA500");
 							gradingTestComponentsStudent.setPadding(new Insets(0));
-							gradingTestComponentsStudent.getChildren().addAll(titleBox, gradingBoxes, buttons,
+							gradingTestComponentsStudent.getChildren().addAll(/*titleBox, */gradingBoxes, buttons,
 									separator);
 							gradingTestComponentsStudent.setStyle("-fx-background-color: #FFFFFF");
 
 						} // end looping the questions on a test
+						gradingPane.getChildren().add(gradingTestComponentsStudent);
 					});
 				}
 			}
-		}
-		if (focusStudent) {
-			gradingPane.getChildren().add(gradingTestComponentsStudent);
-		} else {
-			gradingPane.getChildren().add(gradingTestComponentsQuestion);
 		}
 		return gradingPane;
 	}
