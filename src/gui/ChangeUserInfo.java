@@ -54,13 +54,13 @@ public class ChangeUserInfo {
 		GridPane grid = new GridPane();
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
-		// Hittar användaren
+		// Hittar anvÃ¤ndaren
 		Query findUser = em.createNamedQuery("loginByName");
 		findUser.setParameter("uname", user.getUserName());
 		userList = findUser.getResultList();
 		user = userList.get(0);
 		
-		// Skapar grafiska komponenter
+		// Creates the graphic components
 		Label lblUserName = new Label("Username: ");
 		TextField txtUserName = new TextField();
 		txtUserName.setText(user.getUserName());
@@ -111,6 +111,7 @@ public class ChangeUserInfo {
 		
 		Button saveChanges = new Button("save changes");
 		saveChanges.setOnAction(save -> {
+			// Saves the user's new credentials
 			em.getTransaction().begin();
 				user.setCity(txtCity.getText());
 				user.setEmail(txtEmail.getText());
@@ -147,6 +148,7 @@ public class ChangeUserInfo {
 			 Node okButton = pwDialog.getDialogPane().lookupButton(okButtonType);
 			 okButton.setDisable(true);
 			 
+			 // Disables the OK-button if the passwordfields don't match
 			 confirmPw.textProperty().addListener(c -> {
 				 if (confirmPw.getText().equals(newPw.getText())) {
 					 okButton.setDisable(false);
@@ -165,14 +167,14 @@ public class ChangeUserInfo {
 			 Optional<Pair<String, String>> result = pwDialog.showAndWait();
 			 
 			 result.ifPresent(password -> {
+				 // If the old password is correct
 				 if (password.getKey().equals(user.getPassword())) {
+					 // Update the user's password
 					 em.getTransaction().begin();
 					 user.setPassword(password.getValue());
 					 em.getTransaction().commit();
-					 
 				 }
 			 });
-			 
 		});
 		
 		grid.add(saveChanges, 3, 0);
