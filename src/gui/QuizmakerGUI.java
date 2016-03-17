@@ -424,6 +424,17 @@ public class QuizmakerGUI {
 		});
 		//Opens new question popup
 		newQuestBut.setOnAction(event -> {
+			answer1.setText("");
+			answer2.setText("");
+			answer3.setText("");
+			answer4.setText("");
+			setTitleTxtQ.setText("");
+			writeQuestionTxt.setText("");
+			writeAnswerTxt.setText("");
+			radBut1.setSelected(false);
+			radBut2.setSelected(false);
+			radBut3.setSelected(false);
+			radBut4.setSelected(false);
 			fieldsVBox.setVisible(true);
 			radButsVBox.setVisible(true);
 			writeQuestionTxt.setVisible(true);
