@@ -1,3 +1,23 @@
+/* GUITemplate build upon a boarderPane, top, left, center and bottom.
+* top Pane has all the top menu and menuItems, Left has all general used nodes like buttons
+* centerPane displays all the different input and output panes generated from external classes,
+* bottomPane are used for displaying information and actions controls for specific tasks like
+* buttons for next page or go back. CSS are used to do effects on buttons but coded in the
+* GUITemplate. Main purpose for GUITemplate to give a common set of components to give 
+* one form and view to fit all.
+* 
+* As of today each input and output pane has its own set of components not generated from the
+* GUITemplate. Those could if wanted to be integrated and a part of the general view to allow
+* less differences in graphical looks.
+* 
+* In this class you also have the methods and logic for loading and sends student answers witch
+* sending Date to Timer class. Timer class sends remain time for the test. When time runs out
+* and test is not finished, it will automatically stop test show the result at that point and
+* send it to the database.
+* 
+*/
+
+
 package GUITemplate;
 
 import java.util.ArrayList;
@@ -76,6 +96,7 @@ public class GUITemplate extends Application {
 	private Login logIn = new Login();
 	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
 	private BooleanProperty isAdmin = new SimpleBooleanProperty(false);
+	private static BooleanProperty isTestPicked = new SimpleBooleanProperty(false);
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
@@ -211,6 +232,7 @@ public class GUITemplate extends Application {
 			}
 		});
 
+		BooleanBinding canStart = isTestPicked.and(isLoggedIn);
 		btn4 = new Button();
 		btn4.setLayoutX(30.0);
 		btn4.setLayoutY(235.0);
@@ -220,6 +242,7 @@ public class GUITemplate extends Application {
 		btn4.setMinSize(2 * r, 2 * r);
 		btn4.setMaxSize(2 * r, 2 * r);
 		btn4.setStyle("-fx-font: 12 Myriad; -fx-base: #f69651; -fx-font-weight: bold");
+		btn4.disableProperty().bind(canStart.not());
 
 		DropShadow shadow2 = new DropShadow();
 		btn4.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
@@ -870,7 +893,9 @@ public class GUITemplate extends Application {
 		
 	}
 	
-
+public static void setPicked(Boolean value){
+	isTestPicked.set(value);
+}
 	// TODO----------------------------SLUT LEO
 
 }
