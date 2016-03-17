@@ -12,7 +12,6 @@ import entity.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -21,13 +20,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 /** Administrates users
  * 
@@ -40,12 +37,19 @@ public class AdminUser {
 	private ObservableList<String> classList = FXCollections.observableArrayList();
 	private EntityManagerFactory emf;
 	private EntityManager em;
+	private SchoolClass tempClass;
 	
 	
-	public AdminUser() {
-		
-	}
+	public AdminUser() {}
 	
+	/** Returns the panel for administration of classes and users
+	 * 
+	 * 
+	 * @param root
+	 * @param allClasses
+	 * @param allUsers
+	 * @return The GridPane
+	 */
 	public GridPane showPane(BorderPane root, List<SchoolClass> allClasses, List<User> allUsers) {
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
@@ -73,9 +77,23 @@ public class AdminUser {
 				showNewClass(allClasses);
 			} else {
 				userList.clear();
-				SchoolClass tempClass = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getValue() + "'").getSingleResult();
+				tempClass = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getValue() + "'").getSingleResult();
 				for (int i = 0; i<tempClass.getStudents().size(); i++) {
 					userList.add(tempClass.getStudents().get(i).getfName() + "\t" + tempClass.getStudents().get(i).getlName());
+				}
+			}
+			em.getTransaction().commit();
+		});
+		
+		studentListView.setOnMouseClicked(userView -> {
+			if (userView.getClickCount()>1) {
+				for (User u : allUsers) {
+					if ((u.getfName() + "\t" + u.getlName()).equals(studentListView.getSelectionModel().getSelectedItem())) {
+						System.out.println("hej");
+						ChangeUserInfo cu = new ChangeUserInfo(u);
+						adminUserPane.add(cu.showPane(), 0, 4, 3, 3);
+						break;
+					}
 				}
 			}
 		});
