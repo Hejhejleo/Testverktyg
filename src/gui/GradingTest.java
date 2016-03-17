@@ -38,10 +38,40 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * GradingTest:
+ * 
+ * Choose a test in the list of available tests
+ * 
+ * Choose a schoolclass in the list of schoolclasses assigned to that test
+ * 
+ * Choose to focus on a question or a student
+ * 
+ * > If question:
+ * 
+ * Choose a question in a list of the questions in the test
+ * 
+ * All students' answers to that question are presented
+ * 
+ * > If student: 
+ * 
+ * Pick a student in a list of students in the class
+ * 
+ * The picked student's answers are presented
+ * 
+ * Known bugs and flaws: 
+ * > only shows the last question of the last student 
+ * > no scrollpane connected to the stackpane
+ * > no working cancelbutton 
+ * > doesn't include answer from radionbutton questions 
+ * > lots of code written more than once
+ * 
+ * @author Jannike
+ *
+ */
 public class GradingTest {
 
 	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
-
 	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
 			+ "-fx-background-color: #FFFFFF";
 	private String pushButtonStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
@@ -52,17 +82,29 @@ public class GradingTest {
 	private EntityManager em;
 	private Menu gradingTestMenu;
 	private Menu gradingTest;
+	private VBox gradingTestComponentsQuestion = new VBox(5);
+	private VBox gradingTestComponentsStudent = new VBox(5);
+	private boolean focusStudent;
 
+	/**
+	 * 
+	 * @param gradingTest
+	 *            - gives the starting point in the main program for the menu
+	 */
 	public GradingTest(Menu gradingTest) {
 		this.gradingTest = gradingTest;
-
 	}
 
-	private Double getMaxPoint(Question q) {
-		return q.getPoints();
-	}	
-	
-	private ObservableList<Double> getGivenPointAlternatives(Question q) {  
+	/**
+	 * Gives the point alternatives for the teacher to award on a question, from
+	 * 0 to the question's maximum point
+	 * 
+	 * @param q
+	 *            - the question
+	 * @return the point alternatives for the teacher to award on the question
+	 *         q, from 0 to the maximum point
+	 */
+	private ObservableList<Double> getGivenPointAlternatives(Question q) {
 		ObservableList<Double> givenPointAlternative = FXCollections.observableArrayList();
 		Double maxPoint = q.getPoints();
 		for (Double i = 0.0; i < ((maxPoint) * 2); i++) {
@@ -72,20 +114,26 @@ public class GradingTest {
 		return givenPointAlternative;
 	}
 
+	/**
+	 * 
+	 * @return the stackpane for grading tests
+	 */
 	public StackPane showGradingPane() {
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
 		StackPane gradingPane = new StackPane();
 
-		gradingTestMenu = new Menu("Available tests"); // TODO
+		// Starting point for the menu where which test to grade is chosen
+		gradingTestMenu = new Menu("Available tests");
 		gradingTest.getItems().add(gradingTestMenu);
 		Query findTests = em.createQuery("Select t from Test t");
 		List<Test> testList = findTests.getResultList();
 
-
+		// List all test in the database, name and starting date
 		for (Test t : testList) {
 			Menu itemForTestMenu = new Menu("Test: " + t.getTestName() + " " + "date: " + t.getTestStart());
 			gradingTestMenu.getItems().add(itemForTestMenu);
+			// Lists all schoolclasses assinged to the test
 			for (SchoolClass sc : t.getClasses()) {
 				Menu itemForClassMenu = new Menu("Class: " + sc.getClassName());
 				itemForTestMenu.getItems().add(itemForClassMenu);
@@ -93,10 +141,13 @@ public class GradingTest {
 				Menu itemChooseFocusStudentMenu = new Menu("Focus on a student");
 				itemForClassMenu.getItems().addAll(itemChooseFocusQuestionMenu, itemChooseFocusStudentMenu);
 				// ------ Focus on a question ------
+				// List all questions in the test
 				for (Question q : t.getQuestions()) {
-
+					focusStudent = false;
 					MenuItem itemForQuestionMenu = new MenuItem(q.getQuestionTitle());
 					itemChooseFocusQuestionMenu.getItems().add(itemForQuestionMenu);
+					// Question is chosen, presentation of the answers from all
+					// students in the class
 					itemChooseFocusQuestionMenu.setOnAction(event -> {
 						Text titleText = new Text("Grading test - focus on question");
 						titleText.setFont(Font.font(30));
@@ -168,17 +219,9 @@ public class GradingTest {
 							lblGivenPoints.setMaxWidth(200);
 
 							// Setting the score on the question
-//							ComboBox<Double> cmbGivenPoints = new ComboBox();
-//							cmbGivenPoints.setItems(givenPointAlternative);
-//
-//
-							
-							
-							// Setting the score on the question
 							ComboBox<Double> cmbGivenPoints = new ComboBox();
-							ObservableList<Double> givenPointAlternative = getGivenPointAlternatives(q); 
+							ObservableList<Double> givenPointAlternative = getGivenPointAlternatives(q);
 							cmbGivenPoints.setItems(givenPointAlternative);
-							
 
 							if (sa.getGivenPoints() != null) {
 								cmbGivenPoints.setValue(sa.getGivenPoints());
@@ -188,16 +231,19 @@ public class GradingTest {
 							cmbGivenPoints.setStyle(whiteBGAndGreyBorder);
 							cmbGivenPoints.setCursor(Cursor.HAND);
 
+							// Left column of the presentation
 							VBox gradingBoxL = new VBox(5);
 							gradingBoxL.setPadding(new Insets(5, 10, 5, 10));
 							gradingBoxL.getChildren().addAll(lblName, lblQuestionName, txtQuestion, lblTeachersNote,
 									txtTeachersNote);
 
+							// Right column of the presentation
 							VBox gradingBoxR = new VBox(5);
 							gradingBoxR.setPadding(new Insets(5, 10, 5, 10));
 							gradingBoxR.getChildren().addAll(lblTestName, lblAnswerTitle, txtStudentAnswer,
 									lblTeachersComment, txtTeachersComment, lblGivenPoints, cmbGivenPoints);
 
+							// Both columns
 							HBox gradingBoxes = new HBox();
 							gradingBoxes.getChildren().addAll(gradingBoxL, gradingBoxR);
 
@@ -214,6 +260,8 @@ public class GradingTest {
 							buttons.setRight(cancelButton);
 							buttons.setPadding(new Insets(5, 10, 10, 10));
 
+							// The look of the button gives feedback when pressed and
+							// released
 							saveButton.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 								@Override
 								public void handle(MouseEvent e) {
@@ -243,22 +291,17 @@ public class GradingTest {
 							});
 
 							cancelButton.setOnAction(cancel -> {
-								Alert notSaved = new Alert(AlertType.CONFIRMATION);
+								Alert notSaved = new Alert(AlertType.INFORMATION);
 								notSaved.setTitle("Content not saved");
-								notSaved.setHeaderText("Your input has not been saved");
-								notSaved.setContentText("If you want to store the data push the Save button instead");
+								notSaved.setHeaderText("No grading added");
+								notSaved.setContentText("Your inputs will not be saved");
+								notSaved.showAndWait();
+								// centerPane.getChildren().clear(); TODO
 
-								Optional<ButtonType> result = notSaved.showAndWait();
-								if (result.get() == ButtonType.OK) {
-
-								} else {
-									// ... user chose CANCEL or closed the
-									// dialog TODO
-								}
 							});
 
+							// The input is stored in the database
 							saveButton.setOnAction(save -> {
-
 								sa.setGivenPoints(cmbGivenPoints.getValue());
 								sa.setNote(txtTeachersNote.getText());
 								sa.setTeacherComment(txtTeachersComment.getText());
@@ -267,24 +310,25 @@ public class GradingTest {
 								em.getTransaction().commit();
 							});
 
+							// A separator between each student's answer
 							HBox separator = new HBox(5);
 							separator.setPadding(new Insets(5));
 							separator.setStyle("-fx-background-color: #FFA500");
-							VBox gradingTestComponents = new VBox(5);
-							gradingTestComponents.setPadding(new Insets(0));
-							gradingTestComponents.getChildren().addAll(titleBox, gradingBoxes, buttons, separator);
-							gradingTestComponents.setStyle("-fx-background-color: #FFFFFF");
-
-							gradingPane.getChildren().add(gradingTestComponents);
+							gradingTestComponentsQuestion.setPadding(new Insets(0));
+							gradingTestComponentsQuestion.getChildren().addAll(titleBox, gradingBoxes, buttons,
+									separator);
+							gradingTestComponentsQuestion.setStyle("-fx-background-color: #FFFFFF");
 						}
-
 					});
 				}
-
-				// ------ Focus on a student ------
+				// ------ Focus on a student ------ //TODO
+				focusStudent = true;
+				// all students in the schoolclass are listed
 				for (User u : sc.getStudents()) {
 					MenuItem itemForStudentMenu = new MenuItem(u.getfName() + " " + u.getlName());
 					itemChooseFocusStudentMenu.getItems().add(itemForStudentMenu);
+					// choose student to focus on
+					// Student is chosen, presentation of the students answer to all question in the test
 					itemChooseFocusStudentMenu.setOnAction(event -> {
 						Text titleText = new Text("Grading test - focus on student");
 						titleText.setFont(Font.font(30));
@@ -302,7 +346,7 @@ public class GradingTest {
 						Label lblTestName = new Label(t.getTestName());
 						lblTestName.setFont(Font.font(18));
 						lblTestName.setMaxWidth(200);
-
+						
 						for (Question q : t.getQuestions()) {
 							// Name of the question
 							Label lblQuestionName = new Label(q.getQuestionTitle());
@@ -357,7 +401,7 @@ public class GradingTest {
 
 							// Setting the score on the question
 							ComboBox<Double> cmbGivenPoints = new ComboBox();
-							ObservableList<Double> givenPointAlternative = getGivenPointAlternatives(q); 
+							ObservableList<Double> givenPointAlternative = getGivenPointAlternatives(q);
 							cmbGivenPoints.setItems(givenPointAlternative);
 
 							if (sa.getGivenPoints() != null) {
@@ -423,22 +467,15 @@ public class GradingTest {
 							});
 
 							cancelButton.setOnAction(cancel -> {
-								Alert notSaved = new Alert(AlertType.CONFIRMATION);
+								Alert notSaved = new Alert(AlertType.INFORMATION);
 								notSaved.setTitle("Content not saved");
-								notSaved.setHeaderText("Your input has not been saved");
-								notSaved.setContentText("If you want to store the data push the Save button instead");
-
-								Optional<ButtonType> result = notSaved.showAndWait();
-								if (result.get() == ButtonType.OK) {
-
-								} else {
-									// ... user chose CANCEL or closed the
-									// dialog TODO
-								}
+								notSaved.setHeaderText("No grading added");
+								notSaved.setContentText("Your inputs will not be saved");
+								notSaved.showAndWait();
+								// centerPane.getChildren().clear(); TODO
 							});
 
 							saveButton.setOnAction(save -> {
-
 								sa.setGivenPoints(cmbGivenPoints.getValue());
 								sa.setNote(txtTeachersNote.getText());
 								sa.setTeacherComment(txtTeachersComment.getText());
@@ -447,19 +484,24 @@ public class GradingTest {
 								em.getTransaction().commit();
 							});
 
+							// A separator between each question
 							HBox separator = new HBox(5);
 							separator.setPadding(new Insets(5));
 							separator.setStyle("-fx-background-color: #FFA500");
-							VBox gradingTestComponents = new VBox(5);
-							gradingTestComponents.setPadding(new Insets(0));
-							gradingTestComponents.getChildren().addAll(titleBox, gradingBoxes, buttons, separator);
-							gradingTestComponents.setStyle("-fx-background-color: #FFFFFF");
+							gradingTestComponentsStudent.setPadding(new Insets(0));
+							gradingTestComponentsStudent.getChildren().addAll(titleBox, gradingBoxes, buttons,
+									separator);
+							gradingTestComponentsStudent.setStyle("-fx-background-color: #FFFFFF");
 
-							gradingPane.getChildren().add(gradingTestComponents);
-						}
+						} // end looping the questions on a test
 					});
 				}
 			}
+		}
+		if (focusStudent) {
+			gradingPane.getChildren().add(gradingTestComponentsStudent);
+		} else {
+			gradingPane.getChildren().add(gradingTestComponentsQuestion);
 		}
 		return gradingPane;
 	}
