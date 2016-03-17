@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import GUITemplate.GUITemplate;
 import entity.SchoolClass;
 import entity.Test;
 import entity.User;
@@ -31,6 +32,7 @@ public class StudentHome {
 	public BorderPane showPane(User user, List<Test> allTests) {
 		obsTestsList.clear();
 
+		GUITemplate.setPicked(false);
 		Calendar today = Calendar.getInstance();
 		Calendar start = Calendar.getInstance();
 		Calendar end = Calendar.getInstance();
@@ -95,6 +97,7 @@ public class StudentHome {
 			for (Test t : allTests) {
 				if (t.getTestName().equals(testsComboBox.getValue())) {
 					setTest(t);
+					GUITemplate.setPicked(true);
 				}
 			}
 		});
