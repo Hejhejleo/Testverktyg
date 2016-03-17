@@ -3,25 +3,18 @@ package gui;
 
 
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.OneToOne;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javafx.scene.input.MouseEvent;
+
 import entity.Answers;
 import entity.Question;
 import entity.QuestionType;
 import entity.Test;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -33,7 +26,6 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -42,9 +34,7 @@ import javafx.stage.Stage;
 public class QuizmakerGUI {
 	
 	private EntityManagerFactory emf;
-	private EntityManager em;
-	
-	
+	private EntityManager em;	
 	private ObservableList<Integer> pointObList ;
 	private ObservableList<String> questTypeObList ;
 	private ObservableList<String> testList = FXCollections.observableArrayList();
@@ -54,8 +44,6 @@ public class QuizmakerGUI {
 	private QuestionType questType = new QuestionType();
 	private Question quest;
 	private Answers answer;
-	private QuestionType questionType = new QuestionType();
-	private QuestionType questionType2 = new QuestionType();
 	private int points;
 	private int correctAnswerIndex;
 	private String questionName;	
@@ -157,7 +145,7 @@ public class QuizmakerGUI {
 		radBut2.setToggleGroup(butGroup);
 		radBut3.setToggleGroup(butGroup);
 		radBut4.setToggleGroup(butGroup);		
-		radButsVBox.getChildren().addAll(radBut1, radBut2, radBut3, radBut4, feedbackCheck);
+		radButsVBox.getChildren().addAll(radBut1, radBut2, radBut3, radBut4);
 		radButsVBox.setVisible(false);
 		// Button VBox right of textarea		
 		butsAndCmbTest.getChildren().addAll(newTestBut, deleteTestBut, assignTestBut, testCmbBox);
@@ -287,6 +275,7 @@ public class QuizmakerGUI {
 			em.getTransaction().commit();
 		});
 		
+		//Delete the test chosen in the testcombobox
 		deleteTestBut.setOnAction(event -> {
 			em.getTransaction().begin();
 			 Test t = (Test) em.createQuery("select t from Test t where t.testName ='" + testCmbBox.getValue()+"'").getSingleResult();			 
@@ -294,14 +283,15 @@ public class QuizmakerGUI {
 			 for (Question q : t.getQuestions()){
 				 q.setTest(null);
 				 em.persist(q);
-			 }
-			 
+			 }			 
 			 t.getQuestions().clear();
 			 em.persist(t);
 			 em.remove(t);
 			 em.getTransaction().commit();
 		});
 		
+		//Shows the selected question in the questionmaker GUI
+		//Save the changes made to the selected question
 		listViewQuest.setOnMouseClicked(event -> {
 			
 			Question tempSelcQuest = (Question) em.createQuery("select t from Question t where t.questionTitle ='" + listViewQuest.getSelectionModel().getSelectedItem() +"'").getSingleResult();
@@ -382,17 +372,15 @@ public class QuizmakerGUI {
 			tempTestLista.add(test);
 			testCmbBox.getSelectionModel().select(testList.size()-1);
 		});
-		
+		//Opens a newtest popup
 		newTestBut.setOnAction(event -> {
 			fieldsVBox.setVisible(false);
 			radButsVBox.setVisible(false);
 			writeQuestionTxt.setVisible(false);
-			writeAnswerTxt.setVisible(false);
-			
-				
+			writeAnswerTxt.setVisible(false);							
 			popUpStage.showAndWait();			
 		});
-		//TODO töm answers
+		//Closes the newQuestion popup and sets values to the database
 		okBut.setOnAction(event -> {
 			//Get a questType from questionType
 			QuestionType tempQuestType = (QuestionType) em.createQuery("select t from QuestionType t where t.questionType ='" + setTypeCmbBox.getValue()+"'").getSingleResult();
@@ -411,14 +399,14 @@ public class QuizmakerGUI {
 			else if(setTypeCmbBox.getValue().equals("Radiobuttons")){
 				fieldsAndRadsHBox.getChildren().clear();
 				fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
-			}					
-						
+			}											
 			popUpStage2.close();
 		});
+		//Assigns test to the different classes
 		assignTestBut.setOnAction(event -> {			
 			assignTest.doAssign(test, em);			
 		});
-		
+		//Opens new question popup
 		newQuestBut.setOnAction(event -> {
 			fieldsVBox.setVisible(true);
 			radButsVBox.setVisible(true);
@@ -427,14 +415,14 @@ public class QuizmakerGUI {
 			quest = new Question(points, true, null, null, test, null, answer);		
 			popUpStage2.show();	
 		});
-		
+		/*
 		feedbackCheck.setOnAction(event -> {			
 			if(feedbackCheck.isSelected()){
 				questFeedback.setVisible(true);				
 			}
 			else{
 				questFeedback.setVisible(false);}				
-		});
+		});*/
 		
 		
 		return root;		
