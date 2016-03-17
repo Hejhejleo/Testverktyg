@@ -176,7 +176,6 @@ public class AddNewUser {
 			});
 		
 		clearButton.setOnAction(clear -> {
-			titleText.setText("");
 			txtFirstName.setText("");
 			txtLastName.setText("");
 			txtSSN.setText("");
