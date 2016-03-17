@@ -72,19 +72,21 @@ public class AdminUser {
 		studentListView.setItems(userList);
 		studentListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		studentListView.setMaxHeight(300);
+		
 		classCombo.setOnAction(chooseClass -> {
 			if (classCombo.getValue().equals("Create new class")) {
 				showNewClass(allClasses);
 			} else {
+				// Updates the user list
 				userList.clear();
 				tempClass = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + classCombo.getValue() + "'").getSingleResult();
 				for (int i = 0; i<tempClass.getStudents().size(); i++) {
 					userList.add(tempClass.getStudents().get(i).getfName() + "\t" + tempClass.getStudents().get(i).getlName());
 				}
 			}
-			em.getTransaction().commit();
 		});
 		
+		// If doubleclick on a user
 		studentListView.setOnMouseClicked(userView -> {
 			if (userView.getClickCount()>1) {
 				for (User u : allUsers) {
