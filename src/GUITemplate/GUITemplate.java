@@ -15,8 +15,8 @@
 * and test is not finished, it will automatically stop test show the result at that point and
 * send it to the database.
 * 
+* 
 */
-
 
 package GUITemplate;
 
@@ -27,7 +27,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-
 
 import connectivity.Login;
 import connectivity.StartUp;
@@ -49,17 +48,12 @@ import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -118,9 +112,6 @@ public class GUITemplate extends Application {
 	List<String> testOverviewADT = new ArrayList<>();
 	User userDT;
 	List<Object> questionAnswersDT = new ArrayList<>();
-	
-	// List<ToggleGroup> toggleGroupsDT = new ArrayList<>();
-	// List<TextArea> textAreasDT = new ArrayList<>();
 
 	Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
 	static Button endTest;
@@ -142,11 +133,11 @@ public class GUITemplate extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		startUp= new StartUp();
+		startUp = new StartUp();
 		allClasses = startUp.getClasses();
 		allTests = startUp.getTests();
 		allUsers = startUp.getUsers();
-		
+
 		primaryStage.setTitle("Newton test tool 0.5 Alpha");
 		this.primaryStage = primaryStage;
 
@@ -157,16 +148,9 @@ public class GUITemplate extends Application {
 
 		// Menyer topp
 
-		Menu viewMenu = new Menu("_View");
-
-		CheckMenuItem cssMenuItem = new CheckMenuItem("Show remaining time");
-		cssMenuItem.setSelected(true);
-		viewMenu.getItems().add(cssMenuItem);
-
 		// Vertikal box till v�nster med knappar och funktioner
 
 		VBox leftMenu = new VBox(20);
-		//leftMenu.setStyle("-fx-background-color: #f69651;");
 		leftMenu.setPadding(new Insets(10, 10, 10, 10));
 
 		btn2 = new Button();
@@ -259,7 +243,7 @@ public class GUITemplate extends Application {
 		});
 		// START BUTTON
 		btn4.setOnAction(event -> {
-			Test temp=studentHome.getTest();
+			Test temp = studentHome.getTest();
 			centerPane.getChildren().clear();
 			timer = new Timer();
 			timer.setTest(temp);
@@ -286,7 +270,7 @@ public class GUITemplate extends Application {
 		// CenterPane
 
 		centerPane = new AnchorPane();
-		//centerPane.setStyle("-fx-border-color: #000000;");
+		// centerPane.setStyle("-fx-border-color: #000000;");
 		centerPane.getChildren().addAll();
 
 		// Horizontal box i nedre kant
@@ -422,7 +406,7 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().clear();
 			centerPane.getChildren().addAll(qMakerGUI.showPane());
 		});
-		
+
 		Menu gradingTest = new Menu("Grade Test"); // TODO
 		gradingTest.setOnAction(gradeEvent -> {
 			gTest = new GradingTest(gradingTest);
@@ -509,7 +493,7 @@ public class GUITemplate extends Application {
 				logInStage.close();
 				isLoggedIn.set(true);
 				btn2.setText("Log out");
-				centerPane.getChildren().add(studentHome.showPane(user,allTests));
+				centerPane.getChildren().add(studentHome.showPane(user, allTests));
 
 			} else {
 				wrongLogin.setVisible(true);
@@ -518,10 +502,10 @@ public class GUITemplate extends Application {
 
 	}
 
-
-
 	// TODO----------------------------START LEO
-	// KOD!--------------------------------------
+	// Här är koden som hämtar alla frågor och parsar om dem till borderpanes
+	// med "info"
+
 	public void startTest(User user, String testName) {
 		this.centerPaneDT = centerPane;
 
@@ -530,25 +514,19 @@ public class GUITemplate extends Application {
 		Query test = em.createNamedQuery("get tests");
 		testNameDT = "Test i JPA";
 		test.setParameter("name", testName);
-		System.out.println("---------------:::Hello:::-----------------");
 		// get questions from DB
-		System.out.println("---------------:::1:::-----------------");
 		List<Test> testsList = new ArrayList<>(test.getResultList());
-		System.out.println("---------------:::2:::-----------------");
 		List<Answers> answersList = new ArrayList<>(em.createQuery("select a from Answers a").getResultList());
 
-		System.out.println("---------------:::3:::-----------------");
 		Test currentTest = new Test();
 		currentTest = testsList.get(0);
-		System.out.println("---------------:::4:::-----------------");
 
 		for (int i = 0; i < currentTest.getQuestions().size(); i++) {
 			questionsDT.add(currentTest.getQuestions().get(i));
 			System.out.println(questionsDT.get(i).getQuestionText());
 		}
-		System.out.println("---------------:::5:::-----------------");
 
-		// Make array-size to fit test
+		// Make array-size to have empty places for all the questions
 		for (int i = 0; i < questionsDT.size(); i++) {
 			testOverviewADT.add(null);
 			testOverviewQDT.add(null);
@@ -557,7 +535,6 @@ public class GUITemplate extends Application {
 		// RootGrid
 
 		// Make scenes
-		System.out.println("---------------:::6:::-----------------");
 		for (int i = 0; i <= (questionsDT.size() - 1); i++) {
 			for (int j = 0; j <= (answersList.size() - 1); j++) {
 				if (answersList.get(j).getQuestion() == questionsDT.get(i)) {
@@ -568,8 +545,6 @@ public class GUITemplate extends Application {
 			TextArea questionTextArea = new TextArea();
 			ToggleGroup group = new ToggleGroup();
 			GridPane root = new GridPane();
-
-			System.out.println("---------------:::7:::-----------------");
 
 			Scene sceneDT = new Scene(root, 800, 350);
 
@@ -592,23 +567,6 @@ public class GUITemplate extends Application {
 
 			// TopRight Corner
 			BorderPane top = new BorderPane();
-//			HBox topRight = new HBox(10);
-//			topRight.spacingProperty().set(10);
-//
-//			top.setTop(topRight);
-//			topRight.setAlignment(Pos.TOP_RIGHT);
-//			StackPane spoilerHolder = new StackPane();
-//			Rectangle spoilerTimer = new Rectangle(40, 15, Color.BLACK);
-//			Rectangle spoilerDetection = new Rectangle(40, 15, Color.TRANSPARENT);
-//			Text timerText = new Text("time");
-//			timerText.setFill(Color.WHITE);
-//			timerText.setStroke(Color.WHITE);
-//			Label timer = new Label("18:45");
-//			Label questionNr = new Label((i + 1) + "/" + (questionsDT.size()));
-//			spoilerHolder.getChildren().addAll(timer, spoilerTimer, timerText);
-//			spoilerHolder.getChildren().add(spoilerDetection);
-//			topRight.getChildren().addAll(spoilerHolder, questionNr);
-//			GridPane.setConstraints(top, 2, 0);
 			root.getChildren().addAll(top);
 
 			// BottomRight
@@ -665,30 +623,14 @@ public class GUITemplate extends Application {
 			bottomRight.getColumnConstraints().addAll(column1, column1);
 			bottomRight.getRowConstraints().addAll(row50, row50);
 
-//			root.setGridLinesVisible(true);
-//			bottomRight.setGridLinesVisible(true);
 			canvasesDT.add(root);
-
-//			spoilerDetection.setOnMouseEntered(event -> {
-//				spoilerTimer.setFill(Color.TRANSPARENT);
-//				timerText.setFill(Color.TRANSPARENT);
-//				timerText.setStroke(Color.TRANSPARENT);
-//
-//			});
-//			spoilerDetection.setOnMouseExited(event -> {
-//				spoilerTimer.setFill(Color.BLACK);
-//				timerText.setFill(Color.WHITE);
-//				timerText.setStroke(Color.WHITE);
-//
-//			});
-
 		}
 
-		// LastCanvas /START
+		// LastCanvas /START (End test knappen)
 
 		BorderPane rootLC = new BorderPane();
 		Scene lastCanvas = new Scene(rootLC, 800, 350);
-		endTest = new Button("End Test");
+		endTest = new Button("Check answers");
 		rootLC.setCenter(endTest);
 		canvasesDT.add(rootLC);
 
@@ -708,8 +650,8 @@ public class GUITemplate extends Application {
 		rightContainer.setPadding(new Insets(0, 3000, 20, 30));
 		rightContainer.setAlignment(Pos.BOTTOM_LEFT);
 
-		yes = new Button("Skicka in");
-		Button cancel = new Button("Cancel");
+		yes = new Button("Send in");
+		Button cancel = new Button("Change answers");
 		rightContainer.getChildren().addAll(yes, cancel);
 		leftContainer.setTop(overviewTitle);
 		leftContainer.setCenter(overview);
@@ -734,11 +676,11 @@ public class GUITemplate extends Application {
 		});
 
 		yes.setOnAction(event -> {
-			
+
 			for (int i = 0; i < questionsDT.size(); i++) {
-				try{
-				sendToDatabase(user, questionsDT.get(i), testOverviewADT.get(i).toString(), em);
-				}catch(NullPointerException e){
+				try {
+					sendToDatabase(user, questionsDT.get(i), testOverviewADT.get(i).toString(), em);
+				} catch (NullPointerException e) {
 					System.out.println(e);
 				}
 			}
@@ -748,11 +690,12 @@ public class GUITemplate extends Application {
 			centerPane.getChildren().clear();
 			timer.setRun(false);
 			lbl1.setText("Time remaining: 00:00:00");
-		//TODO
+			// TODO
 		});
 
 		// Overview för provets svar /SLUT
 
+		// Question--
 		btn5.setOnMouseClicked(event -> {
 			testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
 
@@ -772,7 +715,7 @@ public class GUITemplate extends Application {
 			changeQuestion("-");
 			System.out.println(questionNumberDT);
 		});
-
+		// Question++
 		btn6.setOnMouseClicked(event -> {
 			testOverviewQDT.set(questionNumberDT, questionsDT.get(questionNumberDT).getQuestionText());
 
@@ -795,12 +738,6 @@ public class GUITemplate extends Application {
 			System.out.println(questionNumberDT);
 		});
 
-	}
-
-	public void showDoneButton() {
-		for (int i = 0; i <= canvasesDT.size() - 1; i++) {
-
-		}
 	}
 
 	public String getAnswersForOverview() {
@@ -855,7 +792,7 @@ public class GUITemplate extends Application {
 			isLoggedIn.set(false);
 			isAdmin.set(false);
 			btn2.setText("Login");
-			
+
 			studentHome.setTest(noTest);
 		} else if (!isLoggedIn.get()) {
 			showLogin();
@@ -872,17 +809,17 @@ public class GUITemplate extends Application {
 		em.persist(studentAnswer);
 		em.getTransaction().commit();
 	}
-	
-	public static void setLabelTime(long days, long hours, long minutes, long seconds){
-		lbl1.setText("Time remaining: "+days+":"+ hours+":"+ minutes+":"+ seconds);
-		checkTime(days,hours,minutes,seconds);
+
+	public static void setLabelTime(long days, long hours, long minutes, long seconds) {
+		lbl1.setText("Time remaining: " + days + ":" + hours + ":" + minutes + ":" + seconds);
+		checkTime(days, hours, minutes, seconds);
 	}
-	
-	public static void checkTime(long days, long hours, long minutes, long seconds){
-		if(seconds<1){
-			if(minutes<1){
-				if(hours<1){
-					if(days<1){
+
+	public static void checkTime(long days, long hours, long minutes, long seconds) {
+		if (seconds < 1) {
+			if (minutes < 1) {
+				if (hours < 1) {
+					if (days < 1) {
 						endTest.fire();
 						yes.fire();
 						timer.setRun(false);
@@ -890,12 +827,11 @@ public class GUITemplate extends Application {
 				}
 			}
 		}
-		
+
 	}
-	
-public static void setPicked(Boolean value){
-	isTestPicked.set(value);
-}
-	// TODO----------------------------SLUT LEO
+
+	public static void setPicked(Boolean value) {
+		isTestPicked.set(value);
+	}
 
 }
