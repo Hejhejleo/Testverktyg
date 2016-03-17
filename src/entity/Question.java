@@ -21,7 +21,6 @@ public class Question {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int questionId;
 	private double points;
-	private boolean directFeedback;
 	private String questionTitle;
 	private String questionText;
 	@ManyToOne(cascade = CascadeType.ALL)
