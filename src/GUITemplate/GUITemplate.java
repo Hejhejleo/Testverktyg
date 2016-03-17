@@ -74,8 +74,8 @@ public class GUITemplate extends Application {
 	private StartUp startUp;
 	private Test noTest;
 	private Login logIn = new Login();
-	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
-	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
+	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
+	private BooleanProperty isAdmin = new SimpleBooleanProperty(false);
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
 	private QuizmakerGUI qMakerGUI;
@@ -486,14 +486,6 @@ public class GUITemplate extends Application {
 				logInStage.close();
 				isLoggedIn.set(true);
 				btn2.setText("Log out");
-				btn3.setVisible(true);
-				btn4.setVisible(true);
-				btn5.setVisible(true);
-				btn6.setVisible(true);
-				btn7.setVisible(true);
-				btn8.setVisible(true);
-				lbl1.setVisible(true);
-				lbl2.setVisible(true);
 				centerPane.getChildren().add(studentHome.showPane(user,allTests));
 
 			} else {
@@ -840,14 +832,6 @@ public class GUITemplate extends Application {
 			isLoggedIn.set(false);
 			isAdmin.set(false);
 			btn2.setText("Login");
-			btn3.setVisible(false);
-			btn4.setVisible(false);
-			btn5.setVisible(false);
-			btn6.setVisible(false);
-			btn7.setVisible(false);
-			btn8.setVisible(false);
-			lbl1.setVisible(false);
-			lbl2.setVisible(false);
 			
 			studentHome.setTest(noTest);
 		} else if (!isLoggedIn.get()) {
