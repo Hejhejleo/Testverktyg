@@ -20,6 +20,7 @@ public class Question {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int questionId;
+	private boolean directFeedback;
 	private double points;
 	private String questionTitle;
 	private String questionText;
