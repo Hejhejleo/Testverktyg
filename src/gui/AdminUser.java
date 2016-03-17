@@ -91,7 +91,6 @@ public class AdminUser {
 			if (userView.getClickCount()>1) {
 				for (User u : allUsers) {
 					if ((u.getfName() + "\t" + u.getlName()).equals(studentListView.getSelectionModel().getSelectedItem())) {
-						System.out.println("hej");
 						ChangeUserInfo cu = new ChangeUserInfo(u);
 						// Show user credentials
 						adminUserPane.add(cu.showPane(), 0, 4, 3, 3);
@@ -202,8 +201,6 @@ public class AdminUser {
 	public String showRemoveStudent(String student, String className) {
 		String fName = student.substring(0, student.indexOf("\t"));
 		String lName = student.substring(student.indexOf("\t")+1, student.length());
-		System.out.println("Fname: " + fName);
-		System.out.println("Lname: " + lName);
 		
 		em.getTransaction().begin();
 		SchoolClass sc = (SchoolClass) em.createQuery("select c from SchoolClass c where c.className = '" + className + "'").getSingleResult();
