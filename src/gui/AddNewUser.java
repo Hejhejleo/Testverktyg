@@ -236,7 +236,7 @@ public class AddNewUser {
 
 		String regex = "\\d+";
 		
-		// TODO ska det finnas poster som inte behöver vara ifyllda?
+		// TODO ska det finnas poster som inte behÃ¶ver vara ifyllda?
 
 		saveButton.setOnAction(ok -> {
 			Alert error = new Alert(AlertType.ERROR);
@@ -331,6 +331,7 @@ public class AddNewUser {
 				addedUser.setHeaderText(null);
 				addedUser.setContentText("The user \"" + txtUserName.getText() + "\" has been added");
 				addedUser.showAndWait();
+				clearButton.fire();
 
 			}
 		});
