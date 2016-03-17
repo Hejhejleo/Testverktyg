@@ -22,6 +22,7 @@ public class Question {
 	private int questionId;
 	private double points;
 	private boolean directFeedback;
+	@Column(unique=true)
 	private String questionTitle;
 	private String questionText;
 	@ManyToOne(cascade = CascadeType.ALL)
