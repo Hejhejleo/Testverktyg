@@ -23,12 +23,15 @@ public class Login {
 	 * @return User
 	 */
 	public User login(String name, String password, List<User> allUsers) {
+		// Obtains all users from the database
 		StartUp start = new StartUp();
 		allUsers = start.getUsers();
+		// Goes through the list of users and checks wether the passwords matches
 		for (User u : allUsers) {
 			if (u.getUserName().equals(name) && u.getPassword().equals(password)) {
 				this.accountType = u.getAccountType();
 				this.name = u.getUserName();
+				// Returns the user
 				return u;
 			}
 		}
