@@ -70,7 +70,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class GUITemplate extends Application {
-	static Timer timer = new Timer();
+	static Timer timer;
 	private StartUp startUp;
 	private Test noTest;
 	private Login logIn = new Login();
@@ -238,6 +238,7 @@ public class GUITemplate extends Application {
 		btn4.setOnAction(event -> {
 			Test temp=studentHome.getTest();
 			centerPane.getChildren().clear();
+			timer = new Timer();
 			timer.setTest(temp);
 			timer.setLabel(lbl);
 			System.out.println("\nStart\n");
@@ -717,8 +718,13 @@ public class GUITemplate extends Application {
 					System.out.println(e);
 				}
 			}
+			timer.stop();
+			studentHome.setTest(noTest);
 			centerPaneDT.getChildren().clear();
 			centerPane.getChildren().clear();
+			timer.setRun(false);
+			lbl.setText("Time remaining: 00:00:00");
+		//TODO
 		});
 
 		// Overview för provets svar /SLUT
