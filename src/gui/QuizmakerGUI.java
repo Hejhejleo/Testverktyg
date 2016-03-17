@@ -303,8 +303,7 @@ public class QuizmakerGUI {
 				else if (tempSelcQuest.getquestionType().getQuestionType().equals("Radiobuttons")){
 					fieldsAndRadsHBox.getChildren().clear();
 					fieldsAndRadsHBox.getChildren().addAll(radButsVBox, fieldsVBox, listViewQuest);
-				}
-			
+				}			
 				
 			fieldsVBox.setVisible(true);
 			radButsVBox.setVisible(true);
@@ -315,6 +314,23 @@ public class QuizmakerGUI {
 			
 			for(Answers a: tempAnsView){
 				if(a.getQuestion().getQuestionTitle().equals(listViewQuest.getSelectionModel().getSelectedItem())){
+					System.out.println();
+					if(a.getCorrectAnswerIndex() == 0){
+						radBut1.setSelected(true);
+						System.out.println(a.getCorrectAnswer());
+					}
+					else if(a.getCorrectAnswerIndex() == 1){
+						radBut2.setSelected(true);
+						System.out.println(a.getCorrectAnswer());
+					}
+					else if(a.getCorrectAnswerIndex() == 2){
+						radBut3.setSelected(true);
+						System.out.println(a.getCorrectAnswer());
+					}
+					else if(a.getCorrectAnswerIndex() == 3){
+						radBut4.setSelected(true);
+						System.out.println(a.getCorrectAnswer());
+					}
 					
 					if(tempSelcQuest.getquestionType().getQuestionType().equals("Fritext")){
 						writeAnswerTxt.setText(a.getAnswerList().get(0));
