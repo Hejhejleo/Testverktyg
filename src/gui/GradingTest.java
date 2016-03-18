@@ -32,6 +32,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -61,9 +62,7 @@ import javafx.scene.text.Text;
  * The picked student's answers are presented
  * 
  * Known bugs and flaws: 
- * > only shows the last question of the last student 
  * > no scrollpane connected to the stackpane
- * > no working cancelbutton 
  * > doesn't include answer from radionbutton questions 
  * > lots of code written more than once
  * 
@@ -85,7 +84,6 @@ public class GradingTest {
 	private Menu gradingTest;
 	private VBox gradingTestComponentsQuestion = new VBox(5);
 	private VBox gradingTestComponentsStudent = new VBox(5);
-	private boolean focusStudent;
 
 	/**
 	 * 
@@ -119,7 +117,7 @@ public class GradingTest {
 	 * 
 	 * @return the stackpane for grading tests
 	 */
-	public StackPane showGradingPane() {
+	public StackPane showGradingPane(AnchorPane centerPane) {
 		emf = Persistence.createEntityManagerFactory("Testverktyg");
 		em = emf.createEntityManager();
 		StackPane gradingPane = new StackPane();
@@ -298,7 +296,7 @@ public class GradingTest {
 								notSaved.setHeaderText("No grading added");
 								notSaved.setContentText("Your inputs will not be saved");
 								notSaved.showAndWait();
-								// centerPane.getChildren().clear(); TODO
+								 centerPane.getChildren().clear(); //TODO
 
 							});
 
@@ -476,7 +474,7 @@ public class GradingTest {
 								notSaved.setHeaderText("No grading added");
 								notSaved.setContentText("Your inputs will not be saved");
 								notSaved.showAndWait();
-								// centerPane.getChildren().clear(); TODO
+								 centerPane.getChildren().clear(); //TODO
 							});
 
 							saveButton.setOnAction(save -> {
