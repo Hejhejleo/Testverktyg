@@ -88,8 +88,8 @@ public class GUITemplate extends Application {
 	private StartUp startUp;
 	private Test noTest;
 	private Login logIn = new Login();
-	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(false);
-	private BooleanProperty isAdmin = new SimpleBooleanProperty(false);
+	private BooleanProperty isLoggedIn = new SimpleBooleanProperty(true);
+	private BooleanProperty isAdmin = new SimpleBooleanProperty(true);
 	private static BooleanProperty isTestPicked = new SimpleBooleanProperty(false);
 	private BorderPane root;
 	private ChangeUserInfo userInfo;
