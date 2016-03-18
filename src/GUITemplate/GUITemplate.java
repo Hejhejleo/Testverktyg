@@ -96,34 +96,34 @@ public class GUITemplate extends Application {
 	private QuizmakerGUI qMakerGUI;
 	private GradingTest gTest;
 	private StudentHome studentHome = new StudentHome();
-	AddNewUser addNewUser = new AddNewUser();
-	List<SchoolClass> allClasses = new ArrayList<>();
-	List<User> allUsers = new ArrayList<>();
-	List<Test> allTests = new ArrayList<>();
+	private AddNewUser addNewUser = new AddNewUser();
+	private List<SchoolClass> allClasses = new ArrayList<>();
+	private List<User> allUsers = new ArrayList<>();
+	private List<Test> allTests = new ArrayList<>();
 	private User user = null;
-	AnchorPane centerPaneDT;
-	String testNameDT;
-	int questionNumberDT = 0;
-	Answers answerDT;
-	Boolean goneThroughDT = false;
-	List<Pane> canvasesDT = new ArrayList<>();
-	List<Question> questionsDT = new ArrayList<>();
-	List<String> testOverviewQDT = new ArrayList<>();
-	List<String> testOverviewADT = new ArrayList<>();
-	User userDT;
-	List<Object> questionAnswersDT = new ArrayList<>();
+	private AnchorPane centerPaneDT;
+	private String testNameDT;
+	private int questionNumberDT = 0;
+	private Answers answerDT;
+	private Boolean goneThroughDT = false;
+	private List<Pane> canvasesDT = new ArrayList<>();
+	private List<Question> questionsDT = new ArrayList<>();
+	private List<String> testOverviewQDT = new ArrayList<>();
+	private List<String> testOverviewADT = new ArrayList<>();
+	private User userDT;
+	private List<Object> questionAnswersDT = new ArrayList<>();
 
-	Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
-	static Button endTest;
-	static Button yes;
-	static Label lbl1;
-	Label lbl2;
+	private Button btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8;
+	private static Button endTest;
+	private static Button yes;
+	private static Label lbl1;
+	private Label lbl2;
 
-	AnchorPane centerPane;
-	boolean writeLine = false;
+	private AnchorPane centerPane;
+	private boolean writeLine = false;
 
-	double clickX1;
-	double clickY1;
+	private double clickX1;
+	private double clickY1;
 
 	Stage primaryStage;
 
@@ -512,7 +512,6 @@ public class GUITemplate extends Application {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
 		Query test = em.createNamedQuery("get tests");
-		testNameDT = "Test i JPA";
 		test.setParameter("name", testName);
 		// get questions from DB
 		List<Test> testsList = new ArrayList<>(test.getResultList());
