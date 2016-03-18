@@ -411,7 +411,7 @@ public class GUITemplate extends Application {
 		gradingTest.setOnAction(gradeEvent -> {
 			gTest = new GradingTest(gradingTest);
 			centerPane.getChildren().clear();
-			centerPane.getChildren().addAll(gTest.showGradingPane());
+			centerPane.getChildren().addAll(gTest.showGradingPane(centerPane));
 		});
 		mnuAdmin.getItems().addAll(adminUsers, addUser, createQuest, gradingTest);
 
