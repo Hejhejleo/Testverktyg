@@ -29,6 +29,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/**
+ * 
+ * @author Jannike, Mattias
+ *
+ */
 public class AddNewUser {
 	private String whiteBGAndGreyBorder = "-fx-background-color: #FFFFFF; " + "-fx-border-color: #D3D3D3";
 	private String frameStyle = "-fx-border-color: #FFA500; " + "-fx-border-width: 2px; "
@@ -39,7 +44,16 @@ public class AddNewUser {
 			+ "-fx-background-color: #FFFFFF";
 
 	private SchoolClass sc;
-
+	
+	/**
+	 * Checks if a username is used already
+	 * 
+	 * @param userName,
+	 *            the username
+	 * @param allUsers,
+	 *            the list of all users
+	 * @return true if the username is in use already
+	 */
 	private boolean checkDouble(String userName, List<User> allUsers) {
 		for (User user : allUsers) {
 			if (userName.equals(user.getUserName()))
@@ -49,13 +63,16 @@ public class AddNewUser {
 		return false;
 	}
 
-//	private List<SchoolClass> getAvailableClasses(List<SchoolClass> allClasses) {
-//		Query findSchoolclasses = em.createQuery("Select sc from SchoolClass sc"); // TODO
-//		List<SchoolClass> scList = findSchoolclasses.getResultList();
-//		
-//		return scList;
-//	}
-
+	/**
+	 * 
+	 * @param allClasses,
+	 *            a list of all classes in the database
+	 * @param allUsers,
+	 *            a list of all user in the database
+	 * @param centerPane,
+	 *            the pane the class AddNewUser is shown
+	 * @return A stackpane with graphics to add a user
+	 */
 	public StackPane showPane(List<SchoolClass> allClasses, List<User> allUsers, AnchorPane centerPane) {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("Testverktyg");
 		EntityManager em = emf.createEntityManager();
@@ -64,7 +81,7 @@ public class AddNewUser {
 		accountType.add("Admin");
 		accountType.add("Student");
 
-		// Get available schoolclasses for a student // TODO
+		// Get available schoolclasses for a student 
 		ObservableList<String> availableSchoolClasses = FXCollections.observableArrayList();
 		
 		for (SchoolClass sc : allClasses) {
@@ -73,6 +90,7 @@ public class AddNewUser {
 
 		StackPane userPane = new StackPane();
 
+		// Components to enter user data
 		Text titleText = new Text("Add user account");
 		titleText.setFont(Font.font(30));
 		HBox titleBox = new HBox(10);
@@ -130,6 +148,7 @@ public class AddNewUser {
 		txtEmail.setMaxWidth(200);
 		txtEmail.setPromptText("E-mail");
 
+		// If the new user is a student it has to be assigned to a schoolclass, admins don't
 		ComboBox cmbStudentsClass = new ComboBox();
 		cmbStudentsClass.setItems(availableSchoolClasses);
 		cmbStudentsClass.setStyle(whiteBGAndGreyBorder);
@@ -233,9 +252,8 @@ public class AddNewUser {
 			}
 		});
 
+		// Used to check if an expresssion includes more than didgits and space
 		String regex = "\\d+";
-		
-		// TODO ska det finnas poster som inte behöver vara ifyllda?
 
 		saveButton.setOnAction(ok -> {
 			Alert error = new Alert(AlertType.ERROR);
